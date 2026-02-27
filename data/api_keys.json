@@ -1,0 +1,19 @@
+{
+  "keys": {
+    "demo-key-12345": {
+      "name": "Demo Key",
+      "tier": "pro",
+      "rate_limit": 100,
+      "created": "2026-02-26",
+      "owner": "demo@a2apex.io"
+    },
+    "test-key-abcde": {
+      "name": "Test Key",
+      "tier": "pro",
+      "rate_limit": 100,
+      "created": "2026-02-26",
+      "owner": "test@a2apex.io"
+    }
+  },
+  "_comment": "Add your API keys here. Each key gets 100 requests/minute. Without a key, free tier is 10/minute."
+}

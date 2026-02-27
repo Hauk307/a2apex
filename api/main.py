@@ -8,11 +8,14 @@ The API behind "Postman for AI Agents".
 import os
 import sys
 import uuid
+import json
+import time
 from typing import Optional
 from pathlib import Path
 from datetime import datetime
+from collections import defaultdict
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -63,6 +66,116 @@ from core import (
 
 
 # ============================================================================
+# RATE LIMITING & API KEY AUTH
+# ============================================================================
+
+# In-memory rate limit tracking
+# Structure: {identifier: [(timestamp, count), ...]}
+rate_limit_store: dict[str, list[tuple[float, int]]] = defaultdict(list)
+
+# API keys config
+API_KEYS_PATH = Path(__file__).parent.parent / "data" / "api_keys.json"
+API_KEYS: dict[str, dict] = {}
+
+# Rate limit settings
+FREE_TIER_LIMIT = 10  # requests per minute
+PRO_TIER_LIMIT = 100  # requests per minute
+RATE_LIMIT_WINDOW = 60  # seconds
+
+# Public endpoints that don't require auth or rate limiting
+PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json"}
+
+
+def load_api_keys():
+    """Load API keys from JSON file."""
+    global API_KEYS
+    if API_KEYS_PATH.exists():
+        try:
+            with open(API_KEYS_PATH) as f:
+                data = json.load(f)
+                API_KEYS = data.get("keys", {})
+        except Exception as e:
+            print(f"Warning: Could not load API keys: {e}")
+            API_KEYS = {}
+    else:
+        API_KEYS = {}
+
+
+def get_api_key(request: Request) -> Optional[str]:
+    """Extract API key from request (header or query param)."""
+    # Check X-API-Key header first
+    api_key = request.headers.get("X-API-Key")
+    if api_key:
+        return api_key
+    
+    # Check query parameter
+    api_key = request.query_params.get("api_key")
+    if api_key:
+        return api_key
+    
+    return None
+
+
+def get_rate_limit(api_key: Optional[str]) -> int:
+    """Get rate limit for API key (or free tier if no key)."""
+    if api_key and api_key in API_KEYS:
+        return API_KEYS[api_key].get("rate_limit", PRO_TIER_LIMIT)
+    return FREE_TIER_LIMIT
+
+
+def get_client_identifier(request: Request, api_key: Optional[str]) -> str:
+    """Get identifier for rate limiting (API key or IP)."""
+    if api_key and api_key in API_KEYS:
+        return f"key:{api_key}"
+    
+    # Fall back to IP
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return f"ip:{forwarded.split(',')[0].strip()}"
+    
+    client_host = request.client.host if request.client else "unknown"
+    return f"ip:{client_host}"
+
+
+def check_rate_limit(identifier: str, limit: int) -> tuple[bool, int, int]:
+    """
+    Check if request is within rate limit.
+    Returns: (allowed, remaining, reset_time)
+    """
+    now = time.time()
+    window_start = now - RATE_LIMIT_WINDOW
+    
+    # Clean old entries
+    rate_limit_store[identifier] = [
+        (ts, count) for ts, count in rate_limit_store[identifier]
+        if ts > window_start
+    ]
+    
+    # Count requests in window
+    request_count = sum(count for _, count in rate_limit_store[identifier])
+    
+    if request_count >= limit:
+        # Calculate reset time
+        if rate_limit_store[identifier]:
+            oldest = min(ts for ts, _ in rate_limit_store[identifier])
+            reset_time = int(oldest + RATE_LIMIT_WINDOW)
+        else:
+            reset_time = int(now + RATE_LIMIT_WINDOW)
+        return False, 0, reset_time
+    
+    # Add this request
+    rate_limit_store[identifier].append((now, 1))
+    remaining = limit - request_count - 1
+    reset_time = int(now + RATE_LIMIT_WINDOW)
+    
+    return True, remaining, reset_time
+
+
+# Load API keys on startup
+load_api_keys()
+
+
+# ============================================================================
 # APP SETUP
 # ============================================================================
 
@@ -74,14 +187,64 @@ app = FastAPI(
     redoc_url="/api/redoc"
 )
 
-# CORS middleware for web UI
+# CORS middleware for web UI - allow all origins (dev tool)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset"],
 )
+
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Rate limiting middleware."""
+    path = request.url.path
+    
+    # Skip rate limiting for public endpoints
+    if path in PUBLIC_ENDPOINTS or path.startswith("/api/docs") or path.startswith("/api/redoc"):
+        return await call_next(request)
+    
+    # Handle CORS preflight
+    if request.method == "OPTIONS":
+        return await call_next(request)
+    
+    # Get API key and rate limit
+    api_key = get_api_key(request)
+    limit = get_rate_limit(api_key)
+    identifier = get_client_identifier(request, api_key)
+    
+    # Check rate limit
+    allowed, remaining, reset_time = check_rate_limit(identifier, limit)
+    
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": "Too Many Requests",
+                "message": f"Rate limit exceeded. Limit: {limit} requests per minute.",
+                "retry_after": reset_time - int(time.time())
+            },
+            headers={
+                "X-RateLimit-Limit": str(limit),
+                "X-RateLimit-Remaining": "0",
+                "X-RateLimit-Reset": str(reset_time),
+                "Retry-After": str(reset_time - int(time.time()))
+            }
+        )
+    
+    # Process request
+    response = await call_next(request)
+    
+    # Add rate limit headers
+    response.headers["X-RateLimit-Limit"] = str(limit)
+    response.headers["X-RateLimit-Remaining"] = str(remaining)
+    response.headers["X-RateLimit-Reset"] = str(reset_time)
+    
+    return response
+
 
 # In-memory store for test reports (would be Redis/DB in production)
 test_reports: dict[str, dict] = {}
