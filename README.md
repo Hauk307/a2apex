@@ -34,7 +34,7 @@
 
 ## What is A2Apex?
 
-A2Apex is the first testing and validation tool for [Google's A2A (Agent-to-Agent) protocol](https://google.github.io/A2A/). 
+A2Apex is the first testing and validation tool for [Google's A2A (Agent-to-Agent) protocol](https://github.com/a2aproject/A2A). 
 
 A2A is the emerging standard for how AI agents communicate — agent cards, capability discovery, task execution, streaming responses. A2Apex helps you verify your agent implements it correctly.
 

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — A2Apex</title>
+    <meta name="description" content="Privacy Policy for A2Apex, the A2A protocol testing and certification platform.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #0A1628;
+            --bg-secondary: #0D1D31;
+            --bg-card: #111F36;
+            --cyan: #00E5FF;
+            --cyan-dim: rgba(0, 229, 255, 0.1);
+            --gradient-start: #0A3DFF;
+            --gradient-mid: #0066FF;
+            --gradient-end: #00E5FF;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --green: #10B981;
+            --red: #EF4444;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+        
+        .logo-text {
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav .logo-text {
+            font-size: 1.5rem;
+        }
+        
+        nav .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        nav .back-link:hover {
+            color: var(--cyan);
+        }
+        
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* Content */
+        .content {
+            padding: 8rem 0 4rem;
+        }
+        
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 3rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin: 2.5rem 0 1rem;
+            color: var(--cyan);
+        }
+        
+        h3 {
+            font-size: 1.125rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .highlight-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .data-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .data-box.collect {
+            border-left: 4px solid var(--green);
+        }
+        
+        .data-box.no-collect {
+            border-left: 4px solid var(--red);
+        }
+        
+        .data-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .data-box.collect h4 {
+            color: var(--green);
+        }
+        
+        .data-box.no-collect h4 {
+            color: var(--red);
+        }
+        
+        .data-box ul {
+            margin-bottom: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        td {
+            color: var(--text-secondary);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        
+        footer a {
+            color: var(--text-muted);
+        }
+        
+        footer a:hover {
+            color: var(--cyan);
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .content {
+                padding: 6rem 0 3rem;
+            }
+            
+            h2 {
+                font-size: 1.25rem;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="https://a2apex.io" class="logo-text">A2Apex</a>
+            <a href="https://a2apex.io" class="back-link">← Back to Home</a>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="content">
+        <div class="container">
+            <h1 class="page-title">Privacy Policy</h1>
+            <p class="last-updated">Effective Date: March 1, 2026</p>
+
+            <p>At A2Apex, we believe in transparency and respecting your privacy. This Privacy Policy explains how Apex Ventures LLC ("we," "us," or "our") collects, uses, and protects your information when you use our A2A protocol testing platform.</p>
+            
+            <p><strong>TL;DR:</strong> We collect minimal data needed to run the service. We don't store your agent credentials. Test results are deleted after 30 days. We don't sell your data.</p>
+
+            <h2>1. Information We Collect</h2>
+            
+            <div class="data-box collect">
+                <h4>✅ What We DO Collect</h4>
+                <ul>
+                    <li><strong>Account Information:</strong> Email address, name (optional), and password when you sign up</li>
+                    <li><strong>Waitlist Information:</strong> Email address when you join the waitlist</li>
+                    <li><strong>Usage Data:</strong> How you interact with our service (pages visited, features used, timestamps)</li>
+                    <li><strong>Test Results:</strong> The results of compliance tests you run (stored temporarily)</li>
+                    <li><strong>Agent URLs:</strong> The endpoints you submit for testing</li>
+                    <li><strong>Device Information:</strong> Browser type, operating system, IP address (for security)</li>
+                </ul>
+            </div>
+            
+            <div class="data-box no-collect">
+                <h4>❌ What We DON'T Collect</h4>
+                <ul>
+                    <li><strong>Agent Credentials:</strong> We never store your API keys, OAuth tokens, or authentication secrets</li>
+                    <li><strong>Sensitive Auth Data:</strong> Authentication headers are used transiently and not logged</li>
+                    <li><strong>Agent Response Content:</strong> We validate structure, not payload contents — your data stays yours</li>
+                    <li><strong>Payment Details:</strong> Stripe handles all payment processing; we never see your card numbers</li>
+                </ul>
+            </div>
+
+            <h2>2. How We Use Your Information</h2>
+            <p>We use the information we collect to:</p>
+            <ul>
+                <li><strong>Provide the Service:</strong> Run tests, generate compliance reports, issue badges</li>
+                <li><strong>Improve the Service:</strong> Analyze usage patterns to make A2Apex better</li>
+                <li><strong>Communicate:</strong> Send service updates, beta invites, and (rarely) product announcements</li>
+                <li><strong>Security:</strong> Detect and prevent fraud, abuse, and security threats</li>
+                <li><strong>Legal Compliance:</strong> Meet our legal obligations</li>
+            </ul>
+            <p>We will never sell, rent, or share your personal information with third parties for their marketing purposes.</p>
+
+            <h2>3. Cookies and Tracking</h2>
+            <p>We use minimal cookies to keep the service running smoothly:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cookie Type</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Session</td>
+                        <td>Keep you logged in</td>
+                        <td>Until logout</td>
+                    </tr>
+                    <tr>
+                        <td>Preferences</td>
+                        <td>Remember your settings</td>
+                        <td>1 year</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics</td>
+                        <td>Understand usage patterns</td>
+                        <td>30 days</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>You can disable cookies in your browser settings, but some features may not work properly.</p>
+
+            <h2>4. Third-Party Services</h2>
+            <p>We work with trusted partners to provide our service:</p>
+            <ul>
+                <li><strong>Vercel:</strong> Website and application hosting</li>
+                <li><strong>Stripe:</strong> Payment processing (they have their own <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>)</li>
+                <li><strong>Analytics:</strong> Anonymous usage analytics to improve the service</li>
+            </ul>
+            <p>These providers process data according to their own privacy policies and our data processing agreements.</p>
+
+            <h2>5. Data Retention</h2>
+            <p>We keep your data only as long as necessary:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data Type</th>
+                        <th>Retention Period</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Test Results</td>
+                        <td>30 days, then automatically deleted</td>
+                    </tr>
+                    <tr>
+                        <td>Account Data</td>
+                        <td>Until you delete your account</td>
+                    </tr>
+                    <tr>
+                        <td>Waitlist Emails</td>
+                        <td>Until you unsubscribe or the beta ends</td>
+                    </tr>
+                    <tr>
+                        <td>Usage Analytics</td>
+                        <td>Aggregated and anonymized after 90 days</td>
+                    </tr>
+                    <tr>
+                        <td>Security Logs</td>
+                        <td>1 year (for fraud prevention)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>6. Your Rights</h2>
+            <p>You have control over your data. Depending on your location, you may have the right to:</p>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of the personal data we hold about you</li>
+                <li><strong>Correction:</strong> Update or correct inaccurate data</li>
+                <li><strong>Deletion:</strong> Request deletion of your personal data ("right to be forgotten")</li>
+                <li><strong>Portability:</strong> Export your data in a machine-readable format</li>
+                <li><strong>Objection:</strong> Opt out of certain data processing activities</li>
+                <li><strong>Restriction:</strong> Limit how we use your data</li>
+            </ul>
+            <p>To exercise any of these rights, contact us at <a href="mailto:team@a2apex.io">team@a2apex.io</a>. We'll respond within 30 days.</p>
+
+            <h2>7. GDPR Compliance</h2>
+            <p>If you're in the European Economic Area (EEA), UK, or Switzerland:</p>
+            <ul>
+                <li>We process your data based on your consent, contractual necessity, or legitimate interests</li>
+                <li>You can withdraw consent at any time by contacting us</li>
+                <li>You have the right to lodge a complaint with your local data protection authority</li>
+                <li>Data transfers outside the EEA are protected by appropriate safeguards</li>
+            </ul>
+            <p>Our lawful bases for processing include:</p>
+            <ul>
+                <li><strong>Contract:</strong> Processing necessary to provide the service you requested</li>
+                <li><strong>Consent:</strong> When you opt in to receive marketing communications</li>
+                <li><strong>Legitimate Interest:</strong> Improving our service, preventing fraud, ensuring security</li>
+            </ul>
+
+            <h2>8. Data Security</h2>
+            <p>We take security seriously:</p>
+            <ul>
+                <li>All data is encrypted in transit (TLS 1.3) and at rest</li>
+                <li>We use industry-standard authentication and access controls</li>
+                <li>Regular security audits and penetration testing</li>
+                <li>Credentials are never logged or stored</li>
+                <li>Employee access to personal data is strictly limited</li>
+            </ul>
+            <p>While we implement strong security measures, no method of transmission over the Internet is 100% secure. We cannot guarantee absolute security.</p>
+
+            <h2>9. Children's Privacy</h2>
+            <p>A2Apex is not intended for children under the age of 13 (or 16 in the EEA). We do not knowingly collect personal information from children.</p>
+            <p>If you believe a child has provided us with personal information, please contact us at <a href="mailto:team@a2apex.io">team@a2apex.io</a> and we will delete it promptly.</p>
+
+            <h2>10. International Data Transfers</h2>
+            <p>A2Apex is operated from the United States. If you're accessing the service from outside the US, your data may be transferred to and processed in the US or other countries where our service providers operate.</p>
+            <p>We ensure appropriate safeguards are in place for international transfers, including Standard Contractual Clauses where required.</p>
+
+            <h2>11. Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. When we make material changes:</p>
+            <ul>
+                <li>We will notify you via email or a prominent notice on our website</li>
+                <li>The "Effective Date" at the top will be updated</li>
+                <li>For significant changes, we may provide additional notice</li>
+            </ul>
+            <p>We encourage you to review this policy periodically.</p>
+
+            <h2>12. Contact Us</h2>
+            <p>If you have questions about this Privacy Policy or our data practices, please contact us:</p>
+            
+            <div class="highlight-box">
+                <p><strong>Apex Ventures LLC</strong><br>
+                Email: <a href="mailto:team@a2apex.io">team@a2apex.io</a><br>
+                Website: <a href="https://a2apex.io">https://a2apex.io</a></p>
+            </div>
+            
+            <p>We aim to respond to all privacy inquiries within 30 days.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 Apex Ventures LLC. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
+        </div>
+    </footer>
+</body>
+</html>

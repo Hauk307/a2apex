@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service — A2Apex</title>
+    <meta name="description" content="Terms of Service for A2Apex, the A2A protocol testing and certification platform.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #0A1628;
+            --bg-secondary: #0D1D31;
+            --bg-card: #111F36;
+            --cyan: #00E5FF;
+            --cyan-dim: rgba(0, 229, 255, 0.1);
+            --gradient-start: #0A3DFF;
+            --gradient-mid: #0066FF;
+            --gradient-end: #00E5FF;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+        
+        .logo-text {
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav .logo-text {
+            font-size: 1.5rem;
+        }
+        
+        nav .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        nav .back-link:hover {
+            color: var(--cyan);
+        }
+        
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* Content */
+        .content {
+            padding: 8rem 0 4rem;
+        }
+        
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 3rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin: 2.5rem 0 1rem;
+            color: var(--cyan);
+        }
+        
+        h3 {
+            font-size: 1.125rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .highlight-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        
+        footer a {
+            color: var(--text-muted);
+        }
+        
+        footer a:hover {
+            color: var(--cyan);
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .content {
+                padding: 6rem 0 3rem;
+            }
+            
+            h2 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="https://a2apex.io" class="logo-text">A2Apex</a>
+            <a href="https://a2apex.io" class="back-link">← Back to Home</a>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="content">
+        <div class="container">
+            <h1 class="page-title">Terms of Service</h1>
+            <p class="last-updated">Last updated: March 1, 2026</p>
+
+            <p>Welcome to A2Apex! These Terms of Service ("Terms") govern your use of the A2Apex platform and services operated by Apex Ventures LLC ("we," "us," or "our"), a Wyoming limited liability company.</p>
+            
+            <p>By accessing or using A2Apex, you agree to be bound by these Terms. If you disagree with any part of these terms, you may not access the service.</p>
+
+            <h2>1. Service Description</h2>
+            <p>A2Apex is a testing and certification platform for the A2A (Agent-to-Agent) protocol. Our services include:</p>
+            <ul>
+                <li><strong>Agent Card Validation:</strong> Schema compliance checking against the A2A specification</li>
+                <li><strong>Endpoint Testing:</strong> Live JSON-RPC calls with response validation</li>
+                <li><strong>State Machine Validation:</strong> Task lifecycle transition verification</li>
+                <li><strong>Streaming Tests:</strong> SSE event ordering and format checks</li>
+                <li><strong>Security Checking:</strong> Authentication scheme validation</li>
+                <li><strong>Compliance Scoring:</strong> Detailed reports and certification badges</li>
+            </ul>
+
+            <h2>2. Account Registration</h2>
+            <p>To use certain features of A2Apex, you may need to create an account. You agree to:</p>
+            <ul>
+                <li>Provide accurate, current, and complete information during registration</li>
+                <li>Maintain the security of your password and account</li>
+                <li>Accept responsibility for all activities that occur under your account</li>
+                <li>Notify us immediately of any unauthorized use of your account</li>
+            </ul>
+            <p>You must be at least 18 years old or the age of legal majority in your jurisdiction to create an account.</p>
+
+            <h2>3. Acceptable Use</h2>
+            <p>You agree to use A2Apex only for lawful purposes and in accordance with these Terms. Specifically, you agree NOT to:</p>
+            <ul>
+                <li><strong>Test agents without authorization:</strong> You may only test agents that you own, operate, or have explicit permission to test</li>
+                <li>Use the service to attack, disrupt, or probe third-party systems without permission</li>
+                <li>Attempt to gain unauthorized access to any part of the service or its systems</li>
+                <li>Use the service to transmit malware, viruses, or malicious code</li>
+                <li>Interfere with or disrupt the service or servers connected to the service</li>
+                <li>Resell, redistribute, or sublicense the service without our written consent</li>
+                <li>Use automated systems to access the service in a manner that exceeds reasonable use</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>⚠️ Important:</strong> Unauthorized testing of third-party agents may violate computer fraud laws. Always obtain explicit permission before testing agents you do not own or operate.</p>
+            </div>
+
+            <h2>4. API Usage Limits</h2>
+            <p>Your usage of A2Apex is subject to the limits of your subscription tier:</p>
+            <ul>
+                <li><strong>Solo ($29/mo):</strong> 100 tests per month, 1 agent</li>
+                <li><strong>Startup ($99/mo):</strong> Unlimited tests, 10 agents</li>
+                <li><strong>Enterprise ($499/mo):</strong> Unlimited tests, unlimited agents</li>
+            </ul>
+            <p>During the beta period, all users receive free access with reasonable usage limits. We reserve the right to throttle or suspend accounts that exceed reasonable usage patterns.</p>
+
+            <h2>5. Intellectual Property</h2>
+            
+            <h3>Our Platform</h3>
+            <p>A2Apex, including its design, features, content, and technology, is owned by Apex Ventures LLC. You receive a limited, non-exclusive, non-transferable license to use the service according to these Terms.</p>
+            
+            <h3>Your Data</h3>
+            <p>You retain all rights to your agent configurations, test data, and any information you provide to the service. We claim no ownership over your intellectual property.</p>
+
+            <h3>Compliance Badges</h3>
+            <p>If you earn an A2Apex compliance badge, you receive a license to display it in connection with your certified agent, subject to maintaining compliance and these Terms.</p>
+
+            <h2>6. Data Handling</h2>
+            <p>We take your data privacy seriously:</p>
+            <ul>
+                <li><strong>No credential storage:</strong> We do not store your agent API keys, OAuth tokens, or other authentication credentials</li>
+                <li><strong>Temporary test results:</strong> Test results are stored temporarily (30 days) for your review and then deleted</li>
+                <li><strong>No data mining:</strong> We do not analyze your agent responses for purposes other than testing</li>
+            </ul>
+            <p>For complete details, please review our <a href="/privacy">Privacy Policy</a>.</p>
+
+            <h2>7. Limitation of Liability</h2>
+            <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW:</p>
+            <ul>
+                <li>A2Apex is provided "AS IS" and "AS AVAILABLE" without warranties of any kind</li>
+                <li>We do not warrant that the service will be uninterrupted, error-free, or secure</li>
+                <li>We are not liable for any indirect, incidental, special, consequential, or punitive damages</li>
+                <li>Our total liability shall not exceed the amount you paid us in the 12 months preceding the claim</li>
+            </ul>
+            <p>Some jurisdictions do not allow the exclusion of certain warranties or limitations on liability, so some of the above limitations may not apply to you.</p>
+
+            <h2>8. Indemnification</h2>
+            <p>You agree to indemnify and hold harmless Apex Ventures LLC, its officers, directors, employees, and agents from any claims, damages, losses, or expenses (including reasonable attorneys' fees) arising from:</p>
+            <ul>
+                <li>Your use of the service</li>
+                <li>Your violation of these Terms</li>
+                <li>Your violation of any third-party rights</li>
+                <li>Any content you submit through the service</li>
+            </ul>
+
+            <h2>9. Termination</h2>
+            
+            <h3>By You</h3>
+            <p>You may terminate your account at any time by contacting us at <a href="mailto:team@a2apex.io">team@a2apex.io</a>. Upon termination, your right to use the service will immediately cease.</p>
+            
+            <h3>By Us</h3>
+            <p>We may suspend or terminate your account immediately, without prior notice, if:</p>
+            <ul>
+                <li>You breach these Terms</li>
+                <li>We are required to do so by law</li>
+                <li>We discontinue the service</li>
+            </ul>
+            <p>Upon termination, provisions that by their nature should survive will remain in effect (including limitations of liability and indemnification).</p>
+
+            <h2>10. Dispute Resolution</h2>
+            
+            <h3>Governing Law</h3>
+            <p>These Terms shall be governed by and construed in accordance with the laws of the State of Wyoming, United States, without regard to its conflict of law provisions.</p>
+            
+            <h3>Jurisdiction</h3>
+            <p>You agree that any legal action or proceeding arising out of these Terms shall be brought exclusively in the state or federal courts located in Wyoming. You consent to the jurisdiction of such courts.</p>
+            
+            <h3>Informal Resolution</h3>
+            <p>Before filing a claim, you agree to try to resolve the dispute informally by contacting us at <a href="mailto:team@a2apex.io">team@a2apex.io</a>. We'll try to resolve the dispute within 30 days.</p>
+
+            <h2>11. Changes to Terms</h2>
+            <p>We may update these Terms from time to time. When we make material changes:</p>
+            <ul>
+                <li>We will provide at least 30 days' notice before the changes take effect</li>
+                <li>We will notify you via email and/or a prominent notice on our website</li>
+                <li>Continued use of the service after changes take effect constitutes acceptance</li>
+            </ul>
+            <p>For non-material changes, we may update these Terms without notice. The "Last updated" date at the top of this page indicates when the Terms were last revised.</p>
+
+            <h2>12. General Provisions</h2>
+            <ul>
+                <li><strong>Entire Agreement:</strong> These Terms constitute the entire agreement between you and Apex Ventures LLC regarding the service</li>
+                <li><strong>Severability:</strong> If any provision is found unenforceable, the remaining provisions will continue in effect</li>
+                <li><strong>Waiver:</strong> Our failure to enforce any right or provision does not constitute a waiver</li>
+                <li><strong>Assignment:</strong> You may not assign these Terms without our consent; we may assign them freely</li>
+            </ul>
+
+            <h2>13. Contact Us</h2>
+            <p>If you have any questions about these Terms, please contact us:</p>
+            <div class="highlight-box">
+                <p><strong>Apex Ventures LLC</strong><br>
+                Email: <a href="mailto:team@a2apex.io">team@a2apex.io</a><br>
+                Website: <a href="https://a2apex.io">https://a2apex.io</a></p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 Apex Ventures LLC. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
+        </div>
+    </footer>
+</body>
+</html>
