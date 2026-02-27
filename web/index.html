@@ -1,0 +1,3087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2Apex — Test Your A2A Agents</title>
+    <meta name="description" content="Test, validate, and certify your A2A protocol implementations with A2Apex.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ════════════════════════════════════════════════════════════════════
+           CSS VARIABLES - Brand System
+           ════════════════════════════════════════════════════════════════════ */
+        :root {
+            /* Core Brand */
+            --bg-primary: #0A1628;
+            --bg-secondary: #0D1D31;
+            --bg-card: #111F36;
+            --bg-elevated: #162740;
+            
+            /* Accent */
+            --cyan: #00E5FF;
+            --cyan-dim: rgba(0, 229, 255, 0.15);
+            --cyan-glow: rgba(0, 229, 255, 0.25);
+            --cyan-subtle: rgba(0, 229, 255, 0.08);
+            
+            /* Gradients */
+            --gradient-brand: linear-gradient(135deg, #0A3DFF 0%, #0066FF 50%, #00E5FF 100%);
+            --gradient-cyan: linear-gradient(135deg, #00E5FF 0%, #00B8D4 100%);
+            
+            /* Status */
+            --success: #00E676;
+            --success-bg: rgba(0, 230, 118, 0.15);
+            --warning: #FFB300;
+            --warning-bg: rgba(255, 179, 0, 0.15);
+            --error: #FF5252;
+            --error-bg: rgba(255, 82, 82, 0.15);
+            --info: #448AFF;
+            --info-bg: rgba(68, 138, 255, 0.15);
+            --skipped: #78909C;
+            --skipped-bg: rgba(120, 144, 156, 0.15);
+            
+            /* Text */
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.45);
+            
+            /* Borders */
+            --border: rgba(255, 255, 255, 0.1);
+            --border-focus: rgba(0, 229, 255, 0.5);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 30px var(--cyan-glow);
+            
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.25s ease;
+            
+            /* Spacing */
+            --header-height: 64px;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           RESET & BASE
+           ════════════════════════════════════════════════════════════════════ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           TYPOGRAPHY
+           ════════════════════════════════════════════════════════════════════ */
+        .font-display {
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; }
+        h2 { font-size: 1.5rem; font-weight: 600; line-height: 1.3; }
+        h3 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
+        h4 { font-size: 1rem; font-weight: 600; line-height: 1.4; }
+
+        /* ════════════════════════════════════════════════════════════════════
+           HEADER / NAV
+           ════════════════════════════════════════════════════════════════════ */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--header-height);
+            background: rgba(10, 22, 40, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            height: 100%;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-brand);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            font-size: 1.125rem;
+            color: white;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            font-size: 1.25rem;
+            background: var(--gradient-brand);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-badge {
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: var(--cyan);
+            background: var(--cyan-dim);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-center {
+            display: none;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all var(--transition-fast);
+        }
+
+        .nav-link:hover {
+            color: var(--cyan);
+            background: var(--cyan-subtle);
+        }
+
+        .btn-docs {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-docs:hover {
+            border-color: var(--cyan);
+            background: var(--cyan-subtle);
+        }
+
+        @media (min-width: 768px) {
+            .nav-center {
+                display: flex;
+                gap: 0.25rem;
+            }
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           MAIN LAYOUT
+           ════════════════════════════════════════════════════════════════════ */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           HERO / URL INPUT
+           ════════════════════════════════════════════════════════════════════ */
+        .hero {
+            text-align: center;
+            padding: 2.5rem 0 3rem;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(ellipse, var(--cyan-glow) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .hero-title {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .hero-title .accent {
+            background: var(--gradient-brand);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.0625rem;
+            margin-bottom: 2rem;
+        }
+
+        /* URL Bar */
+        .url-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-width: 720px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .url-input-row {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .url-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .url-input {
+            width: 100%;
+            height: 52px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0 1rem 0 3rem;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9375rem;
+            transition: all var(--transition-fast);
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px var(--cyan-glow);
+        }
+
+        .url-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .url-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.125rem;
+            opacity: 0.5;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-primary {
+            flex: 1;
+            height: 52px;
+            background: var(--gradient-brand);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            height: 52px;
+            padding: 0 1.5rem;
+            background: transparent;
+            border: 1px solid var(--cyan);
+            border-radius: 12px;
+            color: var(--cyan);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--cyan-dim);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (min-width: 640px) {
+            .url-bar {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .url-input-row {
+                flex: 1;
+                min-width: 300px;
+            }
+            .btn-row {
+                flex: 0 0 auto;
+            }
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.25);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+        }
+
+        .spinner-dark {
+            border-color: rgba(0,229,255,0.25);
+            border-top-color: var(--cyan);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           TABS
+           ════════════════════════════════════════════════════════════════════ */
+        .tabs-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .tabs {
+            display: inline-flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.25rem;
+            gap: 0.25rem;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .tab {
+            padding: 0.625rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-elevated);
+        }
+
+        .tab.active {
+            color: var(--cyan);
+            background: var(--cyan-dim);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 2px;
+            background: var(--cyan);
+            border-radius: 1px;
+        }
+
+        .tab-icon {
+            font-size: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .tabs {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .tab {
+                flex: 1;
+                justify-content: center;
+                padding: 0.625rem 0.5rem;
+            }
+            .tab span:not(.tab-icon) {
+                display: none;
+            }
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           DASHBOARD CONTAINER
+           ════════════════════════════════════════════════════════════════════ */
+        .dashboard {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .dashboard.visible {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(16px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           AGENT CARD DISPLAY
+           ════════════════════════════════════════════════════════════════════ */
+        .agent-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: border-color var(--transition-fast);
+        }
+
+        .agent-card:hover {
+            border-color: var(--cyan-glow);
+        }
+
+        .agent-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-avatar {
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-brand);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            flex-shrink: 0;
+        }
+
+        .agent-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .agent-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .agent-description {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.5;
+        }
+
+        .agent-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .capability-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .capability-badge.streaming {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .capability-badge.push {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        .agent-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .skill-chip {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            background: var(--bg-elevated);
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all var(--transition-fast);
+        }
+
+        .skill-chip:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           SCORE CARD
+           ════════════════════════════════════════════════════════════════════ */
+        .score-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .score-main {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-circle .bg {
+            fill: none;
+            stroke: var(--bg-primary);
+            stroke-width: 8;
+        }
+
+        .score-circle .progress {
+            fill: none;
+            stroke: var(--cyan);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .score-circle.success .progress { stroke: var(--success); }
+        .score-circle.warning .progress { stroke: var(--warning); }
+        .score-circle.error .progress { stroke: var(--error); }
+
+        .score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .score-info h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .score-info p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .score-stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value.passed { color: var(--success); }
+        .stat-value.failed { color: var(--error); }
+        .stat-value.warnings { color: var(--warning); }
+        .stat-value.skipped { color: var(--skipped); }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        @media (min-width: 640px) {
+            .score-card {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .score-stats {
+                padding-top: 0;
+                border-top: none;
+                border-left: 1px solid var(--border);
+                padding-left: 2rem;
+                gap: 2rem;
+            }
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           RESULTS PANEL
+           ════════════════════════════════════════════════════════════════════ */
+        .results-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .results-meta {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .results-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* Result Item */
+        .result-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: var(--bg-elevated);
+        }
+
+        .result-item.expanded {
+            background: var(--cyan-subtle);
+        }
+
+        .result-status {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .result-status.passed {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .result-status.failed {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        .result-status.warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .result-status.skipped {
+            background: var(--skipped-bg);
+            color: var(--skipped);
+        }
+
+        .result-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .result-name {
+            font-weight: 600;
+            margin-bottom: 0.125rem;
+        }
+
+        .result-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .result-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .result-duration {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .result-chevron {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            transition: transform var(--transition-fast);
+        }
+
+        .result-item.expanded .result-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Result Details */
+        .result-details {
+            display: none;
+            padding: 0 1.25rem 1.25rem;
+            padding-left: 4rem;
+            background: var(--bg-primary);
+        }
+
+        .result-details.visible {
+            display: block;
+            animation: slideDown 0.2s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detail-section {
+            margin-bottom: 1rem;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        .json-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+
+        .json-block pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
+        }
+
+        /* JSON Syntax Highlighting */
+        .json-key { color: var(--cyan); }
+        .json-string { color: #98C379; }
+        .json-number { color: #E5C07B; }
+        .json-boolean { color: #C678DD; }
+        .json-null { color: var(--text-muted); }
+
+        /* ════════════════════════════════════════════════════════════════════
+           VALIDATION RESULTS
+           ════════════════════════════════════════════════════════════════════ */
+        .validation-section {
+            margin-top: 1.5rem;
+        }
+
+        .validation-group {
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .validation-group-header {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.875rem 1rem;
+            background: var(--bg-elevated);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .validation-count {
+            margin-left: auto;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 100px;
+        }
+
+        .validation-group.errors .validation-count {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        .validation-group.warnings .validation-count {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .validation-group.info .validation-count {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        .validation-items {
+            background: var(--bg-card);
+        }
+
+        .validation-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.875rem 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .validation-field {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+            color: var(--cyan);
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+
+        .validation-message {
+            font-size: 0.9375rem;
+        }
+
+        .validation-suggestion {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            margin-top: 0.375rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--cyan-dim);
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           CHAT SECTION
+           ════════════════════════════════════════════════════════════════════ */
+        .chat-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chat-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .chat-toggle input {
+            accent-color: var(--cyan);
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-clear {
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-clear:hover {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        /* Chat Messages */
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+        }
+
+        .chat-message.agent {
+            align-self: flex-start;
+        }
+
+        .chat-bubble {
+            padding: 0.875rem 1rem;
+            border-radius: 16px;
+            font-size: 0.9375rem;
+        }
+
+        .chat-message.user .chat-bubble {
+            background: var(--gradient-brand);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.agent .chat-bubble {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.agent.error .chat-bubble {
+            border-color: var(--error);
+            background: var(--error-bg);
+        }
+
+        .chat-meta {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .chat-meta-tag {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            background: var(--bg-primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .chat-timestamp {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            margin-top: 0.375rem;
+        }
+
+        .chat-artifacts {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .chat-artifact {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .chat-artifact-name {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--cyan);
+            margin-bottom: 0.375rem;
+        }
+
+        .chat-raw {
+            display: none;
+            margin-top: 0.75rem;
+        }
+
+        .chat-raw.visible {
+            display: block;
+        }
+
+        /* Chat Input */
+        .chat-input-area {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+        }
+
+        .chat-input {
+            flex: 1;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 0.75rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            resize: none;
+            line-height: 1.5;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-send {
+            width: 44px;
+            height: 44px;
+            background: var(--cyan);
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .btn-send:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Chat Empty State */
+        .chat-empty {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .chat-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.5;
+        }
+
+        .chat-empty h4 {
+            color: var(--text-secondary);
+            margin-bottom: 0.375rem;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           DEMO SECTION
+           ════════════════════════════════════════════════════════════════════ */
+        .demo-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .demo-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-status-badge {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 0.3rem 0.75rem;
+            border-radius: 100px;
+        }
+
+        .demo-status-badge.running {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        .demo-status-badge.passed {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .demo-status-badge.failed {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        /* Demo Progress Bar */
+        .demo-progress {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .demo-progress-bar {
+            height: 6px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .demo-progress-fill {
+            height: 100%;
+            background: var(--gradient-brand);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .demo-progress-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        /* Demo Tests */
+        .demo-tests {
+            padding: 0.5rem;
+        }
+
+        .demo-test {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.25rem;
+            transition: background var(--transition-fast);
+        }
+
+        .demo-test:last-child {
+            margin-bottom: 0;
+        }
+
+        .demo-test.running {
+            background: var(--info-bg);
+        }
+
+        .demo-test.passed {
+            background: var(--success-bg);
+        }
+
+        .demo-test.failed {
+            background: var(--error-bg);
+        }
+
+        .demo-test-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .demo-test-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .demo-test-message {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           EMPTY STATE
+           ════════════════════════════════════════════════════════════════════ */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        /* Error State */
+        .error-state {
+            background: var(--error-bg);
+            border: 1px solid var(--error);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .error-state h4 {
+            color: var(--error);
+            margin-bottom: 0.5rem;
+        }
+
+        .error-state p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .error-state code {
+            display: block;
+            background: var(--bg-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+            color: var(--cyan);
+            word-break: break-all;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           FEATURES SECTION (when no results)
+           ════════════════════════════════════════════════════════════════════ */
+        .features-section {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .features-header h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .features-header p {
+            color: var(--text-secondary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            transition: all var(--transition-normal);
+        }
+
+        .feature-card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.1);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--cyan-dim);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.375rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           FOOTER
+           ════════════════════════════════════════════════════════════════════ */
+        .footer {
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-sep {
+            margin: 0 0.5rem;
+            opacity: 0.5;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           TOAST NOTIFICATIONS
+           ════════════════════════════════════════════════════════════════════ */
+        .toast-container {
+            position: fixed;
+            top: calc(var(--header-height) + 1rem);
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            animation: toastIn 0.3s ease;
+            max-width: 360px;
+            pointer-events: auto;
+        }
+
+        @keyframes toastIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.removing {
+            animation: toastOut 0.2s ease forwards;
+        }
+
+        @keyframes toastOut {
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--error); }
+        .toast.warning { border-left: 3px solid var(--warning); }
+
+        .toast-icon {
+            font-size: 1.125rem;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 0.875rem;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 1rem;
+            line-height: 1;
+            opacity: 0.6;
+            transition: opacity var(--transition-fast);
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           FULL SUITE CATEGORY RESULTS
+           ════════════════════════════════════════════════════════════════════ */
+        .category-results {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .category-header:hover {
+            background: var(--cyan-subtle);
+        }
+
+        .category-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .category-icon {
+            font-size: 1.25rem;
+        }
+
+        .category-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .category-header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .category-counts {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .category-count {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .category-count.passed {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .category-count.failed {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        .category-count.skipped {
+            background: var(--skipped-bg);
+            color: var(--skipped);
+        }
+
+        .category-chevron {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            transition: transform var(--transition-fast);
+        }
+
+        .category-card.expanded .category-chevron {
+            transform: rotate(180deg);
+        }
+
+        .category-body {
+            display: none;
+            padding: 0;
+        }
+
+        .category-card.expanded .category-body {
+            display: block;
+        }
+
+        .category-error {
+            padding: 1rem 1.25rem;
+            color: var(--error);
+            background: var(--error-bg);
+        }
+
+        /* Category results list (reuses result-item styles) */
+        .category-results-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           RESPONSIVE
+           ════════════════════════════════════════════════════════════════════ */
+        @media (max-width: 640px) {
+            .hero-title { font-size: 1.5rem; }
+            .hero-subtitle { font-size: 0.9375rem; }
+            
+            .score-card {
+                padding: 1.25rem;
+            }
+            
+            .score-main {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .score-stats {
+                gap: 1.5rem;
+            }
+            
+            .agent-header {
+                flex-direction: column;
+            }
+            
+            .result-item {
+                padding: 0.875rem 1rem;
+            }
+            
+            .result-details {
+                padding-left: 1rem;
+            }
+            
+            .chat-message {
+                max-width: 95%;
+            }
+            
+            .validation-item {
+                flex-direction: column;
+                gap: 0.375rem;
+            }
+            
+            .validation-field {
+                min-width: auto;
+            }
+        }
+
+        /* Touch-friendly tap targets */
+        @media (hover: none) {
+            .btn-primary,
+            .btn-secondary,
+            .btn-send,
+            .tab,
+            .result-item {
+                min-height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ══════════════════════════════════════════════════════════════════════
+         HEADER
+         ══════════════════════════════════════════════════════════════════════ -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <div class="logo-mark">A</div>
+                <span class="logo-text">A2Apex</span>
+                <span class="logo-badge">Beta</span>
+            </a>
+            
+            <nav class="nav-center">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="https://github.com/a2aproject/A2A" class="nav-link" target="_blank" rel="noopener">A2A Spec</a>
+            </nav>
+            
+            <div class="nav-right">
+                <a href="/api/docs" class="btn-docs">
+                    <span>📖</span> API Docs
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         MAIN CONTENT
+         ══════════════════════════════════════════════════════════════════════ -->
+    <main class="main">
+        <!-- Hero / URL Input -->
+        <section class="hero">
+            <h1 class="hero-title">
+                <span class="accent">Postman</span> for AI Agents
+            </h1>
+            <p class="hero-subtitle">Test, validate, and certify your A2A protocol implementations</p>
+            
+            <div class="url-bar">
+                <div class="url-input-row">
+                    <div class="url-input-wrapper">
+                        <span class="url-icon">🌐</span>
+                        <input 
+                            type="url" 
+                            id="agent-url" 
+                            class="url-input" 
+                            placeholder="https://your-agent.example.com"
+                            autocomplete="url"
+                        >
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn-secondary" id="btn-demo">
+                        <span>🎮</span> Demo
+                    </button>
+                    <button class="btn-primary" id="btn-run">
+                        <span class="btn-icon">▶</span>
+                        <span class="btn-text">Run Tests</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <div class="tabs-wrapper">
+            <div class="tabs">
+                <button class="tab active" data-tab="live">
+                    <span class="tab-icon">⚡</span>
+                    <span>Live Test</span>
+                </button>
+                <button class="tab" data-tab="validate">
+                    <span class="tab-icon">📋</span>
+                    <span>Validate</span>
+                </button>
+                <button class="tab" data-tab="compliance">
+                    <span class="tab-icon">✅</span>
+                    <span>Compliance</span>
+                </button>
+                <button class="tab" data-tab="full">
+                    <span class="tab-icon">🏆</span>
+                    <span>Full Suite</span>
+                </button>
+                <button class="tab" data-tab="chat">
+                    <span class="tab-icon">💬</span>
+                    <span>Debug Chat</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard">
+            <!-- Agent Card Display -->
+            <div id="agent-card-section" class="agent-card" style="display: none;">
+                <div class="agent-header">
+                    <div class="agent-avatar" id="agent-avatar">🤖</div>
+                    <div class="agent-info">
+                        <h3 class="agent-name" id="agent-name">Agent Name</h3>
+                        <p class="agent-description" id="agent-description">Description...</p>
+                        <div class="agent-badges" id="agent-badges"></div>
+                    </div>
+                </div>
+                <div class="agent-skills" id="agent-skills"></div>
+            </div>
+
+            <!-- Score Card -->
+            <div class="score-card" id="score-card" style="display: none;">
+                <div class="score-main">
+                    <div class="score-circle" id="score-circle">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="bg" cx="50" cy="50" r="45"/>
+                            <circle class="progress" cx="50" cy="50" r="45" id="score-progress"/>
+                        </svg>
+                        <div class="score-value" id="score-value">0%</div>
+                    </div>
+                    <div class="score-info">
+                        <h2 id="score-title">Test Results</h2>
+                        <p id="score-subtitle">Run tests to see results</p>
+                    </div>
+                </div>
+                <div class="score-stats">
+                    <div class="stat">
+                        <div class="stat-value passed" id="stat-passed">0</div>
+                        <div class="stat-label">Passed</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value failed" id="stat-failed">0</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value warnings" id="stat-warnings">0</div>
+                        <div class="stat-label">Warnings</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value skipped" id="stat-skipped">0</div>
+                        <div class="stat-label">Skipped</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel" id="results-panel" style="display: none;">
+                <div class="results-header">
+                    <div class="results-title">
+                        <span>📝</span> Test Results
+                    </div>
+                    <div class="results-meta" id="results-time">—</div>
+                </div>
+                <div class="results-list" id="results-list"></div>
+            </div>
+
+            <!-- Validation Results -->
+            <div id="validation-section" class="validation-section" style="display: none;"></div>
+
+            <!-- Full Suite Category Results -->
+            <div id="category-section" class="category-results" style="display: none;"></div>
+
+            <!-- Chat Section -->
+            <div id="chat-section" class="chat-panel" style="display: none;">
+                <div class="chat-header">
+                    <div class="chat-title">
+                        <span>💬</span> Debug Chat
+                    </div>
+                    <div class="chat-controls">
+                        <label class="chat-toggle">
+                            <input type="checkbox" id="show-raw-json">
+                            <span>Show JSON</span>
+                        </label>
+                        <button class="btn-clear" onclick="clearChat()">Clear</button>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-empty">
+                        <div class="chat-empty-icon">💬</div>
+                        <h4>Start a Conversation</h4>
+                        <p>Enter an agent URL above and send a message to test the A2A protocol.</p>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <textarea 
+                        id="chat-input" 
+                        class="chat-input" 
+                        placeholder="Type a message..."
+                        rows="1"
+                    ></textarea>
+                    <button class="btn-send" id="btn-chat-send">➤</button>
+                </div>
+            </div>
+
+            <!-- Demo Section -->
+            <div id="demo-section" class="demo-panel" style="display: none;">
+                <div class="demo-header">
+                    <div class="demo-title">
+                        <span>🎮</span> Demo Mode
+                    </div>
+                    <div class="demo-status-badge running" id="demo-status">Running...</div>
+                </div>
+                <div class="demo-progress" id="demo-progress">
+                    <div class="demo-progress-bar">
+                        <div class="demo-progress-fill" id="demo-progress-fill"></div>
+                    </div>
+                    <div class="demo-progress-text" id="demo-progress-text">Starting...</div>
+                </div>
+                <div class="demo-tests" id="demo-tests"></div>
+            </div>
+        </div>
+
+        <!-- Features Section (shown when no results) -->
+        <section class="features-section" id="features">
+            <div class="features-header">
+                <h2>Complete A2A Testing Suite</h2>
+                <p>Everything you need to test and certify your AI agents</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Agent Card Validation</h3>
+                    <p>Full spec compliance checking with detailed error messages and fix suggestions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Live Endpoint Testing</h3>
+                    <p>Actually call your agent's endpoints and validate JSON-RPC responses.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>State Machine Validation</h3>
+                    <p>Ensure your task state transitions follow the A2A protocol rules.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📡</div>
+                    <h3>Streaming Tests</h3>
+                    <p>Verify Server-Sent Events (SSE) streaming implementation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Security Checking</h3>
+                    <p>Validate authentication schemes, HTTPS, and security configurations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Compliance Score</h3>
+                    <p>Get a clear score showing how well your agent follows the A2A spec.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         FOOTER
+         ══════════════════════════════════════════════════════════════════════ -->
+    <footer class="footer">
+        <p>
+            A2Apex v0.2.0
+            <span class="footer-sep">·</span>
+            Built for the <a href="https://github.com/a2aproject/A2A" target="_blank" rel="noopener">A2A Protocol</a>
+            <span class="footer-sep">·</span>
+            Apex Ventures LLC
+        </p>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         JAVASCRIPT
+         ══════════════════════════════════════════════════════════════════════ -->
+    <script>
+        // ════════════════════════════════════════════════════════════════════
+        // STATE
+        // ════════════════════════════════════════════════════════════════════
+        let currentTab = 'live';
+        let isLoading = false;
+        let chatHistory = [];
+        let currentContextId = null;
+        let showRawJson = false;
+
+        // ════════════════════════════════════════════════════════════════════
+        // DOM ELEMENTS
+        // ════════════════════════════════════════════════════════════════════
+        const urlInput = document.getElementById('agent-url');
+        const btnRun = document.getElementById('btn-run');
+        const btnDemo = document.getElementById('btn-demo');
+        const dashboard = document.getElementById('dashboard');
+        const featuresSection = document.getElementById('features');
+
+        // ════════════════════════════════════════════════════════════════════
+        // TOAST NOTIFICATIONS
+        // ════════════════════════════════════════════════════════════════════
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const icons = { success: '✅', error: '❌', warning: '⚠️' };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <span class="toast-message">${escapeHtml(message)}</span>
+                <button class="toast-close" onclick="dismissToast(this.parentElement)">✕</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => dismissToast(toast), 5000);
+        }
+
+        function dismissToast(toast) {
+            if (!toast || toast.classList.contains('removing')) return;
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 200);
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // TABS
+        // ════════════════════════════════════════════════════════════════════
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                
+                // Update button text
+                const texts = {
+                    'live': 'Run Tests',
+                    'validate': 'Validate',
+                    'compliance': 'Full Check',
+                    'full': 'Full Suite',
+                    'chat': 'Run Tests'
+                };
+                document.querySelector('.btn-text').textContent = texts[currentTab];
+                
+                updateTabVisibility();
+            });
+        });
+
+        function updateTabVisibility() {
+            const chatSection = document.getElementById('chat-section');
+            const resultsPanel = document.getElementById('results-panel');
+            const scoreCard = document.getElementById('score-card');
+            const validationSection = document.getElementById('validation-section');
+            const categorySection = document.getElementById('category-section');
+            const demoSection = document.getElementById('demo-section');
+            const agentCard = document.getElementById('agent-card-section');
+            
+            // Hide demo section always when switching tabs
+            demoSection.style.display = 'none';
+            
+            if (currentTab === 'chat') {
+                chatSection.style.display = 'block';
+                resultsPanel.style.display = 'none';
+                scoreCard.style.display = 'none';
+                validationSection.style.display = 'none';
+                categorySection.style.display = 'none';
+                agentCard.style.display = 'none';
+                dashboard.classList.add('visible');
+                featuresSection.style.display = 'none';
+            } else {
+                chatSection.style.display = 'none';
+            }
+        }
+
+        // Show Raw JSON toggle
+        document.getElementById('show-raw-json').addEventListener('change', (e) => {
+            showRawJson = e.target.checked;
+            document.querySelectorAll('.chat-raw').forEach(el => {
+                el.classList.toggle('visible', showRawJson);
+            });
+        });
+
+        // ════════════════════════════════════════════════════════════════════
+        // DEMO MODE
+        // ════════════════════════════════════════════════════════════════════
+        btnDemo.addEventListener('click', runDemoMode);
+
+        async function runDemoMode() {
+            if (isLoading) return;
+            isLoading = true;
+            
+            btnDemo.disabled = true;
+            btnDemo.innerHTML = '<span class="spinner spinner-dark"></span>';
+            
+            // Show demo section
+            dashboard.classList.add('visible');
+            featuresSection.style.display = 'none';
+            document.getElementById('score-card').style.display = 'none';
+            document.getElementById('results-panel').style.display = 'none';
+            document.getElementById('validation-section').style.display = 'none';
+            document.getElementById('chat-section').style.display = 'none';
+            document.getElementById('agent-card-section').style.display = 'none';
+            
+            const demoSection = document.getElementById('demo-section');
+            demoSection.style.display = 'block';
+            
+            const testList = document.getElementById('demo-tests');
+            const statusEl = document.getElementById('demo-status');
+            const progressFill = document.getElementById('demo-progress-fill');
+            const progressText = document.getElementById('demo-progress-text');
+            
+            statusEl.className = 'demo-status-badge running';
+            statusEl.textContent = 'Running...';
+            progressFill.style.width = '0%';
+            
+            // Show pending tests
+            const pendingTests = [
+                { name: 'Fetch Agent Card', icon: '📋' },
+                { name: 'Echo Skill', icon: '🔊' },
+                { name: 'Weather Skill', icon: '🌤️' },
+                { name: 'tasks/get', icon: '📥' },
+                { name: 'tasks/cancel', icon: '❌' }
+            ];
+            
+            testList.innerHTML = pendingTests.map((t, i) => `
+                <div class="demo-test" id="demo-test-${i}">
+                    <div class="demo-test-icon">⏳</div>
+                    <div class="demo-test-name">${t.icon} ${t.name}</div>
+                    <div class="demo-test-message">Pending...</div>
+                </div>
+            `).join('');
+            
+            // Animate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress = Math.min(progress + 2, 90);
+                progressFill.style.width = progress + '%';
+                progressText.textContent = `Running tests... ${progress}%`;
+            }, 100);
+            
+            try {
+                const response = await fetch('/api/demo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    statusEl.className = 'demo-status-badge failed';
+                    statusEl.textContent = 'Failed';
+                    progressText.textContent = 'Demo failed';
+                    showToast(data.error, 'error');
+                    testList.innerHTML = `
+                        <div class="error-state">
+                            <h4>⚠️ Sample Agent Not Running</h4>
+                            <p>Start the sample agent with:</p>
+                            <code>python3 -m uvicorn sample_agent.main:app --port 8092</code>
+                        </div>
+                    `;
+                } else {
+                    // Update test results with animation
+                    data.results.forEach((result, i) => {
+                        setTimeout(() => {
+                            const testEl = document.getElementById(`demo-test-${i}`);
+                            if (testEl) {
+                                const icon = result.status === 'passed' ? '✅' : 
+                                            result.status === 'warning' ? '⚠️' : '❌';
+                                testEl.querySelector('.demo-test-icon').textContent = icon;
+                                testEl.querySelector('.demo-test-message').textContent = result.message;
+                                testEl.classList.add(result.status);
+                            }
+                        }, i * 150);
+                    });
+                    
+                    // Update status
+                    setTimeout(() => {
+                        if (data.success) {
+                            statusEl.className = 'demo-status-badge passed';
+                            statusEl.textContent = `${data.summary.passed}/${data.summary.total} Passed`;
+                            progressText.textContent = 'Demo completed successfully!';
+                            showToast('Demo completed successfully!', 'success');
+                        } else {
+                            statusEl.className = 'demo-status-badge failed';
+                            statusEl.textContent = `${data.summary.failed} Failed`;
+                            progressText.textContent = 'Some tests failed';
+                            showToast('Some demo tests failed', 'warning');
+                        }
+                        
+                        // Show score card
+                        document.getElementById('score-card').style.display = 'flex';
+                        updateScore(
+                            data.summary.score,
+                            data.summary.passed,
+                            data.summary.failed,
+                            data.summary.warnings,
+                            0
+                        );
+                        document.getElementById('score-title').textContent = 'Demo Results';
+                        document.getElementById('score-subtitle').textContent = 
+                            'Sample agent at localhost:8092';
+                    }, data.results.length * 150 + 200);
+                }
+                
+            } catch (error) {
+                clearInterval(progressInterval);
+                statusEl.className = 'demo-status-badge failed';
+                statusEl.textContent = 'Error';
+                progressText.textContent = 'Connection failed';
+                showToast('Demo failed: ' + error.message, 'error');
+            } finally {
+                btnDemo.disabled = false;
+                btnDemo.innerHTML = '<span>🎮</span> Demo';
+                isLoading = false;
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // DEBUG CHAT
+        // ════════════════════════════════════════════════════════════════════
+        const chatInput = document.getElementById('chat-input');
+        const btnChatSend = document.getElementById('btn-chat-send');
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        // Auto-resize textarea
+        chatInput.addEventListener('input', () => {
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+        });
+
+        async function sendChatMessage() {
+            const message = chatInput.value.trim();
+            const agentUrl = urlInput.value.trim();
+            
+            if (!message) {
+                showToast('Please enter a message', 'warning');
+                return;
+            }
+            
+            if (!agentUrl) {
+                showToast('Please enter an agent URL', 'warning');
+                return;
+            }
+            
+            if (isLoading) return;
+            isLoading = true;
+            
+            btnChatSend.disabled = true;
+            btnChatSend.innerHTML = '<span class="spinner" style="width:14px;height:14px;"></span>';
+            
+            // Add user message to chat
+            const userMsg = {
+                role: 'user',
+                text: message,
+                timestamp: new Date().toISOString(),
+                raw_request: null,
+                raw_response: null
+            };
+            chatHistory.push(userMsg);
+            renderChat();
+            
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        agent_url: agentUrl,
+                        message: message,
+                        context_id: currentContextId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Update user message with raw data
+                userMsg.raw_request = data.raw_request;
+                
+                // Extract context ID for conversation continuity
+                if (data.parsed && data.parsed.context_id) {
+                    currentContextId = data.parsed.context_id;
+                }
+                
+                // Add agent response to chat
+                const agentMsg = {
+                    role: 'agent',
+                    text: data.parsed?.agent_message || 
+                          (data.success ? 'Response received' : data.error || 'Unknown response'),
+                    timestamp: new Date().toISOString(),
+                    raw_request: data.raw_request,
+                    raw_response: data.raw_response,
+                    parsed: data.parsed,
+                    success: data.success,
+                    duration_ms: data.duration_ms
+                };
+                chatHistory.push(agentMsg);
+                renderChat();
+                
+                if (data.success) {
+                    showToast(`Response in ${Math.round(data.duration_ms)}ms`, 'success');
+                } else {
+                    showToast(data.error || 'Request failed', 'error');
+                }
+                
+            } catch (error) {
+                const errorMsg = {
+                    role: 'agent',
+                    text: `Error: ${error.message}`,
+                    timestamp: new Date().toISOString(),
+                    success: false,
+                    isError: true
+                };
+                chatHistory.push(errorMsg);
+                renderChat();
+                showToast('Request failed: ' + error.message, 'error');
+            } finally {
+                btnChatSend.disabled = false;
+                btnChatSend.innerHTML = '➤';
+                isLoading = false;
+            }
+        }
+
+        function renderChat() {
+            const container = document.getElementById('chat-messages');
+            
+            if (chatHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="chat-empty">
+                        <div class="chat-empty-icon">💬</div>
+                        <h4>Start a Conversation</h4>
+                        <p>Enter an agent URL above and send a message to test the A2A protocol.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = chatHistory.map((msg, i) => {
+                const time = new Date(msg.timestamp).toLocaleTimeString();
+                
+                if (msg.role === 'user') {
+                    return `
+                        <div class="chat-message user">
+                            <div class="chat-bubble">${escapeHtml(msg.text)}</div>
+                            <div class="chat-timestamp">${time}</div>
+                        </div>
+                    `;
+                } else {
+                    const artifacts = msg.parsed?.artifacts || [];
+                    
+                    let artifactsHtml = '';
+                    if (artifacts.length > 0) {
+                        artifactsHtml = `
+                            <div class="chat-artifacts">
+                                <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem;">
+                                    📦 ${artifacts.length} Artifact(s)
+                                </div>
+                                ${artifacts.map(art => `
+                                    <div class="chat-artifact">
+                                        <div class="chat-artifact-name">${art.name || 'Unnamed'}</div>
+                                        ${art.parts.map(p => `
+                                            <div style="font-size:0.8125rem;color:var(--text-secondary);">
+                                                ${p.type === 'text' ? escapeHtml(p.content).substring(0, 200) : 
+                                                  p.type === 'data' ? '<pre class="font-mono" style="font-size:0.75rem;margin:0.5rem 0 0;">' + JSON.stringify(p.content, null, 2).substring(0, 300) + '</pre>' :
+                                                  `[${p.type}]`}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                    
+                    let rawHtml = '';
+                    if (msg.raw_request || msg.raw_response) {
+                        rawHtml = `
+                            <div class="chat-raw ${showRawJson ? 'visible' : ''}">
+                                ${msg.raw_request ? `
+                                    <div class="detail-section">
+                                        <div class="detail-label">Request</div>
+                                        <div class="json-block"><pre>${syntaxHighlight(JSON.stringify(msg.raw_request, null, 2))}</pre></div>
+                                    </div>
+                                ` : ''}
+                                ${msg.raw_response ? `
+                                    <div class="detail-section">
+                                        <div class="detail-label">Response</div>
+                                        <div class="json-block"><pre>${syntaxHighlight(JSON.stringify(msg.raw_response, null, 2))}</pre></div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+                    
+                    let metaHtml = '';
+                    if (msg.parsed) {
+                        const metaTags = [];
+                        if (msg.parsed.task_id) metaTags.push(`Task: ${msg.parsed.task_id.substring(0, 8)}...`);
+                        if (msg.parsed.status) metaTags.push(`Status: ${msg.parsed.status}`);
+                        if (msg.duration_ms) metaTags.push(`${Math.round(msg.duration_ms)}ms`);
+                        
+                        if (metaTags.length > 0) {
+                            metaHtml = `
+                                <div class="chat-meta">
+                                    ${metaTags.map(t => `<span class="chat-meta-tag">${t}</span>`).join('')}
+                                </div>
+                            `;
+                        }
+                    }
+                    
+                    return `
+                        <div class="chat-message agent ${msg.isError ? 'error' : ''}">
+                            <div class="chat-bubble">
+                                ${escapeHtml(msg.text)}
+                                ${metaHtml}
+                                ${artifactsHtml}
+                                ${rawHtml}
+                            </div>
+                            <div class="chat-timestamp">${time}</div>
+                        </div>
+                    `;
+                }
+            }).join('');
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearChat() {
+            chatHistory = [];
+            currentContextId = null;
+            renderChat();
+            showToast('Chat cleared', 'success');
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // RUN TESTS
+        // ════════════════════════════════════════════════════════════════════
+        btnRun.addEventListener('click', runTests);
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') runTests();
+        });
+
+        async function runTests() {
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showToast('Please enter an agent URL', 'warning');
+                urlInput.focus();
+                return;
+            }
+
+            if (isLoading) return;
+            isLoading = true;
+
+            // UI loading state
+            const btnText = btnRun.querySelector('.btn-text');
+            const btnIcon = btnRun.querySelector('.btn-icon');
+            const originalText = btnText.textContent;
+            btnIcon.innerHTML = '<span class="spinner"></span>';
+            btnText.textContent = 'Running...';
+            btnRun.disabled = true;
+
+            try {
+                let endpoint, body;
+                
+                switch(currentTab) {
+                    case 'live':
+                        endpoint = '/api/live-test';
+                        body = { agent_url: url };
+                        break;
+                    case 'validate':
+                        endpoint = '/api/validate/agent-card';
+                        body = { url };
+                        break;
+                    case 'compliance':
+                        endpoint = '/api/check/compliance';
+                        body = { agent_url: url };
+                        break;
+                    case 'full':
+                        endpoint = '/api/test/full';
+                        body = { agent_url: url };
+                        break;
+                    default:
+                        endpoint = '/api/live-test';
+                        body = { agent_url: url };
+                }
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    renderResults(data, currentTab);
+                    showToast('Tests completed!', 'success');
+                } else {
+                    showToast(data.detail || 'Test failed', 'error');
+                }
+                
+            } catch (error) {
+                showToast('Connection failed: ' + error.message, 'error');
+            } finally {
+                btnIcon.innerHTML = '▶';
+                btnText.textContent = originalText;
+                btnRun.disabled = false;
+                isLoading = false;
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // RENDER RESULTS
+        // ════════════════════════════════════════════════════════════════════
+        function renderResults(data, type) {
+            dashboard.classList.add('visible');
+            featuresSection.style.display = 'none';
+            document.getElementById('demo-section').style.display = 'none';
+            document.getElementById('chat-section').style.display = 'none';
+            document.getElementById('category-section').style.display = 'none';
+            
+            if (type === 'live') {
+                renderLiveTestResults(data);
+            } else if (type === 'validate') {
+                renderValidationResults(data);
+            } else if (type === 'compliance') {
+                renderComplianceResults(data);
+            } else if (type === 'full') {
+                renderFullSuiteResults(data);
+            }
+        }
+        
+        function renderFullSuiteResults(data) {
+            const summary = data.summary || {};
+            const categories = data.categories || {};
+            
+            // Show and update score
+            document.getElementById('score-card').style.display = 'flex';
+            updateScore(summary.score || 0, summary.passed, summary.failed, summary.warnings || 0, summary.skipped || 0);
+            
+            document.getElementById('score-title').textContent = 'Full Compliance Suite';
+            document.getElementById('score-subtitle').textContent = 
+                `${summary.total || 0} tests across ${Object.keys(categories).length} categories`;
+            
+            document.getElementById('results-time').textContent = '—';
+            
+            // Hide agent card and validation for now
+            document.getElementById('agent-card-section').style.display = 'none';
+            document.getElementById('validation-section').style.display = 'none';
+            document.getElementById('results-panel').style.display = 'none';
+            
+            // Show category section
+            const categorySection = document.getElementById('category-section');
+            categorySection.style.display = 'flex';
+            
+            // Render each category
+            let categoryHtml = '';
+            
+            for (const [catName, catData] of Object.entries(categories)) {
+                const icon = catData.icon || '📋';
+                const catSummary = catData.summary || {};
+                const results = catData.results || [];
+                const error = catData.error;
+                
+                const passedCount = catSummary.passed || 0;
+                const failedCount = catSummary.failed || 0;
+                const skippedCount = catSummary.skipped || 0;
+                
+                categoryHtml += `
+                    <div class="category-card" data-category="${catName}">
+                        <div class="category-header" onclick="toggleCategory('${catName}')">
+                            <div class="category-header-left">
+                                <span class="category-icon">${icon}</span>
+                                <span class="category-name">${escapeHtml(catName)}</span>
+                            </div>
+                            <div class="category-header-right">
+                                <div class="category-counts">
+                                    ${passedCount > 0 ? `<span class="category-count passed">✓ ${passedCount}</span>` : ''}
+                                    ${failedCount > 0 ? `<span class="category-count failed">✗ ${failedCount}</span>` : ''}
+                                    ${skippedCount > 0 ? `<span class="category-count skipped">– ${skippedCount}</span>` : ''}
+                                </div>
+                                <svg class="category-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="category-body">
+                            ${error ? `<div class="category-error">⚠️ ${escapeHtml(error)}</div>` : ''}
+                            <div class="category-results-list">
+                                ${results.map((result, i) => `
+                                    <div class="result-item" data-cat="${catName}" data-index="${i}" onclick="toggleCategoryDetails('${catName}', ${i})">
+                                        <div class="result-status ${result.status}">
+                                            ${getStatusIcon(result.status)}
+                                        </div>
+                                        <div class="result-content">
+                                            <div class="result-name">${formatTestName(result.test_name)}</div>
+                                            <div class="result-message">${escapeHtml(result.message)}</div>
+                                        </div>
+                                        <div class="result-actions">
+                                            <span class="result-duration">${Math.round(result.duration_ms || 0)}ms</span>
+                                            <svg class="result-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="result-details" id="cat-details-${catName}-${i}">
+                                        ${result.error ? `
+                                            <div class="detail-section">
+                                                <div class="detail-label">Error</div>
+                                                <div class="json-block"><pre style="color: var(--error)">${escapeHtml(result.error)}</pre></div>
+                                            </div>
+                                        ` : ''}
+                                        ${result.suggestion ? `
+                                            <div class="detail-section">
+                                                <div class="detail-label">Suggestion</div>
+                                                <div class="validation-suggestion">💡 ${escapeHtml(result.suggestion)}</div>
+                                            </div>
+                                        ` : ''}
+                                        ${result.details ? `
+                                            <div class="detail-section">
+                                                <div class="detail-label">Details</div>
+                                                <div class="json-block"><pre>${syntaxHighlight(JSON.stringify(result.details, null, 2))}</pre></div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            categorySection.innerHTML = categoryHtml;
+            
+            // Auto-expand first category with failures
+            for (const [catName, catData] of Object.entries(categories)) {
+                if (catData.summary && catData.summary.failed > 0) {
+                    toggleCategory(catName);
+                    break;
+                }
+            }
+        }
+        
+        function toggleCategory(catName) {
+            const card = document.querySelector(`.category-card[data-category="${catName}"]`);
+            if (card) {
+                card.classList.toggle('expanded');
+            }
+        }
+        
+        function toggleCategoryDetails(catName, index) {
+            const item = document.querySelector(`.result-item[data-cat="${catName}"][data-index="${index}"]`);
+            const details = document.getElementById(`cat-details-${catName}-${index}`);
+            
+            if (item && details) {
+                item.classList.toggle('expanded');
+                details.classList.toggle('visible');
+            }
+        }
+
+        function renderLiveTestResults(data) {
+            const summary = data.summary || {};
+            const results = data.results || [];
+            
+            // Show and update score
+            document.getElementById('score-card').style.display = 'flex';
+            updateScore(summary.score || 0, summary.passed, summary.failed, summary.warnings || 0, summary.skipped || 0);
+            
+            // Update score info
+            document.getElementById('score-title').textContent = 'Live Test Results';
+            document.getElementById('score-subtitle').textContent = 
+                `${summary.total || 0} tests completed in ${Math.round(data.total_duration_ms || 0)}ms`;
+            
+            // Duration
+            document.getElementById('results-time').textContent = 
+                `${Math.round(data.total_duration_ms || 0)}ms`;
+            
+            // Render agent card if available
+            if (data.agent_card) {
+                renderAgentCard(data.agent_card);
+            } else {
+                document.getElementById('agent-card-section').style.display = 'none';
+            }
+            
+            // Hide validation section
+            document.getElementById('validation-section').style.display = 'none';
+            
+            // Show results panel
+            const resultsPanel = document.getElementById('results-panel');
+            resultsPanel.style.display = 'block';
+            
+            // Render test results
+            const resultsList = document.getElementById('results-list');
+            
+            if (results.length === 0) {
+                resultsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <h3>No Results</h3>
+                        <p>The test suite didn't produce any results.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultsList.innerHTML = results.map((result, i) => `
+                <div class="result-item" data-index="${i}" onclick="toggleDetails(${i})">
+                    <div class="result-status ${result.status}">
+                        ${getStatusIcon(result.status)}
+                    </div>
+                    <div class="result-content">
+                        <div class="result-name">${formatTestName(result.test_name)}</div>
+                        <div class="result-message">${escapeHtml(result.message)}</div>
+                    </div>
+                    <div class="result-actions">
+                        <span class="result-duration">${Math.round(result.duration_ms)}ms</span>
+                        <svg class="result-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
+                <div class="result-details" id="details-${i}">
+                    ${result.error ? `
+                        <div class="detail-section">
+                            <div class="detail-label">Error</div>
+                            <div class="json-block"><pre style="color: var(--error)">${escapeHtml(result.error)}</pre></div>
+                        </div>
+                    ` : ''}
+                    ${result.details ? `
+                        <div class="detail-section">
+                            <div class="detail-label">Details</div>
+                            <div class="json-block"><pre>${syntaxHighlight(JSON.stringify(result.details, null, 2))}</pre></div>
+                        </div>
+                    ` : ''}
+                    ${result.request ? `
+                        <div class="detail-section">
+                            <div class="detail-label">Request</div>
+                            <div class="json-block"><pre>${syntaxHighlight(JSON.stringify(result.request, null, 2))}</pre></div>
+                        </div>
+                    ` : ''}
+                    ${result.response ? `
+                        <div class="detail-section">
+                            <div class="detail-label">Response</div>
+                            <div class="json-block"><pre>${syntaxHighlight(JSON.stringify(result.response, null, 2))}</pre></div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderValidationResults(data) {
+            const summary = data.summary || {};
+            const score = data.score || (data.is_valid ? 100 : 0);
+            
+            document.getElementById('score-card').style.display = 'flex';
+            updateScore(score, 
+                data.is_valid ? 1 : 0, 
+                summary.errors || 0,
+                summary.warnings || 0,
+                0);
+            
+            document.getElementById('score-title').textContent = 
+                data.is_valid ? 'Agent Card Valid ✓' : 'Validation Failed';
+            document.getElementById('score-subtitle').textContent = 
+                `${summary.errors || 0} errors, ${summary.warnings || 0} warnings`;
+            
+            document.getElementById('results-time').textContent = '—';
+            
+            // Render agent card if valid
+            if (data.agent_card) {
+                renderAgentCard(data.agent_card);
+            } else {
+                document.getElementById('agent-card-section').style.display = 'none';
+            }
+            
+            // Hide results panel, show validation section
+            document.getElementById('results-panel').style.display = 'none';
+            const validationSection = document.getElementById('validation-section');
+            validationSection.style.display = 'block';
+            
+            let html = '';
+            
+            if (data.errors && data.errors.length > 0) {
+                html += renderValidationGroup('Errors', data.errors, 'errors', '❌');
+            }
+            
+            if (data.warnings && data.warnings.length > 0) {
+                html += renderValidationGroup('Warnings', data.warnings, 'warnings', '⚠️');
+            }
+            
+            if (data.info && data.info.length > 0) {
+                html += renderValidationGroup('Info', data.info, 'info', 'ℹ️');
+            }
+            
+            if (!html) {
+                html = `
+                    <div class="empty-state">
+                        <div class="empty-icon">✅</div>
+                        <h3>All Clear!</h3>
+                        <p>No issues found in the Agent Card.</p>
+                    </div>
+                `;
+            }
+            
+            validationSection.innerHTML = html;
+        }
+
+        function renderValidationGroup(title, items, type, icon) {
+            return `
+                <div class="validation-group ${type}">
+                    <div class="validation-group-header">
+                        <span>${icon}</span>
+                        <span>${title}</span>
+                        <span class="validation-count">${items.length}</span>
+                    </div>
+                    <div class="validation-items">
+                        ${items.map(item => `
+                            <div class="validation-item">
+                                <div class="validation-field">${item.field}</div>
+                                <div>
+                                    <div class="validation-message">${escapeHtml(item.message)}</div>
+                                    ${item.suggestion ? `
+                                        <div class="validation-suggestion">💡 ${escapeHtml(item.suggestion)}</div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderComplianceResults(data) {
+            const score = data.compliance_score || 0;
+            const summary = data.summary || {};
+            
+            document.getElementById('score-card').style.display = 'flex';
+            updateScore(score, summary.passed, summary.failed, summary.warnings || 0, summary.skipped || 0);
+            
+            document.getElementById('score-title').textContent = 
+                data.is_compliant ? 'A2A Compliant ✓' : 'Not Fully Compliant';
+            document.getElementById('score-subtitle').textContent = 
+                `${summary.passed || 0}/${(summary.passed || 0) + (summary.failed || 0)} checks passed`;
+            
+            // Render as live test results
+            if (data.checks) {
+                const results = data.checks.map(check => ({
+                    test_name: check.name,
+                    status: check.status,
+                    message: check.message,
+                    duration_ms: 0
+                }));
+                
+                renderLiveTestResults({ 
+                    summary, 
+                    results,
+                    total_duration_ms: 0
+                });
+            }
+        }
+
+        function renderAgentCard(card) {
+            const display = document.getElementById('agent-card-section');
+            display.style.display = 'block';
+            
+            document.getElementById('agent-name').textContent = card.name || 'Unknown Agent';
+            document.getElementById('agent-description').textContent = 
+                card.description || card.url || 'No description available';
+            
+            // Badges
+            const badges = document.getElementById('agent-badges');
+            let badgeHtml = '';
+            const caps = card.capabilities || {};
+            if (caps.streaming) badgeHtml += '<span class="capability-badge streaming">📡 Streaming</span>';
+            if (caps.pushNotifications) badgeHtml += '<span class="capability-badge push">🔔 Push</span>';
+            badges.innerHTML = badgeHtml;
+            
+            // Skills
+            const skills = document.getElementById('agent-skills');
+            const skillsArray = card.skills || [];
+            if (skillsArray.length > 0) {
+                skills.innerHTML = skillsArray.slice(0, 8).map(s => 
+                    `<span class="skill-chip">${s.name || s.id}</span>`
+                ).join('');
+                skills.style.display = 'flex';
+            } else {
+                skills.style.display = 'none';
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // HELPERS
+        // ════════════════════════════════════════════════════════════════════
+        function updateScore(score, passed, failed, warnings, skipped) {
+            const scoreValue = document.getElementById('score-value');
+            const scoreProgress = document.getElementById('score-progress');
+            const scoreCircle = document.getElementById('score-circle');
+            
+            // Animate score value
+            const currentScore = parseInt(scoreValue.textContent) || 0;
+            const targetScore = Math.round(score);
+            animateValue(scoreValue, currentScore, targetScore, 800, '%');
+            
+            // Calculate stroke offset (283 is circumference of circle with r=45)
+            const offset = 283 - (283 * score / 100);
+            scoreProgress.style.strokeDashoffset = offset;
+            
+            // Color based on score
+            scoreCircle.classList.remove('success', 'warning', 'error');
+            if (score >= 80) scoreCircle.classList.add('success');
+            else if (score >= 50) scoreCircle.classList.add('warning');
+            else scoreCircle.classList.add('error');
+            
+            // Update stats
+            document.getElementById('stat-passed').textContent = passed || 0;
+            document.getElementById('stat-failed').textContent = failed || 0;
+            document.getElementById('stat-warnings').textContent = warnings || 0;
+            document.getElementById('stat-skipped').textContent = skipped || 0;
+        }
+
+        function animateValue(element, start, end, duration, suffix = '') {
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ease out cubic
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(start + (end - start) * eased);
+                
+                element.textContent = current + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        function getStatusIcon(status) {
+            const icons = {
+                passed: '✓',
+                failed: '✗',
+                warning: '!',
+                skipped: '–'
+            };
+            return icons[status] || '?';
+        }
+
+        function formatTestName(name) {
+            return name
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function syntaxHighlight(json) {
+            if (!json) return '';
+            return json
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+                    let cls = 'json-number';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) {
+                            cls = 'json-key';
+                            match = match.slice(0, -1) + '</span>:';
+                            return '<span class="' + cls + '">' + match;
+                        } else {
+                            cls = 'json-string';
+                        }
+                    } else if (/true|false/.test(match)) {
+                        cls = 'json-boolean';
+                    } else if (/null/.test(match)) {
+                        cls = 'json-null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
+        }
+
+        function toggleDetails(index) {
+            const item = document.querySelector(`.result-item[data-index="${index}"]`);
+            const details = document.getElementById(`details-${index}`);
+            
+            item.classList.toggle('expanded');
+            details.classList.toggle('visible');
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

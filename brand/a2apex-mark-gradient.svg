@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gR" x1="5%" y1="100%" x2="95%" y2="0%">
+      <stop offset="0%" stop-color="#0838B0"/>
+      <stop offset="35%" stop-color="#0066EE"/>
+      <stop offset="65%" stop-color="#00A0F5"/>
+      <stop offset="85%" stop-color="#00D0FF"/>
+      <stop offset="100%" stop-color="#00E5FF"/>
+    </linearGradient>
+    <linearGradient id="gRF" x1="0%" y1="95%" x2="75%" y2="5%">
+      <stop offset="0%" stop-color="#04206A"/>
+      <stop offset="60%" stop-color="#0050B0"/>
+      <stop offset="100%" stop-color="#0080DD"/>
+    </linearGradient>
+    <linearGradient id="gL" x1="5%" y1="100%" x2="95%" y2="0%">
+      <stop offset="0%" stop-color="#020930"/>
+      <stop offset="20%" stop-color="#051560"/>
+      <stop offset="45%" stop-color="#0C2DA0"/>
+      <stop offset="70%" stop-color="#1458C0"/>
+      <stop offset="100%" stop-color="#1C80DD"/>
+    </linearGradient>
+    <linearGradient id="gAc" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0070CC"/>
+      <stop offset="100%" stop-color="#00D0FF"/>
+    </linearGradient>
+  </defs>
+  <polygon points="567,155 310,860 824,860" fill="url(#gR)"/>
+  <polygon points="567,155 310,860 460,860 567,520" fill="url(#gRF)" opacity="0.55"/>
+  <polygon points="567,520 496,714 638,714" fill="#000"/>
+  <polygon points="371,335 180,860 562,860" fill="url(#gL)"/>
+  <polygon points="371,602 319,746 423,746" fill="#000"/>
+  <polygon points="425,498 462,412 499,498" fill="url(#gAc)" opacity="0.45"/>
+</svg>
