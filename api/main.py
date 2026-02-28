@@ -86,7 +86,7 @@ PRO_TIER_LIMIT = 100  # requests per minute
 RATE_LIMIT_WINDOW = 60  # seconds
 
 # Public endpoints that don't require auth or rate limiting
-PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json"}
+PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json", "/api/waitlist"}
 
 
 def load_api_keys():
@@ -332,6 +332,91 @@ async def health_check():
         "version": "0.2.0",
         "timestamp": datetime.utcnow().isoformat() + "Z"
     }
+
+
+# ============================================================================
+# WAITLIST
+# ============================================================================
+
+import sqlite3
+
+WAITLIST_DB_PATH = Path(__file__).parent.parent / "data" / "waitlist.db"
+
+
+def init_waitlist_db():
+    """Initialize the waitlist database."""
+    WAITLIST_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(WAITLIST_DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS waitlist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            created_at TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+
+# Initialize DB on startup
+init_waitlist_db()
+
+
+class WaitlistRequest(BaseModel):
+    """Request to join the waitlist."""
+    email: str = Field(..., description="Email address to add to waitlist")
+
+
+@app.post("/api/waitlist")
+async def join_waitlist(request: WaitlistRequest):
+    """
+    Add an email to the waitlist.
+    
+    Stores the email in SQLite for later use.
+    """
+    import re
+    
+    # Validate email format
+    email = request.email.strip().lower()
+    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+        raise HTTPException(status_code=400, detail="Invalid email format")
+    
+    try:
+        conn = sqlite3.connect(WAITLIST_DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT OR IGNORE INTO waitlist (email, created_at) VALUES (?, ?)",
+            (email, datetime.utcnow().isoformat() + "Z")
+        )
+        conn.commit()
+        
+        # Check if it was actually inserted or already existed
+        cursor.execute("SELECT id FROM waitlist WHERE email = ?", (email,))
+        row = cursor.fetchone()
+        conn.close()
+        
+        return {
+            "success": True,
+            "message": "You're on the list!",
+            "email": email
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to add to waitlist: {str(e)}")
+
+
+@app.get("/api/waitlist/count")
+async def get_waitlist_count():
+    """Get the current waitlist count."""
+    try:
+        conn = sqlite3.connect(WAITLIST_DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM waitlist")
+        count = cursor.fetchone()[0]
+        conn.close()
+        return {"count": count}
+    except Exception as e:
+        return {"count": 0, "error": str(e)}
 
 
 @app.post("/api/validate/agent-card")

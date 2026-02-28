@@ -735,6 +735,147 @@
         }
     </style>
     <script defer data-domain="a2apex.io" src="https://plausible.io/js/script.js"></script>
+    <style>
+        /* Waitlist Modal */
+        .waitlist-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 22, 40, 0.9);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 1rem;
+        }
+        .waitlist-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .waitlist-modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 420px;
+            width: 100%;
+            position: relative;
+            transform: translateY(20px) scale(0.95);
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 60px var(--cyan-glow);
+        }
+        .waitlist-modal.show .waitlist-modal-content {
+            transform: translateY(0) scale(1);
+        }
+        .waitlist-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 36px;
+            height: 36px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .waitlist-modal-close:hover {
+            background: var(--cyan-dim);
+            color: var(--cyan);
+            border-color: var(--cyan);
+        }
+        .waitlist-modal-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .waitlist-modal h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .waitlist-modal p {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .waitlist-modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .waitlist-modal-form input[type="email"] {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        .waitlist-modal-form input[type="email"]:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px var(--cyan-glow);
+        }
+        .waitlist-modal-form input[type="email"]::placeholder {
+            color: var(--text-muted);
+        }
+        .waitlist-modal-form button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .waitlist-modal-form button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--cyan-glow);
+        }
+        .waitlist-modal-form button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .waitlist-modal-success {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .waitlist-modal-success .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .waitlist-modal-success h4 {
+            font-size: 1.25rem;
+            color: #10B981;
+            margin-bottom: 0.5rem;
+        }
+        .waitlist-modal-success p {
+            margin-bottom: 0;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -1033,33 +1174,149 @@
             observer.observe(el);
         });
 
-        // Waitlist form submission
+        // Waitlist modal functionality
+        const waitlistModal = document.getElementById('waitlist-modal');
+        const waitlistForm = document.getElementById('waitlist-modal-form');
+        const waitlistSuccess = document.getElementById('waitlist-success');
+        
+        // Open modal when clicking waitlist buttons
+        document.querySelectorAll('[href="#waitlist"], .btn-secondary[href="#waitlist"]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                openWaitlistModal();
+            });
+        });
+        
+        function openWaitlistModal() {
+            waitlistModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            waitlistForm.style.display = 'block';
+            waitlistSuccess.style.display = 'none';
+        }
+        
+        function closeWaitlistModal() {
+            waitlistModal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        // Close on backdrop click
+        waitlistModal.addEventListener('click', function(e) {
+            if (e.target === waitlistModal) {
+                closeWaitlistModal();
+            }
+        });
+        
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && waitlistModal.classList.contains('show')) {
+                closeWaitlistModal();
+            }
+        });
+        
+        // Handle modal form submission
+        waitlistForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = waitlistForm.querySelector('input[name="email"]').value;
+            const submitBtn = waitlistForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Joining...';
+            
+            // Store in localStorage
+            const waitlist = JSON.parse(localStorage.getItem('a2apex_waitlist') || '[]');
+            if (!waitlist.includes(email)) {
+                waitlist.push(email);
+                localStorage.setItem('a2apex_waitlist', JSON.stringify(waitlist));
+            }
+            
+            // Try to send to backend (will work when tunnel is set up)
+            try {
+                const apiUrl = window.A2APEX_API_URL || '';
+                if (apiUrl) {
+                    await fetch(apiUrl + '/api/waitlist', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                }
+            } catch (err) {
+                console.log('Backend not available, email saved locally');
+            }
+            
+            // Show success
+            waitlistForm.style.display = 'none';
+            waitlistSuccess.style.display = 'block';
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        });
+        
+        // Legacy inline form (in page)
         const form = document.getElementById('waitlist-form');
         const successMessage = document.getElementById('success-message');
 
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = form.querySelector('input[name="email"]').value;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
             
-            // TODO: Replace with actual API endpoint
-            // For now, just show success message
-            console.log('Waitlist signup:', email);
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Joining...';
+            
+            // Store in localStorage
+            const waitlist = JSON.parse(localStorage.getItem('a2apex_waitlist') || '[]');
+            if (!waitlist.includes(email)) {
+                waitlist.push(email);
+                localStorage.setItem('a2apex_waitlist', JSON.stringify(waitlist));
+            }
+            
+            // Try to send to backend
+            try {
+                const apiUrl = window.A2APEX_API_URL || '';
+                if (apiUrl) {
+                    await fetch(apiUrl + '/api/waitlist', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                }
+            } catch (err) {
+                console.log('Backend not available, email saved locally');
+            }
             
             // Hide form and show success
             form.style.display = 'none';
             successMessage.classList.add('show');
             
-            // Optional: Send to actual endpoint when ready
-            // fetch('/api/waitlist', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email })
-            // });
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
         });
 
         // Add visible class to hero immediately
         document.querySelector('.hero .fade-in').classList.add('visible');
     </script>
+    
+    <!-- Waitlist Modal -->
+    <div class="waitlist-modal" id="waitlist-modal">
+        <div class="waitlist-modal-content">
+            <button class="waitlist-modal-close" onclick="closeWaitlistModal()">×</button>
+            <div class="waitlist-modal-icon">🚀</div>
+            <h3>Join the Waitlist</h3>
+            <p>Be first in line for beta access. Early signups get free access during the beta period.</p>
+            <form class="waitlist-modal-form" id="waitlist-modal-form">
+                <input type="email" name="email" placeholder="Enter your email" required>
+                <button type="submit">Join Waitlist</button>
+            </form>
+            <div class="waitlist-modal-success" id="waitlist-success" style="display: none;">
+                <div class="success-icon">✅</div>
+                <h4>You're on the list!</h4>
+                <p>We'll be in touch soon with your beta access. Thanks for your interest!</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
