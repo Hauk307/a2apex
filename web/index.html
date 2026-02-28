@@ -1777,6 +1777,380 @@
                 min-height: 48px;
             }
         }
+
+        /* ════════════════════════════════════════════════════════════════════
+           AUTH MODAL
+           ════════════════════════════════════════════════════════════════════ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px) scale(0.95);
+            transition: transform 0.25s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-overlay.visible .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-elevated);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .auth-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .auth-tab.active {
+            background: var(--cyan-dim);
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 48px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 1rem;
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            transition: all var(--transition-fast);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px var(--cyan-glow);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-error {
+            background: var(--error-bg);
+            border: 1px solid var(--error);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            color: var(--error);
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .form-error.visible {
+            display: block;
+        }
+
+        .btn-auth {
+            width: 100%;
+            height: 50px;
+            background: var(--gradient-brand);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all var(--transition-fast);
+            margin-top: 1.5rem;
+        }
+
+        .btn-auth:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-auth:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* User Menu in Header */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-brand);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: white;
+        }
+
+        .user-info {
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .user-info {
+                display: block;
+            }
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            line-height: 1.2;
+        }
+
+        .user-plan {
+            font-size: 0.6875rem;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-login {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--cyan);
+            border-radius: 8px;
+            color: var(--cyan);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-login:hover {
+            background: var(--cyan-dim);
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem 0.375rem 0.375rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .user-dropdown-toggle:hover {
+            border-color: var(--cyan);
+        }
+
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-width: 200px;
+            padding: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+
+        .user-dropdown.open .user-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .dropdown-item.danger:hover {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 0.5rem 0;
+        }
+
+        .api-key-display {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+        }
+
+        .api-key-label {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.375rem;
+        }
+
+        .api-key-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--cyan);
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-copy {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-size: 0.6875rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .btn-copy:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
     </style>
 </head>
 <body>
@@ -1800,6 +2174,32 @@
                 <a href="/api/docs" class="btn-docs">
                     <span>📖</span> API Docs
                 </a>
+                
+                <!-- Auth: Login Button (shown when logged out) -->
+                <button class="btn-login" id="btn-show-login" onclick="showAuthModal()">
+                    <span>👤</span> Sign In
+                </button>
+                
+                <!-- Auth: User Menu (shown when logged in) -->
+                <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                    <div class="user-dropdown-toggle" onclick="toggleUserDropdown()">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                        <div class="user-info">
+                            <div class="user-name" id="user-name">User</div>
+                            <div class="user-plan" id="user-plan">Free</div>
+                        </div>
+                        <span style="color: var(--text-muted);">▼</span>
+                    </div>
+                    <div class="user-dropdown-menu">
+                        <div class="dropdown-item" onclick="showApiKey()">
+                            <span>🔑</span> API Key
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item danger" onclick="logout()">
+                            <span>🚪</span> Sign Out
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -2039,6 +2439,93 @@
 
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>🔐</span> Welcome to A2Apex
+                </div>
+                <button class="modal-close" onclick="hideAuthModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-auth-tab="login" onclick="switchAuthTab('login')">Sign In</button>
+                    <button class="auth-tab" data-auth-tab="register" onclick="switchAuthTab('register')">Create Account</button>
+                </div>
+                
+                <div class="form-error" id="auth-error"></div>
+                
+                <!-- Login Form -->
+                <form class="auth-form active" id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="login-email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="login-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-auth" id="btn-login-submit">
+                        <span class="btn-text">Sign In</span>
+                    </button>
+                </form>
+                
+                <!-- Register Form -->
+                <form class="auth-form" id="register-form" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-input" id="register-name" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="register-email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="register-password" placeholder="Min 8 characters" minlength="8" required>
+                    </div>
+                    <button type="submit" class="btn-auth" id="btn-register-submit">
+                        <span class="btn-text">Create Account</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div class="modal-overlay" id="api-key-modal">
+        <div class="modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>🔑</span> Your API Key
+                </div>
+                <button class="modal-close" onclick="hideApiKeyModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9375rem;">
+                    Use this API key to authenticate your requests. Keep it secret!
+                </p>
+                <div class="api-key-display">
+                    <div class="api-key-label">API Key</div>
+                    <div class="api-key-value">
+                        <code id="api-key-value" style="flex: 1; word-break: break-all;">—</code>
+                        <button class="btn-copy" onclick="copyApiKey()">Copy</button>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <p style="color: var(--text-muted); font-size: 0.8125rem; margin-bottom: 0.75rem;">
+                        Use with X-API-Key header:
+                    </p>
+                    <div class="json-block" style="padding: 0.75rem;">
+                        <pre style="font-size: 0.75rem; color: var(--text-secondary);">curl -H "X-API-Key: <span style="color: var(--cyan);">YOUR_KEY</span>" \
+  https://api.a2apex.io/api/live-test</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ══════════════════════════════════════════════════════════════════════
          JAVASCRIPT
@@ -3079,6 +3566,272 @@
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ════════════════════════════════════════════════════════════════════
+        // AUTHENTICATION
+        // ════════════════════════════════════════════════════════════════════
+        let currentUser = null;
+        let authToken = null;
+
+        // Initialize auth on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+        });
+
+        function initAuth() {
+            // Check for stored token
+            const storedToken = localStorage.getItem('a2apex_token');
+            const storedUser = localStorage.getItem('a2apex_user');
+            
+            if (storedToken && storedUser) {
+                try {
+                    authToken = storedToken;
+                    currentUser = JSON.parse(storedUser);
+                    updateAuthUI();
+                    
+                    // Verify token is still valid
+                    verifyToken();
+                } catch (e) {
+                    console.error('Failed to restore session:', e);
+                    logout();
+                }
+            }
+        }
+
+        async function verifyToken() {
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    // Token is invalid, logout
+                    logout();
+                } else {
+                    // Update user data in case it changed
+                    const user = await response.json();
+                    currentUser = user;
+                    localStorage.setItem('a2apex_user', JSON.stringify(user));
+                    updateAuthUI();
+                }
+            } catch (e) {
+                console.error('Token verification failed:', e);
+            }
+        }
+
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('btn-show-login');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            if (currentUser) {
+                loginBtn.style.display = 'none';
+                userDropdown.style.display = 'block';
+                
+                // Update user info
+                const initials = currentUser.name.split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .slice(0, 2);
+                
+                document.getElementById('user-avatar').textContent = initials;
+                document.getElementById('user-name').textContent = currentUser.name;
+                document.getElementById('user-plan').textContent = currentUser.plan;
+            } else {
+                loginBtn.style.display = 'flex';
+                userDropdown.style.display = 'none';
+            }
+        }
+
+        function showAuthModal() {
+            document.getElementById('auth-modal').classList.add('visible');
+            document.getElementById('login-email').focus();
+        }
+
+        function hideAuthModal() {
+            document.getElementById('auth-modal').classList.remove('visible');
+            clearAuthForms();
+        }
+
+        function switchAuthTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.authTab === tab);
+            });
+            
+            // Update forms
+            document.getElementById('login-form').classList.toggle('active', tab === 'login');
+            document.getElementById('register-form').classList.toggle('active', tab === 'register');
+            
+            // Clear error
+            hideAuthError();
+        }
+
+        function clearAuthForms() {
+            document.getElementById('login-form').reset();
+            document.getElementById('register-form').reset();
+            hideAuthError();
+        }
+
+        function showAuthError(message) {
+            const errorEl = document.getElementById('auth-error');
+            errorEl.textContent = message;
+            errorEl.classList.add('visible');
+        }
+
+        function hideAuthError() {
+            document.getElementById('auth-error').classList.remove('visible');
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('btn-login-submit');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>';
+            hideAuthError();
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Login failed');
+                }
+                
+                // Success! Store token and user
+                authToken = data.access_token;
+                currentUser = data.user;
+                
+                localStorage.setItem('a2apex_token', authToken);
+                localStorage.setItem('a2apex_user', JSON.stringify(currentUser));
+                
+                updateAuthUI();
+                hideAuthModal();
+                showToast(`Welcome back, ${currentUser.name}!`, 'success');
+                
+            } catch (e) {
+                showAuthError(e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="btn-text">Sign In</span>';
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const btn = document.getElementById('btn-register-submit');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>';
+            hideAuthError();
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Registration failed');
+                }
+                
+                // Success! Store token and user
+                authToken = data.access_token;
+                currentUser = data.user;
+                
+                localStorage.setItem('a2apex_token', authToken);
+                localStorage.setItem('a2apex_user', JSON.stringify(currentUser));
+                
+                updateAuthUI();
+                hideAuthModal();
+                showToast(`Welcome to A2Apex, ${currentUser.name}! 🎉`, 'success');
+                
+            } catch (e) {
+                showAuthError(e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="btn-text">Create Account</span>';
+            }
+        }
+
+        function toggleUserDropdown() {
+            document.getElementById('user-dropdown').classList.toggle('open');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('user-dropdown');
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('a2apex_token');
+            localStorage.removeItem('a2apex_user');
+            updateAuthUI();
+            document.getElementById('user-dropdown').classList.remove('open');
+            showToast('Signed out successfully', 'success');
+        }
+
+        function showApiKey() {
+            if (!currentUser) return;
+            
+            document.getElementById('api-key-value').textContent = currentUser.api_key;
+            document.getElementById('api-key-modal').classList.add('visible');
+            document.getElementById('user-dropdown').classList.remove('open');
+        }
+
+        function hideApiKeyModal() {
+            document.getElementById('api-key-modal').classList.remove('visible');
+        }
+
+        function copyApiKey() {
+            if (!currentUser) return;
+            
+            navigator.clipboard.writeText(currentUser.api_key).then(() => {
+                showToast('API key copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy', 'error');
+            });
+        }
+
+        // Close modals on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideAuthModal();
+                hideApiKeyModal();
+            }
+        });
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('visible');
                 }
             });
         });

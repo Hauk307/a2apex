@@ -21,6 +21,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+# Auth module
+from api.auth import router as auth_router
+
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -186,6 +189,9 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc"
 )
+
+# Include auth router
+app.include_router(auth_router)
 
 # CORS middleware for web UI - allow all origins (dev tool)
 app.add_middleware(

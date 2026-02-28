@@ -9,6 +9,12 @@ httpx>=0.25.0
 
 # Data Validation
 pydantic>=2.5.0
+pydantic[email]>=2.5.0
+
+# Authentication
+passlib[bcrypt]>=1.7.4
+python-jose[cryptography]>=3.3.0
+bcrypt>=4.0.0
 
 # Optional: Development tools
 # pytest>=7.4.0
