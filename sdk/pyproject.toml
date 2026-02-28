@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "a2apex"
-version = "0.1.0"
+version = "0.1.1"
 description = "Test, validate, and certify A2A protocol implementations"
 readme = "README.md"
 license = "Apache-2.0"
@@ -55,9 +55,9 @@ all = [
 
 [project.urls]
 Homepage = "https://a2apex.io"
-Documentation = "https://docs.a2apex.io"
-Repository = "https://github.com/a2apex/a2apex-python"
-Issues = "https://github.com/a2apex/a2apex-python/issues"
+Documentation = "https://github.com/Hauk307/a2apex"
+Repository = "https://github.com/Hauk307/a2apex"
+Issues = "https://github.com/Hauk307/a2apex/issues"
 
 [project.scripts]
 a2apex = "a2apex.cli:main"
