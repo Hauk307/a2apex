@@ -2136,6 +2136,306 @@
             border-color: var(--cyan);
             color: var(--cyan);
         }
+
+        /* ════════════════════════════════════════════════════════════════════
+           CERTIFICATION SECTION
+           ════════════════════════════════════════════════════════════════════ */
+        .certify-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .certify-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .certify-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        .certify-body {
+            padding: 1.5rem;
+        }
+
+        .certify-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .certify-intro h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .certify-intro p {
+            color: var(--text-secondary);
+        }
+
+        .certify-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .certify-plan-selector {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .certify-plan {
+            flex: 1;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .certify-plan:hover {
+            border-color: var(--cyan-glow);
+        }
+
+        .certify-plan.active {
+            border-color: var(--cyan);
+            background: var(--cyan-dim);
+        }
+
+        .certify-plan .plan-name {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .certify-plan .plan-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .certify-plan.active .plan-desc {
+            color: var(--cyan);
+        }
+
+        .btn-certify {
+            width: 100%;
+            height: 52px;
+            background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+            border: none;
+            border-radius: 12px;
+            color: #0A1628;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-certify:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-certify:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .certify-progress {
+            margin: 2rem 0;
+        }
+
+        .certify-progress .progress-bar {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .certify-progress .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), #FFD700);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .certify-progress .progress-text {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .certify-result {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .certify-score {
+            margin-bottom: 1.5rem;
+        }
+
+        .certify-score .score-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--cyan) 0%, #0066FF 100%);
+            border-radius: 50%;
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 0 40px var(--cyan-glow);
+        }
+
+        .certify-score .score-badge.failed {
+            background: linear-gradient(135deg, var(--error) 0%, #CC0000 100%);
+            box-shadow: 0 0 40px rgba(255, 82, 82, 0.3);
+        }
+
+        .certify-score .score-label {
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .certify-status {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .certify-status.passed {
+            background: var(--success-bg);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .certify-status.failed {
+            background: var(--error-bg);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .certify-badge-preview {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .certify-badge-preview h4 {
+            margin-bottom: 1rem;
+        }
+
+        .badge-image {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .badge-image img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .embed-codes {
+            text-align: left;
+        }
+
+        .embed-code-group {
+            margin-bottom: 1rem;
+        }
+
+        .embed-code-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .embed-code-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.375rem;
+        }
+
+        .embed-code {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .embed-code code {
+            flex: 1;
+            background: var(--bg-primary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--cyan);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .btn-copy-embed {
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-copy-embed:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
+
+        .certify-registry-link {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .certify-registry-link a {
+            color: var(--cyan);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .certify-registry-link a:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -2247,6 +2547,10 @@
                 <button class="tab" data-tab="chat">
                     <span class="tab-icon">💬</span>
                     <span>Debug Chat</span>
+                </button>
+                <button class="tab" data-tab="certify">
+                    <span class="tab-icon">🏅</span>
+                    <span>Certify</span>
                 </button>
             </div>
         </div>
@@ -2365,6 +2669,95 @@
                     <div class="demo-progress-text" id="demo-progress-text">Starting...</div>
                 </div>
                 <div class="demo-tests" id="demo-tests"></div>
+            </div>
+
+            <!-- Certification Section -->
+            <div id="certify-section" class="certify-panel" style="display: none;">
+                <div class="certify-header">
+                    <div class="certify-title">
+                        <span>🏅</span> Agent Certification
+                    </div>
+                </div>
+                <div class="certify-body">
+                    <div class="certify-intro">
+                        <h3>Get Your A2Apex Certification Badge</h3>
+                        <p>Certify your A2A agent and display a badge showing compliance. Badges link to your agent in our public registry.</p>
+                    </div>
+                    
+                    <div class="certify-form">
+                        <div class="certify-plan-selector">
+                            <button class="certify-plan active" data-plan="free">
+                                <div class="plan-name">Free</div>
+                                <div class="plan-desc">90-day badge</div>
+                            </button>
+                            <button class="certify-plan" data-plan="pro">
+                                <div class="plan-name">Pro</div>
+                                <div class="plan-desc">1-year verified</div>
+                            </button>
+                            <button class="certify-plan" data-plan="enterprise">
+                                <div class="plan-name">Enterprise</div>
+                                <div class="plan-desc">Premium badge</div>
+                            </button>
+                        </div>
+                        
+                        <button class="btn-certify" id="btn-certify" onclick="runCertification()">
+                            <span class="btn-icon">🏅</span>
+                            <span class="btn-text">Run Certification Tests</span>
+                        </button>
+                    </div>
+                    
+                    <div class="certify-progress" id="certify-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="certify-progress-fill"></div>
+                        </div>
+                        <div class="progress-text" id="certify-progress-text">Running tests...</div>
+                    </div>
+                    
+                    <!-- Results Section -->
+                    <div class="certify-result" id="certify-result" style="display: none;">
+                        <div class="certify-score">
+                            <div class="score-badge" id="certify-score-badge">0</div>
+                            <div class="score-label">Compliance Score</div>
+                        </div>
+                        
+                        <div class="certify-status" id="certify-status"></div>
+                        
+                        <div class="certify-badge-preview" id="certify-badge-preview" style="display: none;">
+                            <h4>Your Badge</h4>
+                            <div class="badge-image" id="badge-image"></div>
+                            
+                            <div class="embed-codes">
+                                <div class="embed-code-group">
+                                    <label>HTML</label>
+                                    <div class="embed-code">
+                                        <code id="embed-html"></code>
+                                        <button class="btn-copy-embed" onclick="copyEmbed('html')">Copy</button>
+                                    </div>
+                                </div>
+                                <div class="embed-code-group">
+                                    <label>Markdown</label>
+                                    <div class="embed-code">
+                                        <code id="embed-markdown"></code>
+                                        <button class="btn-copy-embed" onclick="copyEmbed('markdown')">Copy</button>
+                                    </div>
+                                </div>
+                                <div class="embed-code-group">
+                                    <label>Image URL</label>
+                                    <div class="embed-code">
+                                        <code id="embed-url"></code>
+                                        <button class="btn-copy-embed" onclick="copyEmbed('url')">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="certify-registry-link">
+                        <a href="/api/registry-page" target="_blank">
+                            📋 View Public Registry →
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2576,7 +2969,8 @@
                     'validate': 'Validate',
                     'compliance': 'Full Check',
                     'full': 'Full Suite',
-                    'chat': 'Run Tests'
+                    'chat': 'Run Tests',
+                    'certify': 'Run Tests'
                 };
                 document.querySelector('.btn-text').textContent = texts[currentTab];
                 
@@ -2586,6 +2980,7 @@
 
         function updateTabVisibility() {
             const chatSection = document.getElementById('chat-section');
+            const certifySection = document.getElementById('certify-section');
             const resultsPanel = document.getElementById('results-panel');
             const scoreCard = document.getElementById('score-card');
             const validationSection = document.getElementById('validation-section');
@@ -2598,6 +2993,17 @@
             
             if (currentTab === 'chat') {
                 chatSection.style.display = 'block';
+                certifySection.style.display = 'none';
+                resultsPanel.style.display = 'none';
+                scoreCard.style.display = 'none';
+                validationSection.style.display = 'none';
+                categorySection.style.display = 'none';
+                agentCard.style.display = 'none';
+                dashboard.classList.add('visible');
+                featuresSection.style.display = 'none';
+            } else if (currentTab === 'certify') {
+                chatSection.style.display = 'none';
+                certifySection.style.display = 'block';
                 resultsPanel.style.display = 'none';
                 scoreCard.style.display = 'none';
                 validationSection.style.display = 'none';
@@ -2607,6 +3013,7 @@
                 featuresSection.style.display = 'none';
             } else {
                 chatSection.style.display = 'none';
+                certifySection.style.display = 'none';
             }
         }
 
@@ -3820,6 +4227,163 @@
                 }
             });
         });
+
+        // ════════════════════════════════════════════════════════════════════
+        // CERTIFICATION
+        // ════════════════════════════════════════════════════════════════════
+        let selectedPlan = 'free';
+        let certificationResult = null;
+
+        // Plan selector
+        document.querySelectorAll('.certify-plan').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.certify-plan').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedPlan = btn.dataset.plan;
+            });
+        });
+
+        async function runCertification() {
+            const agentUrl = urlInput.value.trim();
+            
+            if (!agentUrl) {
+                showToast('Please enter an agent URL', 'warning');
+                urlInput.focus();
+                return;
+            }
+
+            if (isLoading) return;
+            isLoading = true;
+
+            const btn = document.getElementById('btn-certify');
+            const progressSection = document.getElementById('certify-progress');
+            const progressFill = document.getElementById('certify-progress-fill');
+            const progressText = document.getElementById('certify-progress-text');
+            const resultSection = document.getElementById('certify-result');
+
+            // Reset UI
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Running tests...';
+            progressSection.style.display = 'block';
+            resultSection.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressText.textContent = 'Initializing...';
+
+            // Animate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress = Math.min(progress + 2, 90);
+                progressFill.style.width = progress + '%';
+                
+                if (progress < 30) {
+                    progressText.textContent = 'Validating agent card...';
+                } else if (progress < 60) {
+                    progressText.textContent = 'Running live tests...';
+                } else if (progress < 80) {
+                    progressText.textContent = 'Calculating score...';
+                } else {
+                    progressText.textContent = 'Generating badge...';
+                }
+            }, 150);
+
+            try {
+                const response = await fetch('/api/certify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        agent_url: agentUrl,
+                        plan: selectedPlan
+                    })
+                });
+
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Complete!';
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Certification failed');
+                }
+
+                certificationResult = data;
+                renderCertificationResult(data);
+                
+                if (data.certified) {
+                    showToast(`🏅 Certified! Score: ${data.score}/100`, 'success');
+                } else {
+                    showToast(`Score: ${data.score}/100 - Need 80+ to certify`, 'warning');
+                }
+
+            } catch (error) {
+                clearInterval(progressInterval);
+                progressText.textContent = 'Failed';
+                showToast('Certification failed: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="btn-icon">🏅</span><span class="btn-text">Run Certification Tests</span>';
+                isLoading = false;
+            }
+        }
+
+        function renderCertificationResult(data) {
+            const resultSection = document.getElementById('certify-result');
+            const scoreBadge = document.getElementById('certify-score-badge');
+            const statusDiv = document.getElementById('certify-status');
+            const badgePreview = document.getElementById('certify-badge-preview');
+
+            resultSection.style.display = 'block';
+
+            // Score
+            scoreBadge.textContent = data.score;
+            scoreBadge.classList.toggle('failed', !data.certified);
+
+            // Status
+            if (data.certified) {
+                statusDiv.className = 'certify-status passed';
+                statusDiv.innerHTML = `
+                    <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem;">✓ Certified!</div>
+                    <div>Your agent "${escapeHtml(data.agent_name)}" is now certified until ${new Date(data.expires_at).toLocaleDateString()}</div>
+                `;
+                
+                // Show badge preview
+                badgePreview.style.display = 'block';
+                document.getElementById('badge-image').innerHTML = `<img src="${data.badge_url}" alt="A2Apex Badge">`;
+                document.getElementById('embed-html').textContent = data.embed_html;
+                document.getElementById('embed-markdown').textContent = data.embed_markdown;
+                document.getElementById('embed-url').textContent = data.badge_url;
+            } else {
+                statusDiv.className = 'certify-status failed';
+                statusDiv.innerHTML = `
+                    <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem;">✗ Not Certified</div>
+                    <div>Score of 80+ required. Your agent scored ${data.score}/100. Fix issues and try again.</div>
+                `;
+                badgePreview.style.display = 'none';
+            }
+        }
+
+        function copyEmbed(type) {
+            if (!certificationResult) return;
+
+            let text;
+            switch (type) {
+                case 'html':
+                    text = certificationResult.embed_html;
+                    break;
+                case 'markdown':
+                    text = certificationResult.embed_markdown;
+                    break;
+                case 'url':
+                    text = certificationResult.badge_url;
+                    break;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy', 'error');
+            });
+        }
     </script>
 </body>
 </html>

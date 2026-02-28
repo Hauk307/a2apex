@@ -24,6 +24,9 @@ from pydantic import BaseModel, Field
 # Auth module
 from api.auth import router as auth_router
 
+# Badges module
+from api.badges import router as badges_router
+
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -86,7 +89,7 @@ PRO_TIER_LIMIT = 100  # requests per minute
 RATE_LIMIT_WINDOW = 60  # seconds
 
 # Public endpoints that don't require auth or rate limiting
-PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json", "/api/waitlist"}
+PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json", "/api/waitlist", "/api/registry", "/api/registry-page"}
 
 
 def load_api_keys():
@@ -193,6 +196,9 @@ app = FastAPI(
 # Include auth router
 app.include_router(auth_router)
 
+# Include badges router
+app.include_router(badges_router)
+
 # CORS middleware for web UI - allow all origins (dev tool)
 app.add_middleware(
     CORSMiddleware,
@@ -210,7 +216,7 @@ async def rate_limit_middleware(request: Request, call_next):
     path = request.url.path
     
     # Skip rate limiting for public endpoints
-    if path in PUBLIC_ENDPOINTS or path.startswith("/api/docs") or path.startswith("/api/redoc"):
+    if path in PUBLIC_ENDPOINTS or path.startswith("/api/docs") or path.startswith("/api/redoc") or path.startswith("/api/badge/") or path.startswith("/api/registry"):
         return await call_next(request)
     
     # Handle CORS preflight
