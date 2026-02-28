@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2Apex Documentation — Postman for AI Agents</title>
+    <meta name="description" content="Documentation for A2Apex - Test, validate, and certify your A2A protocol implementations.">
+    <link rel="icon" type="image/svg+xml" href="https://a2apex.io/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0A1628;
+            --bg-secondary: #0D1D31;
+            --bg-card: #111F36;
+            --bg-sidebar: #0B1929;
+            --cyan: #00E5FF;
+            --cyan-dim: rgba(0, 229, 255, 0.1);
+            --cyan-glow: rgba(0, 229, 255, 0.3);
+            --gradient-start: #0A3DFF;
+            --gradient-end: #00E5FF;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --sidebar-width: 280px;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+        
+        /* Typography */
+        h1, h2, h3, h4 { line-height: 1.3; font-weight: 700; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        h3 { font-size: 1.25rem; margin: 2rem 0 0.75rem; color: var(--cyan); }
+        h4 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        
+        a { color: var(--cyan); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-card);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: var(--cyan);
+        }
+        
+        pre {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1rem 0 1.5rem;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        /* Layout */
+        .docs-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+        
+        .sidebar-logo img {
+            height: 28px;
+        }
+        
+        .sidebar-logo span {
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .docs-badge {
+            font-size: 0.7rem;
+            background: var(--cyan-dim);
+            color: var(--cyan);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-section {
+            padding: 0.5rem 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .nav-section:first-child {
+            margin-top: 0;
+        }
+        
+        .nav-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-links {
+            list-style: none;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            margin: 0.125rem 0;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .nav-links a:hover {
+            background: var(--cyan-dim);
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .nav-links a.active {
+            background: var(--cyan-dim);
+            color: var(--cyan);
+            font-weight: 500;
+        }
+        
+        .nav-icon {
+            font-size: 1rem;
+            width: 1.25rem;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-width: 0;
+        }
+        
+        .content-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .breadcrumb a { color: var(--text-secondary); }
+        .breadcrumb span { color: var(--text-primary); }
+        
+        .header-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .header-links a {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .content-body {
+            max-width: 900px;
+            padding: 2.5rem;
+        }
+        
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        
+        .card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-2px);
+        }
+        
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+        }
+        
+        .card p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Callouts */
+        .callout {
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+        
+        .callout-info {
+            background: rgba(0, 229, 255, 0.1);
+            border-color: var(--cyan);
+        }
+        
+        .callout-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--warning);
+        }
+        
+        .callout-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--success);
+        }
+        
+        .callout-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .callout p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--bg-card);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        td { color: var(--text-secondary); }
+        td code { font-size: 0.85em; }
+        
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        li { margin: 0.5rem 0; }
+        
+        /* Footer */
+        .docs-footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem 2.5rem;
+            margin-top: 3rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Mobile */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .content-body {
+                padding: 1.5rem;
+            }
+            
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .docs-footer {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+        
+        /* Hero section for home */
+        .docs-hero {
+            background: linear-gradient(135deg, rgba(10, 61, 255, 0.1), rgba(0, 229, 255, 0.05));
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .docs-hero h1 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .docs-hero .tagline {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px var(--cyan-glow);
+            text-decoration: none;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--cyan);
+            border: 1px solid var(--cyan);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--cyan-dim);
+            text-decoration: none;
+        }
+        
+        /* Version badge */
+        .version-badge {
+            display: inline-block;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="docs-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="https://a2apex.io" class="sidebar-logo">
+                    <span>A2Apex</span>
+                    <span class="docs-badge">DOCS</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Getting Started</div>
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="active"><span class="nav-icon">🏠</span> Documentation Home</a></li>
+                        <li><a href="quickstart.html"><span class="nav-icon">🚀</span> Quickstart</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Core Concepts</div>
+                    <ul class="nav-links">
+                        <li><a href="agent-card.html"><span class="nav-icon">🪪</span> Agent Card Validation</a></li>
+                        <li><a href="testing.html"><span class="nav-icon">🧪</span> Test Suites</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Reference</div>
+                    <ul class="nav-links">
+                        <li><a href="api.html"><span class="nav-icon">📡</span> API Reference</a></li>
+                        <li><a href="sdk.html"><span class="nav-icon">📦</span> Python SDK</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Support</div>
+                    <ul class="nav-links">
+                        <li><a href="faq.html"><span class="nav-icon">❓</span> FAQ</a></li>
+                        <li><a href="https://github.com/a2aproject/A2A" target="_blank"><span class="nav-icon">📋</span> A2A Protocol Spec</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <div class="breadcrumb">
+                    <a href="index.html">Docs</a>
+                    <span>›</span>
+                    <span>Home</span>
+                </div>
+                <div class="header-links">
+                    <a href="https://a2apex.io" target="_blank">🌐 A2Apex.io</a>
+                    <a href="https://pypi.org/project/a2apex/" target="_blank">📦 PyPI</a>
+                </div>
+            </header>
+            
+            <div class="content-body">
+                <div class="docs-hero">
+                    <span class="version-badge">v0.2.0</span>
+                    <h1>A2Apex Documentation</h1>
+                    <p class="tagline">Test, validate, and certify your A2A protocol implementations.<br>The complete testing toolkit for AI agent interoperability.</p>
+                    <div class="hero-buttons">
+                        <a href="quickstart.html" class="btn btn-primary">🚀 Get Started</a>
+                        <a href="api.html" class="btn btn-secondary">📡 API Reference</a>
+                    </div>
+                </div>
+                
+                <h2 id="what-is-a2apex">What is A2Apex?</h2>
+                <p>A2Apex is the testing toolkit for the <a href="https://github.com/a2aproject/A2A" target="_blank">A2A (Agent-to-Agent) protocol</a> — Google's open standard for AI agent interoperability. Think of it as "Postman for AI Agents."</p>
+                
+                <p>With A2Apex, you can:</p>
+                <ul>
+                    <li><strong>Validate Agent Cards</strong> — Ensure your agent's metadata conforms to the A2A specification</li>
+                    <li><strong>Test Endpoints</strong> — Run live tests against your A2A agent's JSON-RPC endpoints</li>
+                    <li><strong>Check Compliance</strong> — Get a 0-100 compliance score with detailed reports</li>
+                    <li><strong>Automate Testing</strong> — Integrate into CI/CD pipelines with the Python SDK</li>
+                </ul>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-icon">🚀</div>
+                        <h3>Quickstart</h3>
+                        <p>Get up and running in 5 minutes. Install the SDK, validate your first agent card, and run tests.</p>
+                        <a href="quickstart.html">Get started →</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🪪</div>
+                        <h3>Agent Card Validation</h3>
+                        <p>Learn what fields are checked, how scoring works, and how to fix common issues.</p>
+                        <a href="agent-card.html">Learn more →</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🧪</div>
+                        <h3>Test Suites</h3>
+                        <p>Explore the auth, error handling, streaming, and performance test suites.</p>
+                        <a href="testing.html">View tests →</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📡</div>
+                        <h3>API Reference</h3>
+                        <p>Complete REST API documentation for all validation and testing endpoints.</p>
+                        <a href="api.html">API docs →</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📦</div>
+                        <h3>Python SDK</h3>
+                        <p>pip install a2apex and integrate testing into your Python projects and CI/CD.</p>
+                        <a href="sdk.html">SDK docs →</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">❓</div>
+                        <h3>FAQ</h3>
+                        <p>Common questions about A2A, A2Apex, pricing, and more.</p>
+                        <a href="faq.html">Read FAQ →</a>
+                    </div>
+                </div>
+                
+                <h2 id="quick-example">Quick Example</h2>
+                <p>Validate an agent card and run tests with just a few lines of Python:</p>
+                
+                <pre><code class="language-python">from a2apex import A2ApexClient
+
+client = A2ApexClient()
+
+# Validate an agent card
+report = client.validate_card("https://your-agent.example.com")
+print(f"Score: {report.score}/100")
+print(f"Valid: {report.is_valid}")
+
+# Run full test suite
+results = client.test_agent("https://your-agent.example.com")
+print(f"Passed: {results.passed}/{results.total_tests}")
+</code></pre>
+                
+                <h2 id="features">Key Features</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Agent Card Validation</strong></td>
+                            <td>Full schema validation against A2A spec v0.3</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Live Endpoint Testing</strong></td>
+                            <td>Test message/send, tasks/get, tasks/cancel</td>
+                        </tr>
+                        <tr>
+                            <td><strong>State Machine Validation</strong></td>
+                            <td>Verify task lifecycle state transitions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Streaming Tests</strong></td>
+                            <td>SSE event ordering and format validation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Auth Testing</strong></td>
+                            <td>API key, OAuth2, JWT scheme validation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Error Handling</strong></td>
+                            <td>JSON-RPC 2.0 error compliance testing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance Testing</strong></td>
+                            <td>Latency, concurrency, cold start tests</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Compliance Scoring</strong></td>
+                            <td>0-100 score with detailed breakdown</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2 id="resources">Resources</h2>
+                <ul>
+                    <li><a href="https://a2apex.io" target="_blank">A2Apex.io</a> — Web-based testing interface</li>
+                    <li><a href="https://pypi.org/project/a2apex/" target="_blank">PyPI Package</a> — pip install a2apex</li>
+                    <li><a href="https://github.com/a2aproject/A2A" target="_blank">A2A Protocol Specification</a> — Official Google spec</li>
+                </ul>
+                
+                <div class="callout callout-info">
+                    <div class="callout-title">💡 Need Help?</div>
+                    <p>Join the waitlist at <a href="https://a2apex.io">a2apex.io</a> for priority support, or email <a href="mailto:team@a2apex.io">team@a2apex.io</a>.</p>
+                </div>
+            </div>
+            
+            <footer class="docs-footer">
+                <p>© 2026 Apex Ventures LLC. Built for the A2A Protocol.</p>
+                <p>
+                    <a href="https://a2apex.io">A2Apex.io</a> · 
+                    <a href="mailto:team@a2apex.io">team@a2apex.io</a>
+                </p>
+            </footer>
+        </main>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !menuBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

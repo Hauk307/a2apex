@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Card Validation — A2Apex Documentation</title>
+    <meta name="description" content="Learn how A2Apex validates A2A Agent Cards against the protocol specification.">
+    <link rel="icon" type="image/svg+xml" href="https://a2apex.io/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0A1628;
+            --bg-secondary: #0D1D31;
+            --bg-card: #111F36;
+            --bg-sidebar: #0B1929;
+            --cyan: #00E5FF;
+            --cyan-dim: rgba(0, 229, 255, 0.1);
+            --cyan-glow: rgba(0, 229, 255, 0.3);
+            --gradient-start: #0A3DFF;
+            --gradient-end: #00E5FF;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --sidebar-width: 280px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+        h1, h2, h3, h4 { line-height: 1.3; font-weight: 700; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        h3 { font-size: 1.25rem; margin: 2rem 0 0.75rem; color: var(--cyan); }
+        h4 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        a { color: var(--cyan); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: 'JetBrains Mono', monospace; background: var(--bg-card); padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; color: var(--cyan); }
+        pre { background: var(--bg-card) !important; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; overflow-x: auto; margin: 1rem 0 1.5rem; }
+        pre code { background: none; padding: 0; color: inherit; }
+        .docs-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: var(--sidebar-width); background: var(--bg-sidebar); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; transition: transform 0.3s ease; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border); }
+        .sidebar-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .sidebar-logo span { font-family: 'Orbitron', monospace; font-weight: 800; font-size: 1.1rem; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .docs-badge { font-size: 0.7rem; background: var(--cyan-dim); color: var(--cyan); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; margin-left: 0.5rem; }
+        .sidebar-nav { padding: 1rem 0; }
+        .nav-section { padding: 0.5rem 1.5rem; margin-top: 1rem; }
+        .nav-section:first-child { margin-top: 0; }
+        .nav-section-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .nav-links { list-style: none; }
+        .nav-links a { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; margin: 0.125rem 0; border-radius: 6px; color: var(--text-secondary); font-size: 0.9rem; transition: all 0.2s; }
+        .nav-links a:hover { background: var(--cyan-dim); color: var(--text-primary); text-decoration: none; }
+        .nav-links a.active { background: var(--cyan-dim); color: var(--cyan); font-weight: 500; }
+        .nav-icon { font-size: 1rem; width: 1.25rem; text-align: center; }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); min-width: 0; }
+        .content-header { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
+        .breadcrumb a { color: var(--text-secondary); }
+        .breadcrumb span { color: var(--text-primary); }
+        .header-links { display: flex; gap: 1rem; }
+        .header-links a { color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; }
+        .content-body { max-width: 900px; padding: 2.5rem; }
+        .callout { border-radius: 8px; padding: 1rem 1.25rem; margin: 1.5rem 0; border-left: 4px solid; }
+        .callout-info { background: rgba(0, 229, 255, 0.1); border-color: var(--cyan); }
+        .callout-warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .callout-success { background: rgba(16, 185, 129, 0.1); border-color: var(--success); }
+        .callout-error { background: rgba(239, 68, 68, 0.1); border-color: var(--error); }
+        .callout-title { font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        .callout p { margin: 0; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+        th, td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg-card); font-weight: 600; color: var(--text-primary); }
+        td { color: var(--text-secondary); }
+        td code { font-size: 0.85em; }
+        ul, ol { margin: 1rem 0; padding-left: 1.5rem; color: var(--text-secondary); }
+        li { margin: 0.5rem 0; }
+        .docs-footer { border-top: 1px solid var(--border); padding: 2rem 2.5rem; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-menu-btn { display: block; }
+            .content-body { padding: 1.5rem; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .docs-footer { flex-direction: column; gap: 1rem; text-align: center; }
+        }
+        .severity-badge { display: inline-block; padding: 0.2em 0.5em; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .severity-error { background: rgba(239, 68, 68, 0.2); color: #EF4444; }
+        .severity-warning { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
+        .severity-info { background: rgba(0, 229, 255, 0.2); color: var(--cyan); }
+    </style>
+</head>
+<body>
+    <div class="docs-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="https://a2apex.io" class="sidebar-logo">
+                    <span>A2Apex</span>
+                    <span class="docs-badge">DOCS</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Getting Started</div>
+                    <ul class="nav-links">
+                        <li><a href="index.html"><span class="nav-icon">🏠</span> Documentation Home</a></li>
+                        <li><a href="quickstart.html"><span class="nav-icon">🚀</span> Quickstart</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Core Concepts</div>
+                    <ul class="nav-links">
+                        <li><a href="agent-card.html" class="active"><span class="nav-icon">🪪</span> Agent Card Validation</a></li>
+                        <li><a href="testing.html"><span class="nav-icon">🧪</span> Test Suites</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Reference</div>
+                    <ul class="nav-links">
+                        <li><a href="api.html"><span class="nav-icon">📡</span> API Reference</a></li>
+                        <li><a href="sdk.html"><span class="nav-icon">📦</span> Python SDK</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Support</div>
+                    <ul class="nav-links">
+                        <li><a href="faq.html"><span class="nav-icon">❓</span> FAQ</a></li>
+                        <li><a href="https://github.com/a2aproject/A2A" target="_blank"><span class="nav-icon">📋</span> A2A Protocol Spec</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="content-header">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <div class="breadcrumb">
+                    <a href="index.html">Docs</a>
+                    <span>›</span>
+                    <span>Agent Card Validation</span>
+                </div>
+                <div class="header-links">
+                    <a href="https://a2apex.io" target="_blank">🌐 A2Apex.io</a>
+                    <a href="https://pypi.org/project/a2apex/" target="_blank">📦 PyPI</a>
+                </div>
+            </header>
+            
+            <div class="content-body">
+                <h1>🪪 Agent Card Validation</h1>
+                <p>The Agent Card is the foundation of the A2A protocol — it's how agents discover and understand each other. A2Apex validates your Agent Card against the complete A2A specification (v0.3) and provides a compliance score.</p>
+                
+                <h2 id="what-is-validated">What Gets Validated?</h2>
+                <p>A2Apex performs comprehensive validation across all Agent Card fields. Issues are categorized into three severity levels:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Severity</th>
+                            <th>Description</th>
+                            <th>Impact on Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="severity-badge severity-error">Error</span></td>
+                            <td>Must fix — breaks protocol compliance</td>
+                            <td>-10 points each</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-warning">Warning</span></td>
+                            <td>Should fix — may cause interoperability issues</td>
+                            <td>-2 points each</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-info">Info</span></td>
+                            <td>Suggestion for best practices</td>
+                            <td>No penalty</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2 id="required-fields">Required Fields</h2>
+                <p>These fields <strong>must</strong> be present in your Agent Card. Missing any of these will result in errors:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>name</code></td>
+                            <td>string</td>
+                            <td>Human-readable name of the agent</td>
+                        </tr>
+                        <tr>
+                            <td><code>url</code></td>
+                            <td>string (URL)</td>
+                            <td>Base URL of the A2A endpoint</td>
+                        </tr>
+                        <tr>
+                            <td><code>version</code></td>
+                            <td>string (semver)</td>
+                            <td>Agent version (e.g., "1.0.0")</td>
+                        </tr>
+                        <tr>
+                            <td><code>capabilities</code></td>
+                            <td>object</td>
+                            <td>Agent capability flags</td>
+                        </tr>
+                        <tr>
+                            <td><code>skills</code></td>
+                            <td>array</td>
+                            <td>List of agent skills (at least one required)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Capabilities Object</h3>
+                <p>The <code>capabilities</code> object describes what your agent supports:</p>
+                <pre><code class="language-json">{
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "multiTurn": true,
+    "stateTransitionHistory": false
+  }
+}</code></pre>
+                
+                <h3>Skills Array</h3>
+                <p>Each skill must have at minimum <code>id</code> and <code>name</code>:</p>
+                <pre><code class="language-json">{
+  "skills": [
+    {
+      "id": "research",
+      "name": "Web Research",
+      "description": "Search the web and synthesize findings",
+      "tags": ["search", "research", "web"]
+    }
+  ]
+}</code></pre>
+                
+                <h2 id="recommended-fields">Recommended Fields</h2>
+                <p>These fields are not required but are strongly recommended. Missing them will generate warnings:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>description</code></td>
+                            <td>string</td>
+                            <td>Human-readable description of the agent</td>
+                        </tr>
+                        <tr>
+                            <td><code>protocolVersion</code></td>
+                            <td>string</td>
+                            <td>A2A protocol version (e.g., "0.3")</td>
+                        </tr>
+                        <tr>
+                            <td><code>defaultInputModes</code></td>
+                            <td>array</td>
+                            <td>MIME types the agent accepts</td>
+                        </tr>
+                        <tr>
+                            <td><code>defaultOutputModes</code></td>
+                            <td>array</td>
+                            <td>MIME types the agent produces</td>
+                        </tr>
+                        <tr>
+                            <td><code>provider</code></td>
+                            <td>object</td>
+                            <td>Organization providing the agent</td>
+                        </tr>
+                        <tr>
+                            <td><code>documentationUrl</code></td>
+                            <td>string (URL)</td>
+                            <td>Link to agent documentation</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2 id="optional-fields">Optional Fields</h2>
+                <p>These fields are optional but provide additional functionality:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>iconUrl</code></td>
+                            <td>string (URL)</td>
+                            <td>URL to agent icon/logo</td>
+                        </tr>
+                        <tr>
+                            <td><code>preferredTransport</code></td>
+                            <td>string</td>
+                            <td>JSONRPC, GRPC, or HTTP+JSON</td>
+                        </tr>
+                        <tr>
+                            <td><code>securitySchemes</code></td>
+                            <td>object</td>
+                            <td>Authentication methods (OpenAPI 3.0 format)</td>
+                        </tr>
+                        <tr>
+                            <td><code>security</code></td>
+                            <td>array</td>
+                            <td>Required security schemes</td>
+                        </tr>
+                        <tr>
+                            <td><code>supportsAuthenticatedExtendedCard</code></td>
+                            <td>boolean</td>
+                            <td>Whether auth reveals more info</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2 id="security-schemes">Security Scheme Validation</h2>
+                <p>A2Apex validates security schemes against the OpenAPI 3.0 specification. Supported types:</p>
+                
+                <h4>API Key</h4>
+                <pre><code class="language-json">{
+  "securitySchemes": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "X-API-Key",
+      "in": "header"
+    }
+  }
+}</code></pre>
+                
+                <h4>HTTP Bearer (JWT)</h4>
+                <pre><code class="language-json">{
+  "securitySchemes": {
+    "bearer_auth": {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT"
+    }
+  }
+}</code></pre>
+                
+                <h4>OAuth2</h4>
+                <pre><code class="language-json">{
+  "securitySchemes": {
+    "oauth2": {
+      "type": "oauth2",
+      "flows": {
+        "authorizationCode": {
+          "authorizationUrl": "https://auth.example.com/authorize",
+          "tokenUrl": "https://auth.example.com/token",
+          "scopes": {
+            "read": "Read access",
+            "write": "Write access"
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+                
+                <h2 id="scoring">How Scoring Works</h2>
+                <p>The compliance score is calculated as follows:</p>
+                
+                <ul>
+                    <li><strong>Base score:</strong> 100 points</li>
+                    <li><strong>Each error:</strong> -10 points</li>
+                    <li><strong>Each warning:</strong> -2 points</li>
+                    <li><strong>Info items:</strong> No penalty</li>
+                    <li><strong>Minimum score:</strong> 0</li>
+                </ul>
+                
+                <p>A score of 80+ is considered good compliance. 100 means perfect compliance with no errors or warnings.</p>
+                
+                <div class="callout callout-info">
+                    <div class="callout-title">💡 Score Interpretation</div>
+                    <p><strong>90-100:</strong> Excellent — Ready for production<br>
+                    <strong>80-89:</strong> Good — Minor improvements recommended<br>
+                    <strong>60-79:</strong> Fair — Fix warnings before deployment<br>
+                    <strong>Below 60:</strong> Poor — Fix errors before use</p>
+                </div>
+                
+                <h2 id="common-issues">Common Issues &amp; Fixes</h2>
+                
+                <h3>❌ Missing required field: skills</h3>
+                <p>Your Agent Card must include at least one skill.</p>
+                <pre><code class="language-json">{
+  "skills": [
+    {
+      "id": "default",
+      "name": "Default Skill",
+      "description": "Primary agent capability"
+    }
+  ]
+}</code></pre>
+                
+                <h3>❌ Invalid URL format</h3>
+                <p>URLs must be valid HTTP/HTTPS URLs. Localhost is allowed for development.</p>
+                <pre><code class="language-json">{
+  "url": "https://api.example.com/a2a"
+}</code></pre>
+                
+                <h3>❌ Invalid semver version</h3>
+                <p>Version must follow semantic versioning format (X.Y.Z).</p>
+                <pre><code class="language-json">{
+  "version": "1.0.0"
+}</code></pre>
+                
+                <h3>⚠️ Missing description</h3>
+                <p>Add a clear description so other agents understand what yours does.</p>
+                <pre><code class="language-json">{
+  "description": "An AI assistant that helps with research and analysis tasks."
+}</code></pre>
+                
+                <h3>⚠️ Missing protocolVersion</h3>
+                <p>Specify which A2A protocol version your agent implements.</p>
+                <pre><code class="language-json">{
+  "protocolVersion": "0.3"
+}</code></pre>
+                
+                <h3>⚠️ HTTP URL (should use HTTPS)</h3>
+                <p>Production agents should use HTTPS for security.</p>
+                
+                <h2 id="complete-example">Complete Agent Card Example</h2>
+                <p>Here's a fully compliant Agent Card that scores 100/100:</p>
+                
+                <pre><code class="language-json">{
+  "name": "Research Assistant",
+  "description": "An AI agent that searches the web, analyzes documents, and synthesizes research findings.",
+  "url": "https://api.example.com/a2a",
+  "version": "1.2.0",
+  "protocolVersion": "0.3",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "multiTurn": true,
+    "stateTransitionHistory": true
+  },
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["text/plain", "application/json", "text/markdown"],
+  "skills": [
+    {
+      "id": "web-research",
+      "name": "Web Research",
+      "description": "Search the web and synthesize findings on any topic",
+      "tags": ["search", "research", "web", "synthesis"]
+    },
+    {
+      "id": "document-analysis",
+      "name": "Document Analysis",
+      "description": "Analyze PDFs, documents, and extract key information",
+      "tags": ["documents", "analysis", "extraction"]
+    }
+  ],
+  "provider": {
+    "organization": "Example Corp",
+    "url": "https://example.com",
+    "contactEmail": "ai@example.com"
+  },
+  "documentationUrl": "https://docs.example.com/research-agent",
+  "iconUrl": "https://example.com/agent-icon.png",
+  "securitySchemes": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "X-API-Key",
+      "in": "header"
+    }
+  },
+  "security": [
+    {"api_key": []}
+  ]
+}</code></pre>
+                
+                <h2 id="api-usage">Validating via API</h2>
+                <p>You can validate Agent Cards using the REST API:</p>
+                
+                <h4>Validate from URL</h4>
+                <pre><code class="language-bash">curl -X POST https://api.a2apex.io/api/validate/agent-card \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://your-agent.example.com"}'</code></pre>
+                
+                <h4>Validate JSON directly</h4>
+                <pre><code class="language-bash">curl -X POST https://api.a2apex.io/api/validate/agent-card \
+  -H "Content-Type: application/json" \
+  -d '{
+    "json": {
+      "name": "My Agent",
+      "url": "https://api.example.com/a2a",
+      "version": "1.0.0",
+      "capabilities": {},
+      "skills": [{"id": "default", "name": "Default"}]
+    }
+  }'</code></pre>
+                
+                <p>See the <a href="api.html">API Reference</a> for full details on the validation endpoint.</p>
+            </div>
+            
+            <footer class="docs-footer">
+                <p>© 2026 Apex Ventures LLC. Built for the A2A Protocol.</p>
+                <p>
+                    <a href="https://a2apex.io">A2Apex.io</a> · 
+                    <a href="mailto:team@a2apex.io">team@a2apex.io</a>
+                </p>
+            </footer>
+        </main>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

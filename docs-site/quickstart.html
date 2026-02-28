@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quickstart — A2Apex Documentation</title>
+    <meta name="description" content="Get started with A2Apex in 5 minutes. Install the SDK, validate your first agent card, and run tests.">
+    <link rel="icon" type="image/svg+xml" href="https://a2apex.io/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0A1628;
+            --bg-secondary: #0D1D31;
+            --bg-card: #111F36;
+            --bg-sidebar: #0B1929;
+            --cyan: #00E5FF;
+            --cyan-dim: rgba(0, 229, 255, 0.1);
+            --cyan-glow: rgba(0, 229, 255, 0.3);
+            --gradient-start: #0A3DFF;
+            --gradient-end: #00E5FF;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --sidebar-width: 280px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+        h1, h2, h3, h4 { line-height: 1.3; font-weight: 700; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        h3 { font-size: 1.25rem; margin: 2rem 0 0.75rem; color: var(--cyan); }
+        h4 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        a { color: var(--cyan); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: 'JetBrains Mono', monospace; background: var(--bg-card); padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; color: var(--cyan); }
+        pre { background: var(--bg-card) !important; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; overflow-x: auto; margin: 1rem 0 1.5rem; }
+        pre code { background: none; padding: 0; color: inherit; }
+        .docs-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: var(--sidebar-width); background: var(--bg-sidebar); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; transition: transform 0.3s ease; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border); }
+        .sidebar-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .sidebar-logo span { font-family: 'Orbitron', monospace; font-weight: 800; font-size: 1.1rem; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .docs-badge { font-size: 0.7rem; background: var(--cyan-dim); color: var(--cyan); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; margin-left: 0.5rem; }
+        .sidebar-nav { padding: 1rem 0; }
+        .nav-section { padding: 0.5rem 1.5rem; margin-top: 1rem; }
+        .nav-section:first-child { margin-top: 0; }
+        .nav-section-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .nav-links { list-style: none; }
+        .nav-links a { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; margin: 0.125rem 0; border-radius: 6px; color: var(--text-secondary); font-size: 0.9rem; transition: all 0.2s; }
+        .nav-links a:hover { background: var(--cyan-dim); color: var(--text-primary); text-decoration: none; }
+        .nav-links a.active { background: var(--cyan-dim); color: var(--cyan); font-weight: 500; }
+        .nav-icon { font-size: 1rem; width: 1.25rem; text-align: center; }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); min-width: 0; }
+        .content-header { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
+        .breadcrumb a { color: var(--text-secondary); }
+        .breadcrumb span { color: var(--text-primary); }
+        .header-links { display: flex; gap: 1rem; }
+        .header-links a { color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; }
+        .content-body { max-width: 900px; padding: 2.5rem; }
+        .callout { border-radius: 8px; padding: 1rem 1.25rem; margin: 1.5rem 0; border-left: 4px solid; }
+        .callout-info { background: rgba(0, 229, 255, 0.1); border-color: var(--cyan); }
+        .callout-warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .callout-success { background: rgba(16, 185, 129, 0.1); border-color: var(--success); }
+        .callout-title { font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        .callout p { margin: 0; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+        th, td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg-card); font-weight: 600; color: var(--text-primary); }
+        td { color: var(--text-secondary); }
+        td code { font-size: 0.85em; }
+        ul, ol { margin: 1rem 0; padding-left: 1.5rem; color: var(--text-secondary); }
+        li { margin: 0.5rem 0; }
+        .docs-footer { border-top: 1px solid var(--border); padding: 2rem 2.5rem; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-menu-btn { display: block; }
+            .content-body { padding: 1.5rem; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .docs-footer { flex-direction: column; gap: 1rem; text-align: center; }
+        }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); border-radius: 50%; font-weight: 700; font-size: 0.9rem; margin-right: 0.75rem; }
+        .step-title { display: flex; align-items: center; margin: 2rem 0 1rem; }
+        .step-title h3 { margin: 0; color: var(--text-primary); }
+    </style>
+</head>
+<body>
+    <div class="docs-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="https://a2apex.io" class="sidebar-logo">
+                    <span>A2Apex</span>
+                    <span class="docs-badge">DOCS</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Getting Started</div>
+                    <ul class="nav-links">
+                        <li><a href="index.html"><span class="nav-icon">🏠</span> Documentation Home</a></li>
+                        <li><a href="quickstart.html" class="active"><span class="nav-icon">🚀</span> Quickstart</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Core Concepts</div>
+                    <ul class="nav-links">
+                        <li><a href="agent-card.html"><span class="nav-icon">🪪</span> Agent Card Validation</a></li>
+                        <li><a href="testing.html"><span class="nav-icon">🧪</span> Test Suites</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Reference</div>
+                    <ul class="nav-links">
+                        <li><a href="api.html"><span class="nav-icon">📡</span> API Reference</a></li>
+                        <li><a href="sdk.html"><span class="nav-icon">📦</span> Python SDK</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Support</div>
+                    <ul class="nav-links">
+                        <li><a href="faq.html"><span class="nav-icon">❓</span> FAQ</a></li>
+                        <li><a href="https://github.com/a2aproject/A2A" target="_blank"><span class="nav-icon">📋</span> A2A Protocol Spec</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="content-header">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <div class="breadcrumb">
+                    <a href="index.html">Docs</a>
+                    <span>›</span>
+                    <span>Quickstart</span>
+                </div>
+                <div class="header-links">
+                    <a href="https://a2apex.io" target="_blank">🌐 A2Apex.io</a>
+                    <a href="https://pypi.org/project/a2apex/" target="_blank">📦 PyPI</a>
+                </div>
+            </header>
+            
+            <div class="content-body">
+                <h1>🚀 Quickstart</h1>
+                <p>Get up and running with A2Apex in under 5 minutes. This guide will walk you through installing the SDK, validating your first agent card, and running your first test suite.</p>
+                
+                <div class="callout callout-info">
+                    <div class="callout-title">💡 Prerequisites</div>
+                    <p>You'll need Python 3.10+ installed. You can also use the <a href="https://a2apex.io" target="_blank">web interface</a> if you prefer not to install anything.</p>
+                </div>
+                
+                <div class="step-title">
+                    <span class="step-number">1</span>
+                    <h3>Install the SDK</h3>
+                </div>
+                <p>Install A2Apex from PyPI:</p>
+                <pre><code class="language-bash">pip install a2apex</code></pre>
+                
+                <p>For rich terminal output with colored tables:</p>
+                <pre><code class="language-bash">pip install a2apex[rich]</code></pre>
+                
+                <div class="step-title">
+                    <span class="step-number">2</span>
+                    <h3>Validate Your First Agent Card</h3>
+                </div>
+                <p>Create a Python script to validate an agent card:</p>
+                
+                <pre><code class="language-python">from a2apex import A2ApexClient
+
+# Create a client
+client = A2ApexClient()
+
+# Validate from URL (fetches /.well-known/agent-card.json)
+report = client.validate_card("https://your-agent.example.com")
+
+# Check the results
+print(f"✅ Valid: {report.is_valid}")
+print(f"📊 Score: {report.score}/100")
+print(f"❌ Errors: {report.error_count}")
+print(f"⚠️ Warnings: {report.warning_count}")
+
+# Show any errors
+if report.errors:
+    print("\nErrors to fix:")
+    for error in report.errors:
+        print(f"  ✗ {error.field}: {error.message}")
+        if error.suggestion:
+            print(f"    💡 {error.suggestion}")
+</code></pre>
+                
+                <h4>Or validate a dict directly (no HTTP):</h4>
+                <pre><code class="language-python">from a2apex import validate_agent_card
+
+card = {
+    "name": "My Agent",
+    "url": "https://api.example.com/a2a",
+    "version": "1.0.0",
+    "capabilities": {"streaming": True},
+    "skills": [
+        {
+            "id": "chat",
+            "name": "Chat",
+            "description": "General conversation"
+        }
+    ]
+}
+
+report = validate_agent_card(card)
+print(report)  # ✓ Valid (Score: 75/100) — 0 errors, 5 warnings
+</code></pre>
+                
+                <div class="step-title">
+                    <span class="step-number">3</span>
+                    <h3>Run Your First Test</h3>
+                </div>
+                <p>Run the full compliance test suite against your agent:</p>
+                
+                <pre><code class="language-python">from a2apex import A2ApexClient
+
+client = A2ApexClient()
+
+# Run all tests
+results = client.test_agent("https://your-agent.example.com")
+
+print(f"\n📊 Compliance Score: {results.score}/100")
+print(f"✅ Passed: {results.passed}/{results.total_tests}")
+print(f"❌ Failed: {results.failed}")
+print(f"⚠️ Warnings: {results.warnings}")
+
+# Show individual test results
+print("\nTest Results:")
+for test in results:
+    icon = "✅" if test.passed else "❌"
+    print(f"  {icon} {test.name}: {test.message}")
+</code></pre>
+                
+                <h3>Sample Output</h3>
+                <pre><code class="language-text">📊 Compliance Score: 87/100
+✅ Passed: 8/10
+❌ Failed: 1
+⚠️ Warnings: 1
+
+Test Results:
+  ✅ agent_card_fetch: Agent Card accessible
+  ✅ message_send: Message sent successfully
+  ✅ task_get: Task retrieved successfully
+  ✅ invalid_method: Returns -32601 for unknown method
+  ✅ task_cancel: Cancel handled correctly
+  ❌ streaming: SSE connection failed
+  ✅ auth_scheme: API key auth working
+  ⚠️ https_enforcement: Using HTTP (should use HTTPS)
+</code></pre>
+                
+                <div class="step-title">
+                    <span class="step-number">4</span>
+                    <h3>Validate State Transitions</h3>
+                </div>
+                <p>A2A defines a strict state machine for task lifecycle. Validate your transitions:</p>
+                
+                <pre><code class="language-python">from a2apex import validate_transitions, is_terminal_state
+
+# Check if a sequence of state transitions is valid
+result = validate_transitions(["submitted", "working", "completed"])
+print(f"Valid: {result.is_valid}")  # True
+
+# Invalid transition (can't go from completed to working)
+result = validate_transitions(["submitted", "working", "completed", "working"])
+print(f"Valid: {result.is_valid}")  # False
+
+for violation in result.violations:
+    print(f"  ✗ {violation.from_state} → {violation.to_state}")
+    print(f"    {violation.reason}")
+
+# Check terminal states
+print(is_terminal_state("completed"))  # True
+print(is_terminal_state("working"))    # False
+</code></pre>
+                
+                <h2 id="using-async">Using Async</h2>
+                <p>All methods have async versions for use with asyncio:</p>
+                
+                <pre><code class="language-python">import asyncio
+from a2apex import A2ApexClient
+
+async def main():
+    client = A2ApexClient()
+    
+    # Async validation
+    report = await client.avalidate_card("https://agent.example.com")
+    print(f"Score: {report.score}/100")
+    
+    # Async testing
+    results = await client.atest_agent("https://agent.example.com")
+    print(f"Passed: {results.passed}/{results.total_tests}")
+
+asyncio.run(main())
+</code></pre>
+                
+                <h2 id="ci-cd">CI/CD Integration</h2>
+                <p>Add A2Apex to your CI/CD pipeline to catch compliance issues early:</p>
+                
+                <pre><code class="language-python"># test_a2a_compliance.py
+from a2apex import A2ApexClient
+import pytest
+
+def test_a2a_compliance():
+    client = A2ApexClient()
+    results = client.test_agent("https://your-agent.example.com")
+    
+    # Fail if compliance score is below 80
+    assert results.score >= 80, f"A2A compliance too low: {results.score}/100"
+
+def test_critical_endpoints():
+    client = A2ApexClient()
+    results = client.test_agent("https://your-agent.example.com")
+    
+    # Check specific critical tests
+    critical_tests = ["agent_card_fetch", "message_send"]
+    for test in results:
+        if test.name in critical_tests:
+            assert test.passed, f"Critical test failed: {test.name}"
+</code></pre>
+                
+                <h4>GitHub Actions Example:</h4>
+                <pre><code class="language-yaml">name: A2A Compliance
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install a2apex pytest
+      - run: pytest test_a2a_compliance.py
+</code></pre>
+                
+                <h2 id="web-ui">Using the Web UI</h2>
+                <p>Don't want to install anything? Use the <a href="https://a2apex.io" target="_blank">A2Apex web interface</a>:</p>
+                <ol>
+                    <li>Go to <a href="https://a2apex.io" target="_blank">a2apex.io</a></li>
+                    <li>Enter your agent's URL</li>
+                    <li>Click "Test Agent"</li>
+                    <li>View your compliance score and detailed results</li>
+                </ol>
+                
+                <div class="callout callout-success">
+                    <div class="callout-title">✅ You're ready!</div>
+                    <p>You now know the basics of A2Apex. Explore the <a href="agent-card.html">Agent Card Validation</a> docs to learn what fields are checked, or dive into the <a href="testing.html">Test Suites</a> to understand all available tests.</p>
+                </div>
+                
+                <h2 id="next-steps">Next Steps</h2>
+                <ul>
+                    <li><a href="agent-card.html">Agent Card Validation</a> — What fields are validated and how scoring works</li>
+                    <li><a href="testing.html">Test Suites</a> — All available test categories (auth, streaming, errors, etc.)</li>
+                    <li><a href="api.html">API Reference</a> — Complete REST API documentation</li>
+                    <li><a href="sdk.html">Python SDK</a> — Full SDK reference and examples</li>
+                </ul>
+            </div>
+            
+            <footer class="docs-footer">
+                <p>© 2026 Apex Ventures LLC. Built for the A2A Protocol.</p>
+                <p>
+                    <a href="https://a2apex.io">A2Apex.io</a> · 
+                    <a href="mailto:team@a2apex.io">team@a2apex.io</a>
+                </p>
+            </footer>
+        </main>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

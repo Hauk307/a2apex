@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference — A2Apex Documentation</title>
+    <meta name="description" content="Complete REST API reference for A2Apex validation and testing endpoints.">
+    <link rel="icon" type="image/svg+xml" href="https://a2apex.io/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0A1628;
+            --bg-secondary: #0D1D31;
+            --bg-card: #111F36;
+            --bg-sidebar: #0B1929;
+            --cyan: #00E5FF;
+            --cyan-dim: rgba(0, 229, 255, 0.1);
+            --cyan-glow: rgba(0, 229, 255, 0.3);
+            --gradient-start: #0A3DFF;
+            --gradient-end: #00E5FF;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --sidebar-width: 280px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+        h1, h2, h3, h4 { line-height: 1.3; font-weight: 700; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        h3 { font-size: 1.25rem; margin: 2rem 0 0.75rem; color: var(--cyan); }
+        h4 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        a { color: var(--cyan); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { font-family: 'JetBrains Mono', monospace; background: var(--bg-card); padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; color: var(--cyan); }
+        pre { background: var(--bg-card) !important; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; overflow-x: auto; margin: 1rem 0 1.5rem; }
+        pre code { background: none; padding: 0; color: inherit; }
+        .docs-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: var(--sidebar-width); background: var(--bg-sidebar); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; transition: transform 0.3s ease; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border); }
+        .sidebar-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .sidebar-logo span { font-family: 'Orbitron', monospace; font-weight: 800; font-size: 1.1rem; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .docs-badge { font-size: 0.7rem; background: var(--cyan-dim); color: var(--cyan); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; margin-left: 0.5rem; }
+        .sidebar-nav { padding: 1rem 0; }
+        .nav-section { padding: 0.5rem 1.5rem; margin-top: 1rem; }
+        .nav-section:first-child { margin-top: 0; }
+        .nav-section-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .nav-links { list-style: none; }
+        .nav-links a { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; margin: 0.125rem 0; border-radius: 6px; color: var(--text-secondary); font-size: 0.9rem; transition: all 0.2s; }
+        .nav-links a:hover { background: var(--cyan-dim); color: var(--text-primary); text-decoration: none; }
+        .nav-links a.active { background: var(--cyan-dim); color: var(--cyan); font-weight: 500; }
+        .nav-icon { font-size: 1rem; width: 1.25rem; text-align: center; }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); min-width: 0; }
+        .content-header { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
+        .breadcrumb a { color: var(--text-secondary); }
+        .breadcrumb span { color: var(--text-primary); }
+        .header-links { display: flex; gap: 1rem; }
+        .header-links a { color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; }
+        .content-body { max-width: 900px; padding: 2.5rem; }
+        .callout { border-radius: 8px; padding: 1rem 1.25rem; margin: 1.5rem 0; border-left: 4px solid; }
+        .callout-info { background: rgba(0, 229, 255, 0.1); border-color: var(--cyan); }
+        .callout-warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .callout-success { background: rgba(16, 185, 129, 0.1); border-color: var(--success); }
+        .callout-title { font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        .callout p { margin: 0; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+        th, td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg-card); font-weight: 600; color: var(--text-primary); }
+        td { color: var(--text-secondary); }
+        td code { font-size: 0.85em; }
+        ul, ol { margin: 1rem 0; padding-left: 1.5rem; color: var(--text-secondary); }
+        li { margin: 0.5rem 0; }
+        .docs-footer { border-top: 1px solid var(--border); padding: 2rem 2.5rem; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-menu-btn { display: block; }
+            .content-body { padding: 1.5rem; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .docs-footer { flex-direction: column; gap: 1rem; text-align: center; }
+        }
+        .endpoint { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1.5rem 0; }
+        .endpoint-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .method { padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; }
+        .method-get { background: rgba(16, 185, 129, 0.2); color: #10B981; }
+        .method-post { background: rgba(59, 130, 246, 0.2); color: #3B82F6; }
+        .endpoint-path { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--text-primary); }
+        .endpoint-desc { font-size: 0.9rem; color: var(--text-secondary); margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="docs-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="https://a2apex.io" class="sidebar-logo">
+                    <span>A2Apex</span>
+                    <span class="docs-badge">DOCS</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Getting Started</div>
+                    <ul class="nav-links">
+                        <li><a href="index.html"><span class="nav-icon">🏠</span> Documentation Home</a></li>
+                        <li><a href="quickstart.html"><span class="nav-icon">🚀</span> Quickstart</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Core Concepts</div>
+                    <ul class="nav-links">
+                        <li><a href="agent-card.html"><span class="nav-icon">🪪</span> Agent Card Validation</a></li>
+                        <li><a href="testing.html"><span class="nav-icon">🧪</span> Test Suites</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Reference</div>
+                    <ul class="nav-links">
+                        <li><a href="api.html" class="active"><span class="nav-icon">📡</span> API Reference</a></li>
+                        <li><a href="sdk.html"><span class="nav-icon">📦</span> Python SDK</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Support</div>
+                    <ul class="nav-links">
+                        <li><a href="faq.html"><span class="nav-icon">❓</span> FAQ</a></li>
+                        <li><a href="https://github.com/a2aproject/A2A" target="_blank"><span class="nav-icon">📋</span> A2A Protocol Spec</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="content-header">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <div class="breadcrumb">
+                    <a href="index.html">Docs</a>
+                    <span>›</span>
+                    <span>API Reference</span>
+                </div>
+                <div class="header-links">
+                    <a href="https://a2apex.io" target="_blank">🌐 A2Apex.io</a>
+                    <a href="https://pypi.org/project/a2apex/" target="_blank">📦 PyPI</a>
+                </div>
+            </header>
+            
+            <div class="content-body">
+                <h1>📡 API Reference</h1>
+                <p>The A2Apex REST API provides endpoints for validating Agent Cards, running compliance tests, and managing authentication. All endpoints accept JSON and return JSON responses.</p>
+                
+                <h2 id="base-url">Base URL</h2>
+                <pre><code>https://api.a2apex.io</code></pre>
+                
+                <h2 id="authentication">Authentication</h2>
+                <p>Most endpoints require authentication via API key or JWT token:</p>
+                
+                <h4>API Key (Header)</h4>
+                <pre><code class="language-bash">curl -H "X-API-Key: your_api_key" https://api.a2apex.io/api/validate/agent-card</code></pre>
+                
+                <h4>API Key (Query Parameter)</h4>
+                <pre><code class="language-bash">curl "https://api.a2apex.io/api/validate/agent-card?api_key=your_api_key"</code></pre>
+                
+                <h4>JWT Bearer Token</h4>
+                <pre><code class="language-bash">curl -H "Authorization: Bearer your_jwt_token" https://api.a2apex.io/api/validate/agent-card</code></pre>
+                
+                <h2 id="rate-limits">Rate Limits</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tier</th>
+                            <th>Limit</th>
+                            <th>Window</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Free (no API key)</td><td>10 requests</td><td>per minute</td></tr>
+                        <tr><td>Pro (API key)</td><td>100 requests</td><td>per minute</td></tr>
+                        <tr><td>Enterprise</td><td>Custom</td><td>per minute</td></tr>
+                    </tbody>
+                </table>
+                
+                <p>Rate limit headers are included in all responses:</p>
+                <pre><code>X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1709064000</code></pre>
+                
+                <h2 id="validation">Validation Endpoints</h2>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/validate/agent-card</span>
+                    </div>
+                    <p class="endpoint-desc">Validate an Agent Card against the A2A specification.</p>
+                </div>
+                
+                <h4>Request Body</h4>
+                <table>
+                    <thead>
+                        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>url</code></td><td>string</td><td>URL to fetch the Agent Card from</td></tr>
+                        <tr><td><code>json</code></td><td>object</td><td>Agent Card JSON to validate directly</td></tr>
+                    </tbody>
+                </table>
+                <p>Provide either <code>url</code> or <code>json</code>, not both.</p>
+                
+                <h4>Example Request</h4>
+                <pre><code class="language-bash">curl -X POST https://api.a2apex.io/api/validate/agent-card \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: your_api_key" \
+  -d '{"url": "https://agent.example.com"}'</code></pre>
+                
+                <h4>Example Response</h4>
+                <pre><code class="language-json">{
+  "is_valid": true,
+  "score": 92.5,
+  "summary": {
+    "errors": 0,
+    "warnings": 3,
+    "info": 2
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "field": "protocolVersion",
+      "message": "Missing recommended field",
+      "suggestion": "Add protocolVersion: \"0.3\"",
+      "spec_reference": "Section 6.1"
+    }
+  ],
+  "info": [...],
+  "agent_card": { ... }
+}</code></pre>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/validate/state-transition</span>
+                    </div>
+                    <p class="endpoint-desc">Validate A2A task state transitions.</p>
+                </div>
+                
+                <h4>Request Body</h4>
+                <pre><code class="language-json">// Validate a sequence of states
+{"states": ["submitted", "working", "completed"]}
+
+// Or validate a single transition
+{"from_state": "submitted", "to_state": "working"}</code></pre>
+                
+                <h2 id="testing">Testing Endpoints</h2>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/live-test</span>
+                    </div>
+                    <p class="endpoint-desc">Run live endpoint tests against an A2A agent.</p>
+                </div>
+                
+                <h4>Request Body</h4>
+                <table>
+                    <thead>
+                        <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>agent_url</code></td><td>string</td><td>Yes</td><td>Base URL of the A2A agent</td></tr>
+                        <tr><td><code>auth_header</code></td><td>string</td><td>No</td><td>Authorization header value</td></tr>
+                        <tr><td><code>timeout</code></td><td>float</td><td>No</td><td>Request timeout in seconds (default: 30)</td></tr>
+                    </tbody>
+                </table>
+                
+                <h4>Example</h4>
+                <pre><code class="language-bash">curl -X POST https://api.a2apex.io/api/live-test \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: your_api_key" \
+  -d '{
+    "agent_url": "https://agent.example.com",
+    "auth_header": "Bearer agent_token",
+    "timeout": 30
+  }'</code></pre>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/test/auth</span>
+                    </div>
+                    <p class="endpoint-desc">Run authentication and security tests.</p>
+                </div>
+                
+                <p>Tests security scheme declarations, API key auth, HTTP bearer, OAuth2 flows, unauthenticated request handling, and HTTPS enforcement.</p>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/test/errors</span>
+                    </div>
+                    <p class="endpoint-desc">Run error handling tests.</p>
+                </div>
+                
+                <p>Tests JSON-RPC 2.0 error compliance: malformed JSON, invalid requests, unknown methods, invalid parameters, non-existent tasks, and oversized payloads.</p>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/test/streaming</span>
+                    </div>
+                    <p class="endpoint-desc">Run SSE streaming tests.</p>
+                </div>
+                
+                <p>Tests SSE connection, event format validation, state transition ordering, artifact streaming, stream termination, and timeout handling.</p>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/test/performance</span>
+                    </div>
+                    <p class="endpoint-desc">Run performance tests.</p>
+                </div>
+                
+                <p>Tests Agent Card fetch latency, message send latency, concurrent request handling, task isolation, and cold/warm start performance.</p>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/test/full</span>
+                    </div>
+                    <p class="endpoint-desc">Run the FULL compliance test suite (all tests).</p>
+                </div>
+                
+                <h4>Response Structure</h4>
+                <pre><code class="language-json">{
+  "agent_url": "https://agent.example.com",
+  "timestamp": "2026-02-27T12:00:00Z",
+  "summary": {
+    "total": 35,
+    "passed": 30,
+    "failed": 3,
+    "warnings": 2,
+    "skipped": 0,
+    "score": 85.7
+  },
+  "categories": {
+    "Live Endpoint Tests": {
+      "icon": "⚡",
+      "summary": { "total": 6, "passed": 5, "failed": 1 },
+      "results": [
+        { "test": "agent_card_fetch", "status": "passed", "message": "..." }
+      ]
+    },
+    ...
+  }
+}</code></pre>
+                
+                <h2 id="reports">Test Reports</h2>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-path">/api/test-report/{report_id}</span>
+                    </div>
+                    <p class="endpoint-desc">Get a previously generated test report by ID.</p>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-path">/api/test-reports</span>
+                    </div>
+                    <p class="endpoint-desc">List recent test reports.</p>
+                </div>
+                
+                <h4>Query Parameters</h4>
+                <table>
+                    <thead>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>limit</code></td><td>integer</td><td>20</td><td>Maximum reports to return</td></tr>
+                    </tbody>
+                </table>
+                
+                <h2 id="chat">Chat / Debug Endpoint</h2>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/chat</span>
+                    </div>
+                    <p class="endpoint-desc">Send a chat message to an A2A agent and return structured results.</p>
+                </div>
+                
+                <h4>Request Body</h4>
+                <pre><code class="language-json">{
+  "agent_url": "https://agent.example.com",
+  "message": "Hello, how can you help me?",
+  "context_id": "optional-context-id",
+  "task_id": "optional-task-id",
+  "auth_header": "Bearer token",
+  "timeout": 30
+}</code></pre>
+                
+                <h4>Response</h4>
+                <pre><code class="language-json">{
+  "success": true,
+  "raw_request": { ... },
+  "raw_response": { ... },
+  "duration_ms": 245.3,
+  "http_status": 200,
+  "parsed": {
+    "task_id": "task-123",
+    "context_id": "ctx-456",
+    "status": "completed",
+    "agent_message": "I can help you with...",
+    "artifacts": [...]
+  }
+}</code></pre>
+                
+                <h2 id="auth-endpoints">Authentication Endpoints</h2>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/auth/register</span>
+                    </div>
+                    <p class="endpoint-desc">Register a new user account.</p>
+                </div>
+                
+                <pre><code class="language-json">{
+  "email": "user@example.com",
+  "password": "minimum8chars",
+  "name": "Your Name"
+}</code></pre>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/auth/login</span>
+                    </div>
+                    <p class="endpoint-desc">Login with email and password.</p>
+                </div>
+                
+                <pre><code class="language-json">{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}</code></pre>
+                
+                <h4>Response</h4>
+                <pre><code class="language-json">{
+  "access_token": "eyJ...",
+  "token_type": "bearer",
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "name": "Your Name",
+    "plan": "free",
+    "api_key": "a2apex_...",
+    "created_at": "2026-02-27T12:00:00Z"
+  }
+}</code></pre>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-path">/api/auth/me</span>
+                    </div>
+                    <p class="endpoint-desc">Get the current authenticated user's profile.</p>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/auth/refresh</span>
+                    </div>
+                    <p class="endpoint-desc">Refresh the JWT access token.</p>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-path">/api/auth/regenerate-api-key</span>
+                    </div>
+                    <p class="endpoint-desc">Generate a new API key (invalidates the old one).</p>
+                </div>
+                
+                <h2 id="utilities">Utility Endpoints</h2>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-path">/api/health</span>
+                    </div>
+                    <p class="endpoint-desc">Health check endpoint (no auth required).</p>
+                </div>
+                
+                <pre><code class="language-json">{
+  "status": "healthy",
+  "service": "a2apex",
+  "version": "0.2.0",
+  "timestamp": "2026-02-27T12:00:00Z"
+}</code></pre>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-path">/api/state-machine/diagram</span>
+                    </div>
+                    <p class="endpoint-desc">Get the A2A state machine diagram and valid transitions.</p>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-path">/api/state-machine/next/{current_state}</span>
+                    </div>
+                    <p class="endpoint-desc">Get valid next states from a given state.</p>
+                </div>
+                
+                <h2 id="errors">Error Responses</h2>
+                <p>Error responses follow a consistent format:</p>
+                <pre><code class="language-json">{
+  "error": "Error Type",
+  "message": "Detailed error message",
+  "detail": "Additional context (optional)"
+}</code></pre>
+                
+                <h4>HTTP Status Codes</h4>
+                <table>
+                    <thead>
+                        <tr><th>Code</th><th>Meaning</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>200</td><td>Success</td></tr>
+                        <tr><td>201</td><td>Created (registration)</td></tr>
+                        <tr><td>400</td><td>Bad Request (invalid input)</td></tr>
+                        <tr><td>401</td><td>Unauthorized (invalid/missing auth)</td></tr>
+                        <tr><td>404</td><td>Not Found</td></tr>
+                        <tr><td>429</td><td>Too Many Requests (rate limited)</td></tr>
+                        <tr><td>500</td><td>Internal Server Error</td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="callout callout-info">
+                    <div class="callout-title">📖 OpenAPI Spec</div>
+                    <p>Interactive API documentation is available at <a href="https://api.a2apex.io/api/docs" target="_blank">/api/docs</a> (Swagger UI) and <a href="https://api.a2apex.io/api/redoc" target="_blank">/api/redoc</a> (ReDoc).</p>
+                </div>
+            </div>
+            
+            <footer class="docs-footer">
+                <p>© 2026 Apex Ventures LLC. Built for the A2A Protocol.</p>
+                <p>
+                    <a href="https://a2apex.io">A2Apex.io</a> · 
+                    <a href="mailto:team@a2apex.io">team@a2apex.io</a>
+                </p>
+            </footer>
+        </main>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
