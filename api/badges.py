@@ -100,6 +100,49 @@ class CertificationResult(BaseModel):
 # SVG BADGE GENERATION
 # ============================================================================
 
+def get_grade_info(score: int) -> dict:
+    """
+    Get grade information based on score.
+    Returns grade name, emoji, colors, and label.
+    """
+    if score >= 90:
+        return {
+            "grade": "gold",
+            "emoji": "★",
+            "medal": "🥇",
+            "label": "A2Apex Certified",
+            "colors": {
+                "start": "#FFD700",
+                "end": "#FFA500",
+                "text": "#0A1628"  # Dark text for contrast on gold
+            }
+        }
+    elif score >= 80:
+        return {
+            "grade": "silver",
+            "emoji": "✓",
+            "medal": "🥈",
+            "label": "A2Apex Verified",
+            "colors": {
+                "start": "#C0C0C0",
+                "end": "#A8A8A8",
+                "text": "#FFFFFF"
+            }
+        }
+    else:  # 70-79 (Bronze)
+        return {
+            "grade": "bronze",
+            "emoji": "",
+            "medal": "🥉",
+            "label": "A2Apex Tested",
+            "colors": {
+                "start": "#CD7F32",
+                "end": "#CD7F32",
+                "text": "#FFFFFF"
+            }
+        }
+
+
 def generate_badge_svg(
     score: int,
     certified: bool,
@@ -108,105 +151,96 @@ def generate_badge_svg(
     date_str: Optional[str] = None
 ) -> str:
     """
-    Generate an SVG badge based on certification status.
+    Generate an SVG badge based on score grade.
     
-    Styles:
-    - basic (free): Simple gray/cyan badge
-    - verified (pro): Premium blue/cyan with checkmark
-    - premium (enterprise): Gold/cyan with shield
+    Grade levels (based on score):
+    - Gold (90-100): Premium gold gradient, star icon
+    - Silver (80-89): Silver gradient, checkmark
+    - Bronze (70-79): Bronze/copper, basic look
+    
+    Plan controls additional features:
+    - Free: 90-day expiry
+    - Pro: 1-year expiry + "PRO" indicator
+    - Enterprise: Permanent + "ENTERPRISE" indicator
     """
     
     # Badge dimensions
     height = 28
+    brand_bg = "#0A1628"  # Navy left section
+    brand_text = "#00E5FF"  # Cyan A2Apex text
     
-    # Colors by style
-    if badge_style == "premium":
-        # Gold/cyan enterprise style
-        left_bg = "#B8860B"  # Dark gold
-        right_bg = "#0A1628"  # Navy
-        accent = "#FFD700"  # Gold
-        text_left = "#FFFFFF"
-        text_right = "#00E5FF"
-        prefix = "🛡"
-        label = "A2Apex Certified"
-    elif badge_style == "verified":
-        # Blue/cyan pro style
-        left_bg = "#0066FF"
-        right_bg = "#0A1628"
-        accent = "#00E5FF"
-        text_left = "#FFFFFF"
-        text_right = "#00E5FF"
-        prefix = "✓"
-        label = "A2Apex Verified"
+    # Get grade-based styling
+    grade_info = get_grade_info(score)
+    
+    # Build the label with grade emoji
+    if grade_info["emoji"]:
+        label = f"{grade_info['emoji']} {grade_info['label']}"
     else:
-        # Gray/cyan free style
-        left_bg = "#555555"
-        right_bg = "#0A1628"
-        accent = "#00E5FF"
-        text_left = "#FFFFFF"
-        text_right = "#00E5FF"
-        prefix = ""
-        label = "A2Apex Tested"
+        label = grade_info['label']
     
-    # Build score text
-    if certified:
-        score_text = f"Score: {score}/100"
-    else:
-        score_text = f"Score: {score}/100"
+    # Build score text with plan indicator
+    score_text = f"Score: {score}/100"
     
-    # Add date for verified/premium
-    if date_str and badge_style in ["verified", "premium"]:
-        score_text = f"{score_text} | {date_str}"
-    
-    # Add plan label for enterprise
-    if badge_style == "premium":
-        score_text = f"{score_text} | Enterprise"
+    # Add plan indicator for Pro/Enterprise
+    if plan == "enterprise":
+        score_text = f"{score_text} | ENT"
+    elif plan == "pro":
+        score_text = f"{score_text} | PRO"
     
     # Calculate widths
-    label_with_prefix = f"{prefix} {label}" if prefix else label
-    label_width = len(label_with_prefix) * 7 + 16
-    score_width = len(score_text) * 6.5 + 16
-    total_width = label_width + score_width
+    # Brand section (A2Apex)
+    brand_label = "A2Apex"
+    brand_width = len(brand_label) * 7 + 16
     
-    # Generate SVG
-    if badge_style == "premium":
-        # Enterprise badge with gradient
+    # Score section (the colored part based on grade)
+    score_section_width = len(score_text) * 6.5 + len(label) * 6 + 24
+    total_width = brand_width + score_section_width
+    
+    # Generate SVG with shields.io-style layout
+    # Left: Navy with cyan "A2Apex" text
+    # Right: Grade-colored section with label + score
+    
+    grade = grade_info["grade"]
+    colors = grade_info["colors"]
+    
+    if grade == "gold":
+        # Gold gradient for 90+ scores
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{height}" viewBox="0 0 {total_width} {height}">
   <defs>
-    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFD700"/>
-      <stop offset="100%" style="stop-color:#B8860B"/>
+    <linearGradient id="grade-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:{colors['start']}"/>
+      <stop offset="100%" style="stop-color:{colors['end']}"/>
     </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.3"/>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#FFD700" flood-opacity="0.4"/>
     </filter>
   </defs>
-  <rect width="{total_width}" height="{height}" rx="4" fill="{right_bg}"/>
-  <rect width="{label_width}" height="{height}" rx="4" fill="url(#gold-grad)" filter="url(#shadow)"/>
-  <text x="{label_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{text_left}" text-anchor="middle">{label_with_prefix}</text>
-  <text x="{label_width + score_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{text_right}" text-anchor="middle">{score_text}</text>
+  <rect width="{total_width}" height="{height}" rx="4" fill="url(#grade-grad)"/>
+  <rect width="{brand_width}" height="{height}" rx="4" fill="{brand_bg}"/>
+  <text x="{brand_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{brand_text}" text-anchor="middle">{brand_label}</text>
+  <text x="{brand_width + score_section_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle" filter="url(#glow)">{label} | {score_text}</text>
 </svg>'''
-    elif badge_style == "verified":
-        # Pro badge with subtle gradient
+    elif grade == "silver":
+        # Silver gradient for 80-89 scores
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{height}" viewBox="0 0 {total_width} {height}">
   <defs>
-    <linearGradient id="blue-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#0A3DFF"/>
-      <stop offset="100%" style="stop-color:#0066FF"/>
+    <linearGradient id="grade-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:{colors['start']}"/>
+      <stop offset="100%" style="stop-color:{colors['end']}"/>
     </linearGradient>
   </defs>
-  <rect width="{total_width}" height="{height}" rx="4" fill="{right_bg}"/>
-  <rect width="{label_width}" height="{height}" rx="4" fill="url(#blue-grad)"/>
-  <text x="{label_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{text_left}" text-anchor="middle">{label_with_prefix}</text>
-  <text x="{label_width + score_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{text_right}" text-anchor="middle">{score_text}</text>
+  <rect width="{total_width}" height="{height}" rx="4" fill="url(#grade-grad)"/>
+  <rect width="{brand_width}" height="{height}" rx="4" fill="{brand_bg}"/>
+  <text x="{brand_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{brand_text}" text-anchor="middle">{brand_label}</text>
+  <text x="{brand_width + score_section_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle">{label} | {score_text}</text>
 </svg>'''
     else:
-        # Basic badge
+        # Bronze solid color for 70-79 scores
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{height}" viewBox="0 0 {total_width} {height}">
-  <rect width="{total_width}" height="{height}" rx="4" fill="{right_bg}"/>
-  <rect width="{label_width}" height="{height}" rx="4" fill="{left_bg}"/>
-  <text x="{label_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{text_left}" text-anchor="middle">{label}</text>
-  <text x="{label_width + score_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{text_right}" text-anchor="middle">{score_text}</text>
+  <rect width="{total_width}" height="{height}" rx="4" fill="{colors['start']}"/>
+  <rect width="{brand_width}" height="{height}" rx="4" fill="{brand_bg}"/>
+  <text x="{brand_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{brand_text}" text-anchor="middle">{brand_label}</text>
+  <text x="{brand_width + score_section_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle">{label} | {score_text}</text>
 </svg>'''
     
     return svg
@@ -241,7 +275,7 @@ async def certify_agent(request: CertifyRequest, req: Request):
     """
     Run full test suite on an agent URL and create certification record.
     
-    If score >= 80/100, creates a valid certification.
+    If score >= 70/100, creates a valid certification.
     Returns certification data with embed codes.
     """
     agent_url = request.agent_url.rstrip("/")
@@ -250,16 +284,17 @@ async def certify_agent(request: CertifyRequest, req: Request):
     if plan not in ["free", "pro", "enterprise"]:
         raise HTTPException(status_code=400, detail="Invalid plan. Must be: free, pro, or enterprise")
     
-    # Determine badge style and expiry
+    # Determine expiry based on plan
+    # Badge style is now determined by score, not plan
     if plan == "enterprise":
-        badge_style = "premium"
-        expires_days = 365
+        expires_days = 36500  # ~100 years = permanent
     elif plan == "pro":
-        badge_style = "verified"
-        expires_days = 365
+        expires_days = 365  # 1 year
     else:
-        badge_style = "basic"
-        expires_days = 90
+        expires_days = 90  # 90 days for free
+    
+    # Badge style will be set after we know the score
+    badge_style = "basic"  # Placeholder, updated after scoring
     
     # Run tests
     try:
@@ -291,7 +326,17 @@ async def certify_agent(request: CertifyRequest, req: Request):
         raise HTTPException(status_code=500, detail=f"Testing failed: {str(e)}")
     
     # Determine certification status
-    certified = total_score >= 80
+    certified = total_score >= 70
+    
+    # Determine badge style based on score (grade)
+    if total_score >= 90:
+        badge_style = "gold"
+    elif total_score >= 80:
+        badge_style = "silver"
+    elif total_score >= 70:
+        badge_style = "bronze"
+    else:
+        badge_style = "failed"
     
     # Create certification record
     cert_id = str(uuid.uuid4())
@@ -885,6 +930,12 @@ async def registry_page(req: Request):
             }}
         }}
         
+        function getGradeInfo(score) {{
+            if (score >= 90) return {{ medal: '🥇', grade: 'GOLD', color: '#FFD700' }};
+            if (score >= 80) return {{ medal: '🥈', grade: 'SILVER', color: '#C0C0C0' }};
+            return {{ medal: '🥉', grade: 'BRONZE', color: '#CD7F32' }};
+        }}
+        
         function renderAgents(agents) {{
             const grid = document.getElementById('agentsGrid');
             
@@ -898,11 +949,14 @@ async def registry_page(req: Request):
                 return;
             }}
             
+            // Sort by score (highest first)
+            agents.sort((a, b) => b.score - a.score);
+            
             grid.innerHTML = agents.map(agent => {{
                 const date = new Date(agent.created_at).toLocaleDateString('en-US', {{ 
                     year: 'numeric', month: 'short', day: 'numeric' 
                 }});
-                const scoreClass = agent.score >= 90 ? '' : 'warning';
+                const gradeInfo = getGradeInfo(agent.score);
                 const planClass = agent.plan === 'enterprise' ? 'enterprise' : (agent.plan === 'pro' ? 'pro' : '');
                 const planLabel = agent.plan.charAt(0).toUpperCase() + agent.plan.slice(1);
                 
@@ -910,15 +964,16 @@ async def registry_page(req: Request):
                     <div class="agent-card">
                         <div class="agent-header">
                             <div>
-                                <div class="agent-name">${{agent.agent_name}}</div>
+                                <div class="agent-name">${{gradeInfo.medal}} ${{agent.agent_name}}</div>
                                 <div class="agent-url">${{agent.agent_url}}</div>
                             </div>
-                            <div class="agent-score ${{scoreClass}}">${{agent.score}}</div>
+                            <div class="agent-score" style="color: ${{gradeInfo.color}}">${{agent.score}}</div>
                         </div>
                         <div class="badge-embed">
                             <img src="${{BASE_URL}}/api/badge/${{agent.id}}.svg" alt="A2Apex Badge">
                         </div>
                         <div class="agent-meta">
+                            <span class="meta-tag" style="background: ${{gradeInfo.color}}22; color: ${{gradeInfo.color}}">${{gradeInfo.grade}}</span>
                             <span class="meta-tag ${{planClass}}">${{planLabel}}</span>
                             <span class="meta-tag">Certified ${{date}}</span>
                         </div>

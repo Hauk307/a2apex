@@ -663,6 +663,9 @@
         .score-circle.success .progress { stroke: var(--success); }
         .score-circle.warning .progress { stroke: var(--warning); }
         .score-circle.error .progress { stroke: var(--error); }
+        .score-circle.gold .progress { stroke: #FFD700; }
+        .score-circle.silver .progress { stroke: #C0C0C0; }
+        .score-circle.bronze .progress { stroke: #CD7F32; }
 
         .score-value {
             position: absolute;
@@ -2691,12 +2694,12 @@
                                 <div class="plan-desc">90-day badge</div>
                             </button>
                             <button class="certify-plan" data-plan="pro">
-                                <div class="plan-name">Pro</div>
-                                <div class="plan-desc">1-year verified</div>
+                                <div class="plan-name">Pro <span style="color: var(--text-muted); font-weight: 400;">$29/mo</span></div>
+                                <div class="plan-desc">1-year badge + PRO label</div>
                             </button>
                             <button class="certify-plan" data-plan="enterprise">
-                                <div class="plan-name">Enterprise</div>
-                                <div class="plan-desc">Premium badge</div>
+                                <div class="plan-name">Enterprise <span style="color: var(--text-muted); font-weight: 400;">$499/mo</span></div>
+                                <div class="plan-desc">Permanent + ENT label</div>
                             </button>
                         </div>
                         
@@ -3861,11 +3864,24 @@
             const offset = 283 - (283 * score / 100);
             scoreProgress.style.strokeDashoffset = offset;
             
-            // Color based on score
-            scoreCircle.classList.remove('success', 'warning', 'error');
-            if (score >= 80) scoreCircle.classList.add('success');
-            else if (score >= 50) scoreCircle.classList.add('warning');
-            else scoreCircle.classList.add('error');
+            // Color based on grade (gold/silver/bronze/fail)
+            scoreCircle.classList.remove('success', 'warning', 'error', 'gold', 'silver', 'bronze');
+            if (score >= 90) {
+                scoreCircle.classList.add('gold');
+                scoreProgress.style.stroke = '#FFD700';
+            } else if (score >= 80) {
+                scoreCircle.classList.add('silver');
+                scoreProgress.style.stroke = '#C0C0C0';
+            } else if (score >= 70) {
+                scoreCircle.classList.add('bronze');
+                scoreProgress.style.stroke = '#CD7F32';
+            } else if (score >= 50) {
+                scoreCircle.classList.add('warning');
+                scoreProgress.style.stroke = '';  // Use CSS default
+            } else {
+                scoreCircle.classList.add('error');
+                scoreProgress.style.stroke = '';  // Use CSS default
+            }
             
             // Update stats
             document.getElementById('stat-passed').textContent = passed || 0;
@@ -4312,7 +4328,7 @@
                 if (data.certified) {
                     showToast(`🏅 Certified! Score: ${data.score}/100`, 'success');
                 } else {
-                    showToast(`Score: ${data.score}/100 - Need 80+ to certify`, 'warning');
+                    showToast(`Score: ${data.score}/100 - Need 70+ to certify`, 'warning');
                 }
 
             } catch (error) {
@@ -4326,6 +4342,13 @@
             }
         }
 
+        function getGradeInfo(score) {
+            if (score >= 90) return { medal: '🥇', grade: 'GOLD', color: '#FFD700', nextTier: null };
+            if (score >= 80) return { medal: '🥈', grade: 'SILVER', color: '#C0C0C0', nextTier: 'Score 90+ for Gold!' };
+            if (score >= 70) return { medal: '🥉', grade: 'BRONZE', color: '#CD7F32', nextTier: 'Score 80+ for Silver!' };
+            return { medal: '❌', grade: 'FAILED', color: '#FF5252', nextTier: 'Score 70+ to certify!' };
+        }
+
         function renderCertificationResult(data) {
             const resultSection = document.getElementById('certify-result');
             const scoreBadge = document.getElementById('certify-score-badge');
@@ -4334,17 +4357,46 @@
 
             resultSection.style.display = 'block';
 
-            // Score
+            const gradeInfo = getGradeInfo(data.score);
+
+            // Score badge with grade color
             scoreBadge.textContent = data.score;
             scoreBadge.classList.toggle('failed', !data.certified);
+            scoreBadge.style.background = data.certified 
+                ? `linear-gradient(135deg, ${gradeInfo.color} 0%, ${gradeInfo.color}99 100%)`
+                : 'linear-gradient(135deg, var(--error) 0%, #CC0000 100%)';
+            scoreBadge.style.boxShadow = data.certified
+                ? `0 0 40px ${gradeInfo.color}44`
+                : '0 0 40px rgba(255, 82, 82, 0.3)';
+            // Text color for gold needs to be dark
+            scoreBadge.style.color = (data.score >= 90) ? '#0A1628' : 'white';
 
             // Status
             if (data.certified) {
                 statusDiv.className = 'certify-status passed';
-                statusDiv.innerHTML = `
-                    <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem;">✓ Certified!</div>
-                    <div>Your agent "${escapeHtml(data.agent_name)}" is now certified until ${new Date(data.expires_at).toLocaleDateString()}</div>
+                statusDiv.style.borderColor = gradeInfo.color;
+                statusDiv.style.background = `${gradeInfo.color}22`;
+                statusDiv.style.color = gradeInfo.color;
+                
+                let statusHtml = `
+                    <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+                        ${gradeInfo.medal} ${gradeInfo.grade} - Score: ${data.score}/100
+                    </div>
+                    <div style="color: var(--text-secondary);">
+                        Your agent "${escapeHtml(data.agent_name)}" is now certified until ${new Date(data.expires_at).toLocaleDateString()}
+                    </div>
                 `;
+                
+                // Add next tier hint if not gold
+                if (gradeInfo.nextTier) {
+                    statusHtml += `
+                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid ${gradeInfo.color}44; font-size: 0.875rem; color: var(--cyan);">
+                            💡 ${gradeInfo.nextTier}
+                        </div>
+                    `;
+                }
+                
+                statusDiv.innerHTML = statusHtml;
                 
                 // Show badge preview
                 badgePreview.style.display = 'block';
@@ -4354,9 +4406,15 @@
                 document.getElementById('embed-url').textContent = data.badge_url;
             } else {
                 statusDiv.className = 'certify-status failed';
+                statusDiv.style.borderColor = '';
+                statusDiv.style.background = '';
+                statusDiv.style.color = '';
                 statusDiv.innerHTML = `
                     <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem;">✗ Not Certified</div>
-                    <div>Score of 80+ required. Your agent scored ${data.score}/100. Fix issues and try again.</div>
+                    <div>Score of 70+ required. Your agent scored ${data.score}/100. Fix issues and try again.</div>
+                    <div style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--cyan);">
+                        💡 ${gradeInfo.nextTier}
+                    </div>
                 `;
                 badgePreview.style.display = 'none';
             }

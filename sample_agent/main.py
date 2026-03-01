@@ -152,7 +152,7 @@ AGENT_CARD = {
             "description": "Optional API key for authentication"
         }
     },
-    "security": [],
+    "security": [{"apiKey": []}],
     "provider": {
         "organization": "A2Apex Demo",
         "url": "https://github.com/a2aproject/A2A"
