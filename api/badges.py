@@ -504,7 +504,7 @@ async def get_certificate_page(cert_id: str):
         grade_glow = "rgba(255, 215, 0, 0.4)"
         ring_color_1 = "#FFD700"
         ring_color_2 = "#FFA500"
-        congrats = "Outstanding! Your agent demonstrates exceptional A2A protocol compliance."
+        congrats = "Your agent demonstrates exceptional A2A protocol compliance."
         particle_color = "#FFD700"
     elif score >= 80:
         grade = "SILVER"
@@ -515,7 +515,7 @@ async def get_certificate_page(cert_id: str):
         grade_glow = "rgba(192, 192, 192, 0.4)"
         ring_color_1 = "#E8E8E8"
         ring_color_2 = "#A8A8A8"
-        congrats = "Excellent work! Your agent meets A2A protocol verification standards."
+        congrats = "Your agent meets A2A protocol verification standards."
         particle_color = "#C0C0C0"
     else:
         grade = "BRONZE"
@@ -526,7 +526,7 @@ async def get_certificate_page(cert_id: str):
         grade_glow = "rgba(205, 127, 50, 0.4)"
         ring_color_1 = "#CD7F32"
         ring_color_2 = "#8B4513"
-        congrats = "Well done! Your agent has passed A2A protocol testing."
+        congrats = "Your agent has passed A2A protocol testing."
         particle_color = "#CD7F32"
 
     next_tier_html = ""
