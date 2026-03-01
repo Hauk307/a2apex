@@ -10,7 +10,7 @@
 
 **VISUAL:**
 - Logo: ⚡ A2Apex
-- Tagline: "Postman for AI Agents"
+- Tagline: Where AI Agents Earn Trust
 - Subtle particle/grid animation in background
 
 **NARRATION:** *(None — music only, logo speaks for itself)*

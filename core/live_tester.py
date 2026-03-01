@@ -2,7 +2,7 @@
 A2Apex Live Endpoint Tester
 
 Actually calls A2A agent endpoints and validates responses.
-This is the "Postman-like" testing functionality.
+This is the live testing functionality for A2A protocol compliance.
 
 Tests:
 - Agent Card fetch

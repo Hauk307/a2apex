@@ -3,11 +3,11 @@
 ## Product Hunt Listing
 
 ### Tagline (60 chars max)
-**Postman for AI Agents — Test A2A protocol compliance**
+**Where AI Agents Earn Trust — Test A2A protocol compliance**
 
 ### Description
 
-A2Apex is the first testing and validation tool for Google's A2A (Agent-to-Agent) protocol. Think Postman, but for AI agents that need to talk to each other.
+A2Apex is the first testing and validation tool for Google's A2A (Agent-to-Agent) protocol. The first testing and validation tool for AI agent interoperability.
 
 As AI agents become the new APIs, they need a standardized way to communicate. Google's A2A protocol is emerging as that standard — but until now, there's been no way to verify your agent actually implements it correctly.
 
@@ -48,7 +48,7 @@ Show HN: A2Apex – Testing tool for Google's A2A (Agent-to-Agent) protocol
 
 ### Body
 
-I built a testing and validation tool for Google's A2A protocol. Think of it as Postman, but for AI agents.
+I built a testing and validation tool for Google's A2A protocol. A2A protocol testing and certification tool.
 
 **What it does:**
 - Validates agent cards (the JSON that describes what an agent can do)
@@ -87,7 +87,7 @@ Curious what protocol edge cases others have run into with A2A.
 ## X/Twitter Launch Thread
 
 ### Tweet 1 — Hook
-🧵 Shipped something today: A2Apex — "Postman for AI Agents"
+🧵 Shipped something today: A2Apex — Where AI Agents Earn Trust
 
 It's a testing tool for Google's A2A (Agent-to-Agent) protocol.
 

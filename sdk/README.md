@@ -2,7 +2,7 @@
 
 **Test, validate, and certify A2A protocol implementations.**
 
-A2Apex is the testing toolkit for the [A2A (Agent-to-Agent) protocol](https://github.com/a2aproject/A2A) — the open standard for AI agent interoperability. Think "Postman for AI Agents."
+A2Apex is the testing toolkit for the [A2A (Agent-to-Agent) protocol](https://github.com/a2aproject/A2A) — the open standard for AI agent interoperability. Think "Where AI Agents Earn Trust."
 
 [![PyPI version](https://badge.fury.io/py/a2apex.svg)](https://badge.fury.io/py/a2apex)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)

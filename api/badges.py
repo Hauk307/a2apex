@@ -30,6 +30,105 @@ from core import (
 
 
 # ============================================================================
+# TEST USAGE TRACKING (Shared with main.py)
+# ============================================================================
+
+TEST_USAGE_DB_PATH = Path(__file__).parent.parent / "data" / "test_usage.db"
+FREE_TESTS_PER_MONTH = 3
+ANON_TESTS_TOTAL = 3
+
+
+def init_test_usage_db():
+    """Initialize the test usage database."""
+    TEST_USAGE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(TEST_USAGE_DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_test_usage (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            month TEXT NOT NULL,
+            test_count INTEGER NOT NULL DEFAULT 0,
+            UNIQUE(user_id, month)
+        )
+    """)
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS anon_test_usage (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ip_address TEXT UNIQUE NOT NULL,
+            test_count INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL
+        )
+    """)
+    
+    conn.commit()
+    conn.close()
+
+
+init_test_usage_db()
+
+
+def get_client_ip(request: Request) -> str:
+    """Get client IP address from request."""
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(',')[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+def check_test_limit_badges(request: Request, plan: str = "free") -> tuple[bool, int, str]:
+    """
+    Check if user can run a test based on their plan and usage.
+    Returns: (allowed, remaining, message)
+    """
+    # Pro and Enterprise have unlimited tests
+    if plan in ("pro", "enterprise"):
+        return True, -1, "Unlimited tests"
+    
+    conn = sqlite3.connect(TEST_USAGE_DB_PATH)
+    cursor = conn.cursor()
+    
+    # For badges, we use IP-based tracking for simplicity
+    ip_address = get_client_ip(request)
+    
+    cursor.execute("""
+        SELECT test_count FROM anon_test_usage WHERE ip_address = ?
+    """, (ip_address,))
+    row = cursor.fetchone()
+    
+    test_count = row[0] if row else 0
+    remaining = ANON_TESTS_TOTAL - test_count
+    
+    conn.close()
+    
+    if test_count >= ANON_TESTS_TOTAL:
+        return False, 0, f"You've used all {ANON_TESTS_TOTAL} free tests. Upgrade to Pro for unlimited testing."
+    
+    return True, remaining, f"{remaining} tests remaining"
+
+
+def record_test_usage_badges(request: Request) -> None:
+    """Record that a test was run."""
+    ip_address = get_client_ip(request)
+    now = datetime.utcnow().isoformat() + "Z"
+    
+    conn = sqlite3.connect(TEST_USAGE_DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        INSERT INTO anon_test_usage (ip_address, test_count, created_at)
+        VALUES (?, 1, ?)
+        ON CONFLICT(ip_address) 
+        DO UPDATE SET test_count = test_count + 1
+    """, (ip_address, now))
+    
+    conn.commit()
+    conn.close()
+
+
+# ============================================================================
 # DATABASE SETUP
 # ============================================================================
 
@@ -266,6 +365,18 @@ async def certify_agent(request: CertifyRequest, req: Request):
     if plan not in ["free", "pro", "enterprise"]:
         raise HTTPException(status_code=400, detail="Invalid plan. Must be: free, pro, or enterprise")
     
+    # Check test limit for free plan users
+    allowed, remaining, message = check_test_limit_badges(req, plan)
+    if not allowed:
+        return JSONResponse(
+            status_code=403,
+            content={
+                "error": "free_limit_reached",
+                "message": "You've used all 3 free tests this month. Upgrade to Pro for unlimited testing.",
+                "upgrade_url": "https://app.a2apex.io"
+            }
+        )
+    
     # Determine expiry based on plan
     # Badge style is now determined by score, not plan
     if plan == "enterprise":
@@ -347,6 +458,10 @@ async def certify_agent(request: CertifyRequest, req: Request):
     ))
     conn.commit()
     conn.close()
+    
+    # Record test usage for free tier users
+    if plan == "free":
+        record_test_usage_badges(req)
     
     # Build response
     base_url = str(req.base_url).rstrip("/")

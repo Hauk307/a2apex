@@ -2,7 +2,7 @@
 A2Apex API Server
 
 FastAPI server for A2A protocol testing and validation.
-The API behind "Postman for AI Agents".
+The API behind "Where AI Agents Earn Trust".
 """
 
 import os
@@ -10,6 +10,7 @@ import sys
 import uuid
 import json
 import time
+import sqlite3
 from typing import Optional
 from pathlib import Path
 from datetime import datetime
@@ -182,12 +183,194 @@ load_api_keys()
 
 
 # ============================================================================
+# TEST USAGE TRACKING (Free Tier 3-Test Limit)
+# ============================================================================
+
+TEST_USAGE_DB_PATH = Path(__file__).parent.parent / "data" / "test_usage.db"
+
+# Free tier limits
+FREE_TESTS_PER_MONTH = 3
+ANON_TESTS_TOTAL = 3  # Anonymous users get 3 total tests ever
+
+
+def init_test_usage_db():
+    """Initialize the test usage database."""
+    TEST_USAGE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(TEST_USAGE_DB_PATH)
+    cursor = conn.cursor()
+    
+    # Table for tracking by user (logged in users)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_test_usage (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            month TEXT NOT NULL,
+            test_count INTEGER NOT NULL DEFAULT 0,
+            UNIQUE(user_id, month)
+        )
+    """)
+    
+    # Table for tracking by IP (anonymous users)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS anon_test_usage (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ip_address TEXT UNIQUE NOT NULL,
+            test_count INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL
+        )
+    """)
+    
+    conn.commit()
+    conn.close()
+
+
+# Initialize on module load
+init_test_usage_db()
+
+
+def get_client_ip(request: Request) -> str:
+    """Get client IP address from request."""
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(',')[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+def get_user_plan(request: Request) -> tuple[Optional[str], str]:
+    """
+    Get user ID and plan from request.
+    Returns (user_id, plan) where plan is 'free', 'pro', or 'enterprise'.
+    If user_id is None, user is anonymous.
+    """
+    # Check for API key first
+    api_key = get_api_key(request)
+    if api_key and api_key in API_KEYS:
+        key_data = API_KEYS[api_key]
+        return key_data.get("user_id", api_key), key_data.get("plan", "pro")
+    
+    # Check for auth token (from cookies or headers)
+    # For now, treat all non-API-key users as anonymous free tier
+    # In a full implementation, this would check JWT tokens, sessions, etc.
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        # Would decode JWT and get user info here
+        # For now, return None to indicate anonymous
+        pass
+    
+    return None, "free"
+
+
+def check_test_limit(request: Request) -> tuple[bool, int, str]:
+    """
+    Check if user can run a test based on their plan and usage.
+    
+    Returns: (allowed, remaining, message)
+    """
+    user_id, plan = get_user_plan(request)
+    
+    # Pro and Enterprise have unlimited tests
+    if plan in ("pro", "enterprise"):
+        return True, -1, "Unlimited tests"
+    
+    conn = sqlite3.connect(TEST_USAGE_DB_PATH)
+    cursor = conn.cursor()
+    
+    if user_id:
+        # Logged in user - check monthly usage
+        current_month = datetime.utcnow().strftime("%Y-%m")
+        
+        cursor.execute("""
+            SELECT test_count FROM user_test_usage 
+            WHERE user_id = ? AND month = ?
+        """, (user_id, current_month))
+        row = cursor.fetchone()
+        
+        test_count = row[0] if row else 0
+        remaining = FREE_TESTS_PER_MONTH - test_count
+        
+        conn.close()
+        
+        if test_count >= FREE_TESTS_PER_MONTH:
+            return False, 0, f"You've used all {FREE_TESTS_PER_MONTH} free tests this month."
+        
+        return True, remaining, f"{remaining} tests remaining this month"
+    
+    else:
+        # Anonymous user - check IP-based total usage
+        ip_address = get_client_ip(request)
+        
+        cursor.execute("""
+            SELECT test_count FROM anon_test_usage WHERE ip_address = ?
+        """, (ip_address,))
+        row = cursor.fetchone()
+        
+        test_count = row[0] if row else 0
+        remaining = ANON_TESTS_TOTAL - test_count
+        
+        conn.close()
+        
+        if test_count >= ANON_TESTS_TOTAL:
+            return False, 0, f"You've used all {ANON_TESTS_TOTAL} free tests. Sign up for more!"
+        
+        return True, remaining, f"{remaining} tests remaining"
+
+
+def record_test_usage(request: Request) -> None:
+    """Record that a test was run."""
+    user_id, plan = get_user_plan(request)
+    
+    # Don't count for paid plans
+    if plan in ("pro", "enterprise"):
+        return
+    
+    conn = sqlite3.connect(TEST_USAGE_DB_PATH)
+    cursor = conn.cursor()
+    
+    if user_id:
+        # Logged in user - increment monthly count
+        current_month = datetime.utcnow().strftime("%Y-%m")
+        
+        cursor.execute("""
+            INSERT INTO user_test_usage (user_id, month, test_count)
+            VALUES (?, ?, 1)
+            ON CONFLICT(user_id, month) 
+            DO UPDATE SET test_count = test_count + 1
+        """, (user_id, current_month))
+    else:
+        # Anonymous user - increment IP-based count
+        ip_address = get_client_ip(request)
+        now = datetime.utcnow().isoformat() + "Z"
+        
+        cursor.execute("""
+            INSERT INTO anon_test_usage (ip_address, test_count, created_at)
+            VALUES (?, 1, ?)
+            ON CONFLICT(ip_address) 
+            DO UPDATE SET test_count = test_count + 1
+        """, (ip_address, now))
+    
+    conn.commit()
+    conn.close()
+
+
+def free_limit_error_response():
+    """Return the standard free limit reached error response."""
+    return JSONResponse(
+        status_code=403,
+        content={
+            "error": "free_limit_reached",
+            "message": "You've used all 3 free tests this month. Upgrade to Pro for unlimited testing.",
+            "upgrade_url": "https://app.a2apex.io"
+        }
+    )
+
+
+# ============================================================================
 # APP SETUP
 # ============================================================================
 
 app = FastAPI(
     title="A2Apex",
-    description="Postman for AI Agents - A2A Protocol Testing Tool",
+    description="Where AI Agents Earn Trust - A2A Protocol Testing Tool",
     version="0.2.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc"
@@ -452,10 +635,15 @@ async def validate_agent_card(request: AgentCardValidationRequest):
 
 
 @app.post("/api/test/task")
-async def test_task(request: TaskTestRequest):
+async def test_task(request: TaskTestRequest, req: Request):
     """
     Send a test task to an A2A agent and validate the response.
     """
+    # Check test limit for free users
+    allowed, remaining, message = check_test_limit(req)
+    if not allowed:
+        return free_limit_error_response()
+    
     try:
         report = await run_task_test(
             agent_url=request.agent_url,
@@ -463,13 +651,17 @@ async def test_task(request: TaskTestRequest):
             auth_header=request.auth_header,
             full_lifecycle=request.full_lifecycle
         )
+        
+        # Record usage after successful test
+        record_test_usage(req)
+        
         return report.to_dict()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/check/compliance")
-async def check_compliance(request: ComplianceCheckRequest):
+async def check_compliance(request: ComplianceCheckRequest, req: Request):
     """
     Run a comprehensive compliance check against an A2A agent.
     
@@ -480,12 +672,21 @@ async def check_compliance(request: ComplianceCheckRequest):
     - Error handling
     - Security configuration
     """
+    # Check test limit for free users
+    allowed, remaining, message = check_test_limit(req)
+    if not allowed:
+        return free_limit_error_response()
+    
     try:
         report = await run_compliance_check(
             agent_url=request.agent_url,
             auth_header=request.auth_header,
             timeout=request.timeout
         )
+        
+        # Record usage after successful test
+        record_test_usage(req)
+        
         return report.to_dict()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -496,7 +697,7 @@ async def check_compliance(request: ComplianceCheckRequest):
 # ============================================================================
 
 @app.post("/api/live-test")
-async def run_live_test(request: LiveTestRequest):
+async def run_live_test(request: LiveTestRequest, req: Request):
     """
     Run live endpoint tests against an A2A agent.
     
@@ -509,12 +710,20 @@ async def run_live_test(request: LiveTestRequest):
     - Streaming (if supported)
     - Error handling
     """
+    # Check test limit for free users
+    allowed, remaining, message = check_test_limit(req)
+    if not allowed:
+        return free_limit_error_response()
+    
     try:
         report = await run_live_tests(
             agent_url=request.agent_url,
             auth_header=request.auth_header,
             timeout=request.timeout
         )
+        
+        # Record usage after successful test
+        record_test_usage(req)
         
         # Store report for retrieval
         report_id = str(uuid.uuid4())

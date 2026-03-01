@@ -1,6 +1,6 @@
 # A2A Protocol Deep Dive — The Definitive Reference for A2Apex
 
-*Research compiled for building A2Apex: "Postman for AI Agents"*  
+*Research compiled for building A2Apex: Where AI Agents Earn Trust*  
 *Protocol Version: 0.3.0 (Release Candidate v1.0)*  
 *Last Updated: 2026-02-26*
 

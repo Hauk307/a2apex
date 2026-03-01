@@ -6,7 +6,7 @@
 <h1 align="center">A2Apex</h1>
 
 <p align="center">
-  <strong>Postman for AI Agents — Test A2A protocol compliance</strong>
+  <strong>Where AI Agents Earn Trust — Test A2A protocol compliance</strong>
 </p>
 
 <p align="center">
