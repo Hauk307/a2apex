@@ -2555,6 +2555,10 @@
                     <span class="tab-icon">🏅</span>
                     <span>Certify</span>
                 </button>
+                <button class="tab" data-tab="pricing">
+                    <span class="tab-icon">💎</span>
+                    <span>Pricing</span>
+                </button>
             </div>
         </div>
 
@@ -2761,6 +2765,137 @@
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div id="pricing-section" style="display: none; max-width: 900px; margin: 0 auto; padding: 1.5rem;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">
+                    💎 Choose Your Plan
+                </h2>
+                <p style="color: #8899AA; font-size: 1rem;">
+                    Every plan includes Bronze, Silver, and Gold badges based on your agent's score
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
+                
+                <!-- FREE -->
+                <div style="background: linear-gradient(135deg, #0D1D31, #111F36); border: 1px solid #1A2A3F; border-radius: 16px; padding: 2rem; position: relative;">
+                    <div style="font-size: 0.85rem; color: #00E5FF; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Free</div>
+                    <div style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">$0<span style="font-size: 1rem; color: #667788; font-weight: 400;">/mo</span></div>
+                    <p style="color: #667788; font-size: 0.9rem; margin-bottom: 1.5rem;">Get started testing your agents</p>
+                    <div style="border-top: 1px solid #1A2A3F; padding-top: 1.5rem;">
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">3 agent tests per month</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Embeddable badge (expires in 90 days)</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Basic registry listing</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Agent Card validation</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Community support</span>
+                        </div>
+                    </div>
+                    <button style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #1A2A3F; background: transparent; color: #00E5FF; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.background='#1A2A3F'" onmouseout="this.style.background='transparent'">Current Plan</button>
+                </div>
+                
+                <!-- PRO -->
+                <div style="background: linear-gradient(135deg, #0D1D31, #111F36); border: 2px solid #00E5FF; border-radius: 16px; padding: 2rem; position: relative;">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #00E5FF; color: #0A1628; padding: 4px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Most Popular</div>
+                    <div style="font-size: 0.85rem; color: #00E5FF; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Pro</div>
+                    <div style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">$29<span style="font-size: 1rem; color: #667788; font-weight: 400;">/mo</span></div>
+                    <p style="color: #667788; font-size: 0.9rem; margin-bottom: 1.5rem;">For teams shipping A2A agents</p>
+                    <div style="border-top: 1px solid #1A2A3F; padding-top: 1.5rem;">
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;"><strong>Unlimited</strong> agent tests</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Badge valid for <strong>1 year</strong></span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;"><strong>PRO verified</strong> badge indicator</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Re-test anytime</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">API access (100 req/min)</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Test history & analytics</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Email support</span>
+                        </div>
+                    </div>
+                    <button style="width: 100%; padding: 0.75rem; border-radius: 8px; border: none; background: #00E5FF; color: #0A1628; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Coming Soon</button>
+                </div>
+                
+                <!-- ENTERPRISE -->
+                <div style="background: linear-gradient(135deg, #0D1D31, #111F36); border: 1px solid #FFD70040; border-radius: 16px; padding: 2rem; position: relative;">
+                    <div style="font-size: 0.85rem; color: #FFD700; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Enterprise</div>
+                    <div style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">$499<span style="font-size: 1rem; color: #667788; font-weight: 400;">/mo</span></div>
+                    <p style="color: #667788; font-size: 0.9rem; margin-bottom: 1.5rem;">For organizations that need trust at scale</p>
+                    <div style="border-top: 1px solid #1A2A3F; padding-top: 1.5rem;">
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Everything in Pro</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;"><strong>Permanent</strong> badges (never expire)</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Custom badge branding</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Bulk agent testing</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;"><strong>Unlimited</strong> API access</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">CI/CD integration</span>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
+                            <span style="color: #CCDDEE; font-size: 0.9rem;">Priority support — direct Slack channel, 4-hour response</span>
+                        </div>
+                    </div>
+                    <button style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #FFD70060; background: transparent; color: #FFD700; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.background='#FFD70015'" onmouseout="this.style.background='transparent'">Contact Us</button>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: #0D1D31; border-radius: 12px; border: 1px solid #1A2A3F;">
+                <p style="color: #8899AA; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    🏅 <strong style="color: #CCDDEE;">Score determines your grade</strong> — Plan determines your perks
+                </p>
+                <p style="color: #667788; font-size: 0.85rem;">
+                    🥉 Bronze (70-79) · 🥈 Silver (80-89) · 🥇 Gold (90-100) — All plans, all grades
+                </p>
             </div>
         </div>
 
@@ -2984,6 +3119,7 @@
         function updateTabVisibility() {
             const chatSection = document.getElementById('chat-section');
             const certifySection = document.getElementById('certify-section');
+            const pricingSection = document.getElementById('pricing-section');
             const resultsPanel = document.getElementById('results-panel');
             const scoreCard = document.getElementById('score-card');
             const validationSection = document.getElementById('validation-section');
@@ -3007,6 +3143,18 @@
             } else if (currentTab === 'certify') {
                 chatSection.style.display = 'none';
                 certifySection.style.display = 'block';
+                pricingSection.style.display = 'none';
+                resultsPanel.style.display = 'none';
+                scoreCard.style.display = 'none';
+                validationSection.style.display = 'none';
+                categorySection.style.display = 'none';
+                agentCard.style.display = 'none';
+                dashboard.classList.add('visible');
+                featuresSection.style.display = 'none';
+            } else if (currentTab === 'pricing') {
+                chatSection.style.display = 'none';
+                certifySection.style.display = 'none';
+                pricingSection.style.display = 'block';
                 resultsPanel.style.display = 'none';
                 scoreCard.style.display = 'none';
                 validationSection.style.display = 'none';
@@ -3017,6 +3165,7 @@
             } else {
                 chatSection.style.display = 'none';
                 certifySection.style.display = 'none';
+                pricingSection.style.display = 'none';
             }
         }
 
