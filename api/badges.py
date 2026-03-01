@@ -187,24 +187,14 @@ def generate_badge_svg(
     elif plan == "pro":
         score_text = f"{score_text} | PRO"
     
-    # Calculate widths
-    # Brand section (A2Apex)
-    brand_label = "A2Apex"
-    brand_width = len(brand_label) * 7 + 16
-    
-    # Score section (the colored part based on grade)
-    score_section_width = len(score_text) * 6.5 + len(label) * 6 + 24
-    total_width = brand_width + score_section_width
-    
-    # Generate SVG with shields.io-style layout
-    # Left: Navy with cyan "A2Apex" text
-    # Right: Grade-colored section with label + score
+    # Calculate width — single full-width badge, no brand section
+    full_label = f"{label} | {score_text}"
+    total_width = len(full_label) * 7 + 32
     
     grade = grade_info["grade"]
     colors = grade_info["colors"]
     
     if grade == "gold":
-        # Gold gradient for 90+ scores
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{height}" viewBox="0 0 {total_width} {height}">
   <defs>
     <linearGradient id="grade-grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -216,12 +206,9 @@ def generate_badge_svg(
     </filter>
   </defs>
   <rect width="{total_width}" height="{height}" rx="4" fill="url(#grade-grad)"/>
-  <rect width="{brand_width}" height="{height}" rx="4" fill="{brand_bg}"/>
-  <text x="{brand_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{brand_text}" text-anchor="middle">{brand_label}</text>
-  <text x="{brand_width + score_section_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle" filter="url(#glow)">{label} | {score_text}</text>
+  <text x="{total_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle" filter="url(#glow)">{full_label}</text>
 </svg>'''
     elif grade == "silver":
-        # Silver gradient for 80-89 scores
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{height}" viewBox="0 0 {total_width} {height}">
   <defs>
     <linearGradient id="grade-grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -230,17 +217,12 @@ def generate_badge_svg(
     </linearGradient>
   </defs>
   <rect width="{total_width}" height="{height}" rx="4" fill="url(#grade-grad)"/>
-  <rect width="{brand_width}" height="{height}" rx="4" fill="{brand_bg}"/>
-  <text x="{brand_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{brand_text}" text-anchor="middle">{brand_label}</text>
-  <text x="{brand_width + score_section_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle">{label} | {score_text}</text>
+  <text x="{total_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle">{full_label}</text>
 </svg>'''
     else:
-        # Bronze solid color for 70-79 scores
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{height}" viewBox="0 0 {total_width} {height}">
   <rect width="{total_width}" height="{height}" rx="4" fill="{colors['start']}"/>
-  <rect width="{brand_width}" height="{height}" rx="4" fill="{brand_bg}"/>
-  <text x="{brand_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{brand_text}" text-anchor="middle">{brand_label}</text>
-  <text x="{brand_width + score_section_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle">{label} | {score_text}</text>
+  <text x="{total_width/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="{colors['text']}" text-anchor="middle">{full_label}</text>
 </svg>'''
     
     return svg
