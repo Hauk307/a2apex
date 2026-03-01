@@ -461,6 +461,410 @@ async def get_badge_svg(cert_id: str):
     )
 
 
+@router.get("/certificate/{cert_id}", response_class=HTMLResponse)
+async def get_certificate_page(cert_id: str):
+    """Full certificate celebration page."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT agent_name, agent_url, score, certified, badge_style, plan, created_at, expires_at
+        FROM certifications WHERE id = ?
+    """, (cert_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Certificate not found")
+
+    agent_name, agent_url, score, certified, badge_style, plan, created_at, expires_at = row
+
+    date_str = ""
+    if created_at:
+        try:
+            dt = datetime.fromisoformat(created_at.replace("Z", ""))
+            date_str = dt.strftime("%B %d, %Y")
+        except:
+            date_str = created_at[:10]
+
+    exp_str = ""
+    if expires_at:
+        try:
+            dt = datetime.fromisoformat(expires_at.replace("Z", ""))
+            exp_str = dt.strftime("%B %d, %Y")
+        except:
+            pass
+
+    # Determine grade
+    if score >= 90:
+        grade = "GOLD"
+        grade_emoji = "🥇"
+        grade_title = "A2Apex Certified"
+        grade_color = "#FFD700"
+        grade_gradient = "linear-gradient(135deg, #FFD700, #FFA500)"
+        grade_glow = "rgba(255, 215, 0, 0.4)"
+        ring_color_1 = "#FFD700"
+        ring_color_2 = "#FFA500"
+        congrats = "Outstanding! Your agent demonstrates exceptional A2A protocol compliance."
+        particle_color = "#FFD700"
+    elif score >= 80:
+        grade = "SILVER"
+        grade_emoji = "🥈"
+        grade_title = "A2Apex Verified"
+        grade_color = "#C0C0C0"
+        grade_gradient = "linear-gradient(135deg, #E8E8E8, #A8A8A8)"
+        grade_glow = "rgba(192, 192, 192, 0.4)"
+        ring_color_1 = "#E8E8E8"
+        ring_color_2 = "#A8A8A8"
+        congrats = "Excellent work! Your agent meets A2A protocol verification standards."
+        particle_color = "#C0C0C0"
+    else:
+        grade = "BRONZE"
+        grade_emoji = "🥉"
+        grade_title = "A2Apex Tested"
+        grade_color = "#CD7F32"
+        grade_gradient = "linear-gradient(135deg, #CD7F32, #8B4513)"
+        grade_glow = "rgba(205, 127, 50, 0.4)"
+        ring_color_1 = "#CD7F32"
+        ring_color_2 = "#8B4513"
+        congrats = "Well done! Your agent has passed A2A protocol testing."
+        particle_color = "#CD7F32"
+
+    next_tier_html = ""
+    if score < 80:
+        next_tier_html = f'<p class="next-tier">Score 80+ to earn <span style="color: #C0C0C0">🥈 Silver — A2Apex Verified</span></p>'
+    elif score < 90:
+        next_tier_html = f'<p class="next-tier">Score 90+ to earn <span style="color: #FFD700">🥇 Gold — A2Apex Certified</span></p>'
+
+    badge_url = f"https://app.a2apex.io/api/badge/{cert_id}.svg"
+    cert_url = f"https://app.a2apex.io/api/certificate/{cert_id}"
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{grade_emoji} {agent_name} — {grade_title}</title>
+    <meta property="og:title" content="{agent_name} — {grade_title}">
+    <meta property="og:description" content="Scored {score}/100 on A2A protocol compliance testing">
+    <meta property="og:image" content="{badge_url}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            background: #0A1628;
+            color: #E0E0E0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }}
+        .particles {{
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }}
+        .particle {{
+            position: absolute;
+            border-radius: 50%;
+            background: {particle_color};
+            opacity: 0;
+            animation: float-up 3s ease-out forwards;
+        }}
+        @keyframes float-up {{
+            0% {{ opacity: 0; transform: translateY(100vh) scale(0); }}
+            20% {{ opacity: 0.8; }}
+            100% {{ opacity: 0; transform: translateY(-20vh) scale(1); }}
+        }}
+        .container {{
+            position: relative;
+            z-index: 1;
+            max-width: 640px;
+            width: 100%;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }}
+        .logo {{
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #00E5FF;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            display: inline-block;
+            filter: brightness(1.3) drop-shadow(0 0 10px rgba(0, 229, 255, 0.3));
+        }}
+        .congrats {{
+            font-size: 1.1rem;
+            color: #8899AA;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }}
+        .certificate {{
+            background: linear-gradient(135deg, #0D1D31, #111F36);
+            border: 2px solid {grade_color}40;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }}
+        .certificate::before {{
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 20px;
+            background: {grade_gradient};
+            opacity: 0.1;
+            z-index: 0;
+        }}
+        .certificate > * {{ position: relative; z-index: 1; }}
+        .medal {{
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            animation: medal-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }}
+        @keyframes medal-drop {{
+            0% {{ opacity: 0; transform: translateY(-60px) scale(0.3); }}
+            100% {{ opacity: 1; transform: translateY(0) scale(1); }}
+        }}
+        .grade-label {{
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: {grade_gradient};
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: 3px;
+        }}
+        .grade-title {{
+            font-size: 1.1rem;
+            color: {grade_color};
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }}
+        .score-ring {{
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }}
+        .score-ring svg {{
+            transform: rotate(-90deg);
+        }}
+        .score-ring .bg {{
+            fill: none;
+            stroke: #1A2A3F;
+            stroke-width: 8;
+        }}
+        .score-ring .progress {{
+            fill: none;
+            stroke: url(#scoreGrad);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: {score * 3.77} 377;
+            animation: fill-ring 1.5s ease-out forwards;
+        }}
+        @keyframes fill-ring {{
+            0% {{ stroke-dasharray: 0 377; }}
+        }}
+        .score-number {{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: {grade_color};
+        }}
+        .score-label {{
+            font-size: 0.85rem;
+            color: #667788;
+            margin-bottom: 1.5rem;
+        }}
+        .agent-name {{
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 0.3rem;
+        }}
+        .agent-url {{
+            font-size: 0.85rem;
+            color: #00E5FF;
+            word-break: break-all;
+            margin-bottom: 1rem;
+        }}
+        .cert-date {{
+            font-size: 0.8rem;
+            color: #556677;
+        }}
+        .next-tier {{
+            font-size: 0.95rem;
+            color: #667788;
+            margin-bottom: 2rem;
+        }}
+        .embed-section {{
+            background: #0D1D31;
+            border: 1px solid #1A2A3F;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }}
+        .embed-title {{
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #8899AA;
+            margin-bottom: 0.75rem;
+        }}
+        .embed-preview {{
+            text-align: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #0A1628;
+            border-radius: 8px;
+        }}
+        .embed-code {{
+            background: #0A1628;
+            border: 1px solid #1A2A3F;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #00E5FF;
+            word-break: break-all;
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.2s;
+        }}
+        .embed-code:hover {{
+            border-color: #00E5FF40;
+        }}
+        .embed-code::after {{
+            content: 'Click to copy';
+            position: absolute;
+            top: -8px;
+            right: 8px;
+            background: #0D1D31;
+            padding: 0 6px;
+            font-size: 0.65rem;
+            color: #556677;
+        }}
+        .copied {{
+            border-color: #00E5FF !important;
+        }}
+        .copied::after {{
+            content: '✓ Copied!' !important;
+            color: #00E5FF !important;
+        }}
+        .footer {{
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #445566;
+        }}
+        .footer a {{
+            color: #00E5FF;
+            text-decoration: none;
+        }}
+        @media (max-width: 480px) {{
+            .grade-label {{ font-size: 1.4rem; }}
+            .certificate {{ padding: 2rem 1.5rem; }}
+            .score-number {{ font-size: 2rem; }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="container">
+        <a href="https://a2apex.io" class="logo">A2APEX</a>
+        
+        <p class="congrats">🎉 Congratulations! {congrats}</p>
+        
+        <div class="certificate">
+            <div class="medal">{grade_emoji}</div>
+            <div class="grade-label">{grade}</div>
+            <div class="grade-title">{grade_title}</div>
+            
+            <div class="score-ring">
+                <svg width="140" height="140" viewBox="0 0 140 140">
+                    <defs>
+                        <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color: {ring_color_1}"/>
+                            <stop offset="100%" style="stop-color: {ring_color_2}"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="bg" cx="70" cy="70" r="60"/>
+                    <circle class="progress" cx="70" cy="70" r="60"/>
+                </svg>
+                <div class="score-number">{score}</div>
+            </div>
+            <div class="score-label">Compliance Score out of 100</div>
+            
+            <div class="agent-name">{agent_name}</div>
+            <div class="agent-url">{agent_url}</div>
+            <div class="cert-date">Certified on {date_str}{f' · Expires {exp_str}' if exp_str else ''}</div>
+        </div>
+        
+        {next_tier_html}
+        
+        <div class="embed-section">
+            <div class="embed-title">📛 Embed this badge</div>
+            <div class="embed-preview">
+                <img src="{badge_url}" alt="A2Apex Badge" style="height: 28px;">
+            </div>
+            <div class="embed-code" onclick="copyEmbed(this, 'md')">
+                [![A2Apex {grade_title}]({badge_url})]({cert_url})
+            </div>
+            <br>
+            <div class="embed-code" onclick="copyEmbed(this, 'html')">
+                &lt;a href="{cert_url}"&gt;&lt;img src="{badge_url}" alt="A2Apex {grade_title}"&gt;&lt;/a&gt;
+            </div>
+            <br>
+            <div class="embed-code" onclick="copyEmbed(this, 'url')">
+                {badge_url}
+            </div>
+        </div>
+        
+        <div class="footer">
+            <a href="https://a2apex.io">A2Apex</a> — The Testing Platform for AI Agents<br>
+            <a href="https://app.a2apex.io/api/registry-page">View Public Registry</a>
+        </div>
+    </div>
+    
+    <script>
+        // Particle celebration
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 40; i++) {{
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.width = p.style.height = (Math.random() * 8 + 4) + 'px';
+            p.style.animationDelay = (Math.random() * 2) + 's';
+            p.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            container.appendChild(p);
+        }}
+        
+        function copyEmbed(el, type) {{
+            const text = el.textContent.trim();
+            navigator.clipboard.writeText(text).then(() => {{
+                el.classList.add('copied');
+                setTimeout(() => el.classList.remove('copied'), 2000);
+            }});
+        }}
+    </script>
+</body>
+</html>"""
+
+    return HTMLResponse(content=html)
+
+
 @router.get("/badge/{cert_id}.json")
 async def get_badge_json(cert_id: str):
     """
