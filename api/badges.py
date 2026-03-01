@@ -757,6 +757,15 @@ async def get_certificate_page(cert_id: str):
             font-size: 0.65rem;
             color: #556677;
         }}
+        .embed-label {{
+            font-size: 0.85rem;
+            color: #8899AA;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }}
+        .embed-label strong {{
+            color: #CCDDEE;
+        }}
         .copied {{
             border-color: #00E5FF !important;
         }}
@@ -819,14 +828,17 @@ async def get_certificate_page(cert_id: str):
             <div class="embed-preview">
                 <img src="{badge_url}" alt="A2Apex Badge" style="height: 28px;">
             </div>
+            <p class="embed-label">📝 <strong>Markdown</strong> — Paste into your GitHub README, docs, or any .md file</p>
             <div class="embed-code" onclick="copyEmbed(this, 'md')">
                 [![A2Apex {grade_title}]({badge_url})]({cert_url})
             </div>
             <br>
+            <p class="embed-label">🌐 <strong>HTML</strong> — Add to your website, landing page, or agent documentation</p>
             <div class="embed-code" onclick="copyEmbed(this, 'html')">
                 &lt;a href="{cert_url}"&gt;&lt;img src="{badge_url}" alt="A2Apex {grade_title}"&gt;&lt;/a&gt;
             </div>
             <br>
+            <p class="embed-label">🔗 <strong>Direct URL</strong> — Share anywhere or use as an image link</p>
             <div class="embed-code" onclick="copyEmbed(this, 'url')">
                 {badge_url}
             </div>
