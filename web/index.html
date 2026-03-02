@@ -3686,6 +3686,11 @@
             }
         });
 
+        // Send button click
+        btnChatSend.addEventListener('click', () => {
+            sendChatMessage();
+        });
+
         // Auto-resize textarea
         chatInput.addEventListener('input', () => {
             chatInput.style.height = 'auto';

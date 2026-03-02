@@ -1047,6 +1047,12 @@ async def chat_with_agent(request: ChatRequest):
     
     # Determine A2A endpoint URL
     base_url = request.agent_url.rstrip("/")
+    
+    # Rewrite proxied sample-agent URL back to localhost
+    if "/sample-agent/" in base_url or base_url.endswith("/sample-agent"):
+        base_url = base_url.replace("https://app.a2apex.io/sample-agent", "http://localhost:8092")
+        base_url = base_url.replace("http://app.a2apex.io/sample-agent", "http://localhost:8092")
+    
     if base_url.endswith("/a2a"):
         a2a_url = base_url
     else:
