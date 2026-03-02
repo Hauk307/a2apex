@@ -1821,7 +1821,11 @@ async def serve_ui():
     """Serve the main web UI."""
     index_path = WEB_DIR / "index.html"
     if index_path.exists():
-        return HTMLResponse(content=index_path.read_text(), status_code=200)
+        return HTMLResponse(
+            content=index_path.read_text(), 
+            status_code=200,
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+        )
     else:
         return HTMLResponse(
             content="<h1>A2Apex</h1><p>Web UI not found. API available at /api/docs</p>",
