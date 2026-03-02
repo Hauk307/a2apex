@@ -283,7 +283,7 @@ router = APIRouter(prefix="/api", tags=["Payments"])
 
 
 @router.get("/stripe-config")
-async def get_stripe_config():
+async def get_stripe_config_endpoint():
     """Get the Stripe publishable key for client-side use."""
     return {"publishable_key": STRIPE_PUBLISHABLE_KEY}
 
