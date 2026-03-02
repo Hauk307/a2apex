@@ -2739,7 +2739,7 @@
                 
                 <!-- Auth: Login Button (shown when logged out) -->
                 <button class="btn-login" id="btn-show-login" onclick="showAuthModal()">
-                    <span>👤</span> Sign In
+                    Sign In
                 </button>
                 
                 <!-- Auth: User Menu (shown when logged in) -->
@@ -2754,14 +2754,14 @@
                     </div>
                     <div class="user-dropdown-menu">
                         <div class="dropdown-item" onclick="showApiKey()">
-                            <span>🔑</span> API Key
+                            API Key
                         </div>
                         <div class="dropdown-item" onclick="manageSubscription()" id="manage-subscription-item" style="display: none;">
-                            <span>💳</span> Manage Subscription
+                            Manage Subscription
                         </div>
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item danger" onclick="logout()">
-                            <span>🚪</span> Sign Out
+                            Sign Out
                         </div>
                     </div>
                 </div>
@@ -2792,7 +2792,7 @@
             <div class="url-bar">
                 <div class="url-input-row">
                     <div class="url-input-wrapper">
-                        <span class="url-icon">🌐</span>
+                        
                         <input 
                             type="url" 
                             id="agent-url" 
@@ -2804,7 +2804,7 @@
                 </div>
                 <div class="btn-row">
                     <button class="btn-secondary" id="btn-demo">
-                        <span>🎮</span> Demo
+                        Demo
                     </button>
                     <button class="btn-primary" id="btn-run">
                         <span class="btn-icon">▶</span>
@@ -2838,7 +2838,7 @@
                     <span>Debug Chat</span>
                 </button>
                 <button class="tab" data-tab="certify">
-                    <span class="tab-icon">🏅</span>
+                    
                     <span>Certify</span>
                 </button>
             </div>
@@ -2849,7 +2849,7 @@
             <!-- Agent Card Display -->
             <div id="agent-card-section" class="agent-card" style="display: none;">
                 <div class="agent-header">
-                    <div class="agent-avatar" id="agent-avatar">🤖</div>
+                    <div class="agent-avatar" id="agent-avatar"></div>
                     <div class="agent-info">
                         <h3 class="agent-name" id="agent-name">Agent Name</h3>
                         <p class="agent-description" id="agent-description">Description...</p>
@@ -2898,7 +2898,7 @@
             <div class="results-panel" id="results-panel" style="display: none;">
                 <div class="results-header">
                     <div class="results-title">
-                        <span>📝</span> Test Results
+                        Test Results
                     </div>
                     <div class="results-meta" id="results-time">—</div>
                 </div>
@@ -2947,7 +2947,7 @@
             <div id="demo-section" class="demo-panel" style="display: none;">
                 <div class="demo-header">
                     <div class="demo-title">
-                        <span>🎮</span> Demo Mode
+                        Demo Mode
                     </div>
                     <div class="demo-status-badge running" id="demo-status">Running...</div>
                 </div>
@@ -2964,7 +2964,7 @@
             <div id="certify-section" class="certify-panel" style="display: none;">
                 <div class="certify-header">
                     <div class="certify-title">
-                        <span>🏅</span> Agent Certification
+                        Agent Certification
                     </div>
                 </div>
                 <div class="certify-body">
@@ -2990,7 +2990,7 @@
                         </div>
                         
                         <button class="btn-certify" id="btn-certify" onclick="runCertification()">
-                            <span class="btn-icon">🏅</span>
+                            
                             <span class="btn-text">Run Certification Tests</span>
                         </button>
                     </div>
@@ -3068,17 +3068,17 @@
                     <p>Actually call your agent's endpoints and validate JSON-RPC responses.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔄</div>
+                    
                     <h3>State Machine Validation</h3>
                     <p>Ensure your task state transitions follow the A2A protocol rules.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">📡</div>
+                    
                     <h3>Streaming Tests</h3>
                     <p>Verify Server-Sent Events (SSE) streaming implementation.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
+                    
                     <h3>Security Checking</h3>
                     <p>Validate authentication schemes, HTTPS, and security configurations.</p>
                 </div>
@@ -3167,7 +3167,7 @@
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title">
-                    <span>🔐</span> Welcome to A2Apex
+                    Welcome to A2Apex
                 </div>
                 <button class="modal-close" onclick="hideAuthModal()">✕</button>
             </div>
@@ -3221,7 +3221,7 @@
         <div class="modal" style="max-width: 480px;">
             <div class="modal-header">
                 <div class="modal-title">
-                    <span>🔑</span> Your API Key
+                    Your API Key
                 </div>
                 <button class="modal-close" onclick="hideApiKeyModal()">✕</button>
             </div>
@@ -3311,12 +3311,12 @@
             modal.innerHTML = `
                 <div class="upgrade-modal-overlay" onclick="closeUpgradeModal()">
                     <div class="upgrade-modal-content" onclick="event.stopPropagation()">
-                        <div class="upgrade-modal-icon">🚫</div>
+                        
                         <h3>Free Limit Reached</h3>
                         <p>${escapeHtml(message)}</p>
                         <div class="upgrade-modal-actions">
                             <button class="btn btn-primary" onclick="goToPricing()">
-                                🚀 Upgrade to Pro
+                                Upgrade to Pro
                             </button>
                             <button class="btn btn-secondary" onclick="closeUpgradeModal()">
                                 Maybe Later
@@ -3535,9 +3535,9 @@
             // Show pending tests
             const pendingTests = [
                 { name: 'Fetch Agent Card', icon: '' },
-                { name: 'Echo Skill', icon: '🔊' },
-                { name: 'Weather Skill', icon: '🌤️' },
-                { name: 'tasks/get', icon: '📥' },
+                { name: 'Echo Skill', icon: '' },
+                { name: 'Weather Skill', icon: '' },
+                { name: 'tasks/get', icon: '' },
                 { name: 'tasks/cancel', icon: '❌' }
             ];
             
@@ -3632,7 +3632,7 @@
                 showToast('Demo failed: ' + error.message, 'error');
             } finally {
                 btnDemo.disabled = false;
-                btnDemo.innerHTML = '<span>🎮</span> Demo';
+                btnDemo.innerHTML = 'Demo';
                 isLoading = false;
             }
         }
@@ -3782,7 +3782,7 @@
                         artifactsHtml = `
                             <div class="chat-artifacts">
                                 <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem;">
-                                    📦 ${artifacts.length} Artifact(s)
+                                    ${artifacts.length} Artifact(s)
                                 </div>
                                 ${artifacts.map(art => `
                                     <div class="chat-artifact">
@@ -4046,7 +4046,7 @@
                                         ${result.suggestion ? `
                                             <div class="detail-section">
                                                 <div class="detail-label">Suggestion</div>
-                                                <div class="validation-suggestion">💡 ${escapeHtml(result.suggestion)}</div>
+                                                <div class="validation-suggestion">${escapeHtml(result.suggestion)}</div>
                                             </div>
                                         ` : ''}
                                         ${result.details ? `
@@ -4253,7 +4253,7 @@
                                 <div>
                                     <div class="validation-message">${escapeHtml(item.message)}</div>
                                     ${item.suggestion ? `
-                                        <div class="validation-suggestion">💡 ${escapeHtml(item.suggestion)}</div>
+                                        <div class="validation-suggestion">${escapeHtml(item.suggestion)}</div>
                                     ` : ''}
                                 </div>
                             </div>
@@ -4952,7 +4952,7 @@
                 showToast('Certification failed: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="btn-icon">🏅</span><span class="btn-text">Run Certification Tests</span>';
+                btn.innerHTML = '<span class="btn-text">Run Certification Tests</span>';
                 isLoading = false;
             }
         }
