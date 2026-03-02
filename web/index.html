@@ -2711,19 +2711,19 @@
             <!-- Center: Navigation Links -->
             <nav class="toolbar-nav">
                 <a href="/api/docs" class="toolbar-link">
-                    <span class="toolbar-icon">📖</span>
+                    
                     <span>API Docs</span>
                 </a>
                 <a href="https://github.com/a2aproject/A2A" class="toolbar-link" target="_blank" rel="noopener">
-                    <span class="toolbar-icon">📜</span>
+                    
                     <span>A2A Spec</span>
                 </a>
                 <a href="/api/registry-page" class="toolbar-link" target="_blank">
-                    <span class="toolbar-icon">📋</span>
+                    
                     <span>Registry</span>
                 </a>
                 <a href="#pricing" class="toolbar-link">
-                    <span class="toolbar-icon">💎</span>
+                    
                     <span>Pricing</span>
                 </a>
             </nav>
@@ -2770,10 +2770,10 @@
         
         <!-- Mobile Navigation Menu -->
         <nav class="mobile-nav" id="mobile-nav">
-            <a href="/api/docs" class="mobile-nav-link">📖 API Docs</a>
-            <a href="https://github.com/a2aproject/A2A" class="mobile-nav-link" target="_blank">📜 A2A Spec</a>
-            <a href="/api/registry-page" class="mobile-nav-link" target="_blank">📋 Registry</a>
-            <a href="#pricing" class="mobile-nav-link">💎 Pricing</a>
+            <a href="/api/docs" class="mobile-nav-link">API Docs</a>
+            <a href="https://github.com/a2aproject/A2A" class="mobile-nav-link" target="_blank">A2A Spec</a>
+            <a href="/api/registry-page" class="mobile-nav-link" target="_blank">Registry</a>
+            <a href="#pricing" class="mobile-nav-link">Pricing</a>
         </nav>
     </header>
 
@@ -2818,23 +2818,23 @@
         <div class="tabs-wrapper">
             <div class="tabs">
                 <button class="tab active" data-tab="live">
-                    <span class="tab-icon">⚡</span>
+                    
                     <span>Live Test</span>
                 </button>
                 <button class="tab" data-tab="validate">
-                    <span class="tab-icon">📋</span>
+                    
                     <span>Validate</span>
                 </button>
                 <button class="tab" data-tab="compliance">
-                    <span class="tab-icon">✅</span>
+                    
                     <span>Compliance</span>
                 </button>
                 <button class="tab" data-tab="full">
-                    <span class="tab-icon">🏆</span>
+                    
                     <span>Full Suite</span>
                 </button>
                 <button class="tab" data-tab="chat">
-                    <span class="tab-icon">💬</span>
+                    
                     <span>Debug Chat</span>
                 </button>
                 <button class="tab" data-tab="certify">
@@ -2915,7 +2915,7 @@
             <div id="chat-section" class="chat-panel" style="display: none;">
                 <div class="chat-header">
                     <div class="chat-title">
-                        <span>💬</span> Debug Chat
+                        Debug Chat
                     </div>
                     <div class="chat-controls">
                         <label class="chat-toggle">
@@ -2927,7 +2927,7 @@
                 </div>
                 <div class="chat-messages" id="chat-messages">
                     <div class="chat-empty">
-                        <div class="chat-empty-icon">💬</div>
+                        
                         <h4>Start a Conversation</h4>
                         <p>Enter an agent URL above and send a message to test the A2A protocol.</p>
                     </div>
@@ -3043,7 +3043,7 @@
                     
                     <div class="certify-registry-link">
                         <a href="/api/registry-page" target="_blank">
-                            📋 View Public Registry →
+                            View Public Registry →
                         </a>
                     </div>
                 </div>
@@ -3058,12 +3058,12 @@
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
+                    
                     <h3>Agent Card Validation</h3>
                     <p>Full spec compliance checking with detailed error messages and fix suggestions.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
+                    
                     <h3>Live Endpoint Testing</h3>
                     <p>Actually call your agent's endpoints and validate JSON-RPC responses.</p>
                 </div>
@@ -3083,7 +3083,7 @@
                     <p>Validate authentication schemes, HTTPS, and security configurations.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">📊</div>
+                    
                     <h3>Compliance Score</h3>
                     <p>Get a clear score showing how well your agent follows the A2A spec.</p>
                 </div>
@@ -3143,7 +3143,7 @@
                 <a href="mailto:team@a2apex.io" class="pricing-btn pricing-btn-gold">Contact Us</a>
             </div>
         </div>
-        <p class="pricing-note">🎉 Start free, upgrade when you're ready. Cancel anytime.</p>
+        <p class="pricing-note">Start free, upgrade when you're ready. Cancel anytime.</p>
     </section>
 
     <!-- ══════════════════════════════════════════════════════════════════════
@@ -3534,7 +3534,7 @@
             
             // Show pending tests
             const pendingTests = [
-                { name: 'Fetch Agent Card', icon: '📋' },
+                { name: 'Fetch Agent Card', icon: '' },
                 { name: 'Echo Skill', icon: '🔊' },
                 { name: 'Weather Skill', icon: '🌤️' },
                 { name: 'tasks/get', icon: '📥' },
@@ -3756,7 +3756,7 @@
             if (chatHistory.length === 0) {
                 container.innerHTML = `
                     <div class="chat-empty">
-                        <div class="chat-empty-icon">💬</div>
+                        
                         <h4>Start a Conversation</h4>
                         <p>Enter an agent URL above and send a message to test the A2A protocol.</p>
                     </div>
@@ -4670,7 +4670,7 @@
                 
                 updateAuthUI();
                 hideAuthModal();
-                showToast(`Welcome to A2Apex, ${currentUser.name}! 🎉`, 'success');
+                showToast(`Welcome to A2Apex, ${currentUser.name}!`, 'success');
                 
             } catch (e) {
                 showAuthError(e.message);
@@ -4794,7 +4794,7 @@
             
             if (urlParams.get('success') === 'true') {
                 const plan = urlParams.get('plan') || 'your new';
-                showToast(`🎉 Welcome to ${plan.charAt(0).toUpperCase() + plan.slice(1)}! Your subscription is now active.`, 'success');
+                showToast(`Welcome to ${plan.charAt(0).toUpperCase() + plan.slice(1)}! Your subscription is now active.`, 'success');
                 
                 // Clean up URL
                 window.history.replaceState({}, document.title, window.location.pathname);
