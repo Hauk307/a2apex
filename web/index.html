@@ -3990,7 +3990,7 @@
             let categoryHtml = '';
             
             for (const [catName, catData] of Object.entries(categories)) {
-                const icon = catData.icon || '📋';
+                const icon = catData.icon || '';
                 const catSummary = catData.summary || {};
                 const results = catData.results || [];
                 const error = catData.error;
