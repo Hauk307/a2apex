@@ -107,37 +107,39 @@
         h4 { font-size: 1rem; font-weight: 600; line-height: 1.4; }
 
         /* ════════════════════════════════════════════════════════════════════
-           HEADER / NAV
+           TOP TOOLBAR / NAVIGATION BAR
            ════════════════════════════════════════════════════════════════════ */
         .header {
             position: sticky;
             top: 0;
             z-index: 100;
-            height: var(--header-height);
-            background: rgba(10, 22, 40, 0.92);
-            backdrop-filter: blur(16px);
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
 
         .header-inner {
             max-width: 1400px;
-            height: 100%;
+            height: var(--header-height);
             margin: 0 auto;
             padding: 0 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 1.5rem;
         }
 
+        /* Logo */
         .logo {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             text-decoration: none;
+            flex-shrink: 0;
         }
 
         .logo-img {
-            height: 32px;
+            height: 28px;
             filter: brightness(1.5) drop-shadow(0 0 20px rgba(25, 193, 244, 0.5));
             transition: all var(--transition-fast);
         }
@@ -157,55 +159,145 @@
             letter-spacing: 0.05em;
         }
 
-        .nav-center {
+        /* Toolbar Navigation */
+        .toolbar-nav {
             display: none;
+            align-items: center;
+            gap: 0.25rem;
+            flex: 1;
+            justify-content: center;
         }
 
-        .nav-right {
+        .toolbar-link {
             display: flex;
             align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-link {
+            gap: 0.5rem;
+            padding: 0.5rem 0.875rem;
             color: var(--text-secondary);
             text-decoration: none;
             font-size: 0.875rem;
             font-weight: 500;
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
+            border-radius: 8px;
             transition: all var(--transition-fast);
+            white-space: nowrap;
         }
 
-        .nav-link:hover {
+        .toolbar-link:hover {
             color: var(--cyan);
             background: var(--cyan-subtle);
         }
 
-        .btn-docs {
+        .toolbar-icon {
+            font-size: 1rem;
+        }
+
+        /* Toolbar Right */
+        .toolbar-right {
             display: flex;
             align-items: center;
-            gap: 0.375rem;
-            padding: 0.5rem 1rem;
-            background: var(--bg-card);
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            width: 32px;
+            height: 32px;
+            padding: 4px;
+            background: transparent;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-decoration: none;
+            border-radius: 6px;
+            cursor: pointer;
             transition: all var(--transition-fast);
         }
 
-        .btn-docs:hover {
+        .mobile-menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--text-secondary);
+            border-radius: 1px;
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-toggle:hover {
             border-color: var(--cyan);
+        }
+
+        .mobile-menu-toggle:hover span {
+            background: var(--cyan);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            flex-direction: column;
+            padding: 0.5rem 1rem 1rem;
+            background: rgba(10, 22, 40, 0.98);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-nav.open {
+            display: flex;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-nav-link:hover {
+            color: var(--cyan);
             background: var(--cyan-subtle);
         }
 
+        /* Desktop: Show toolbar nav, hide mobile toggle */
         @media (min-width: 768px) {
-            .nav-center {
+            .toolbar-nav {
                 display: flex;
-                gap: 0.25rem;
+            }
+
+            .mobile-menu-toggle {
+                display: none;
+            }
+
+            .logo-img {
+                height: 32px;
+            }
+        }
+
+        /* Large screens: More spacing */
+        @media (min-width: 1024px) {
+            .toolbar-link {
+                padding: 0.5rem 1rem;
+            }
+            
+            .toolbar-nav {
+                gap: 0.5rem;
             }
         }
 
@@ -2443,24 +2535,44 @@
 </head>
 <body>
     <!-- ══════════════════════════════════════════════════════════════════════
-         HEADER
+         TOP TOOLBAR / NAVIGATION BAR
          ══════════════════════════════════════════════════════════════════════ -->
     <header class="header">
         <div class="header-inner">
+            <!-- Left: Logo + BETA badge -->
             <a href="/" class="logo">
-                <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTE0Ni42MyAzMTcuMSI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQtMik7CiAgICAgIH0KCiAgICAgIC5jbHMtMiB7CiAgICAgICAgZmlsbDogI2ZmZmZmZjsKICAgICAgfQoKICAgICAgLmNscy0zIHsKICAgICAgICBmaWxsOiB1cmwoI3JhZGlhbC1ncmFkaWVudCk7CiAgICAgIH0KCiAgICAgIC5jbHMtNCB7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQtMyk7CiAgICAgICAgb3BhY2l0eTogLjg1OwogICAgICB9CgogICAgICAuY2xzLTUgewogICAgICAgIGZpbGw6IHVybCgjbGluZWFyLWdyYWRpZW50KTsKICAgICAgfQogICAgPC9zdHlsZT4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0icmFkaWFsLWdyYWRpZW50IiBjeD0iMjIxLjciIGN5PSIxNTguNTUiIGZ4PSIyMjEuNyIgZnk9IjE1OC41NSIgcj0iNjMuNTEiIGdyYWRpZW50VHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEwMi40NyAtNDIuOTQpIHJvdGF0ZSgtMjIuNjMpIHNjYWxlKDEgMS45NikiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjI2IiBzdG9wLWNvbG9yPSIjMThiZWYyIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjQyIiBzdG9wLWNvbG9yPSIjMTdiNmVkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjU1IiBzdG9wLWNvbG9yPSIjMTVhN2U1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjY3IiBzdG9wLWNvbG9yPSIjMTI5M2RhIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjc3IiBzdG9wLWNvbG9yPSIjMGY3OGNiIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjg3IiBzdG9wLWNvbG9yPSIjMGE1OGI5Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjk2IiBzdG9wLWNvbG9yPSIjMDUzMmE0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB4MT0iMjMxLjQ5IiB5MT0iMTg4LjI0IiB4Mj0iMTgyLjUxIiB5Mj0iMjM4LjgzIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzE5YzFmNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii4wOSIgc3RvcC1jb2xvcj0iIzE2YWJlOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii4zMSIgc3RvcC1jb2xvcj0iIzBmN2FjYyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii41MiIgc3RvcC1jb2xvcj0iIzA5NTNiNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii43MSIgc3RvcC1jb2xvcj0iIzA2MzdhNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii44NyIgc3RvcC1jb2xvcj0iIzAzMjY5ZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMzIxOWIiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxpbmVhci1ncmFkaWVudC0yIiB4MT0iMTIxLjg4IiB5MT0iMTM3LjI5IiB4Mj0iMTA1LjIyIiB5Mj0iMjQ4LjMiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50LTMiIHgxPSIxODUuMjciIHkxPSIxODYuNjMiIHgyPSIxNTIuODEiIHkyPSIyNDkuMTEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjEzIiBzdG9wLWNvbG9yPSIjMThiYmYxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjI5IiBzdG9wLWNvbG9yPSIjMTZhY2U4Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjQ4IiBzdG9wLWNvbG9yPSIjMTI5MmRhIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjY3IiBzdG9wLWNvbG9yPSIjMGQ2ZmM2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjg3IiBzdG9wLWNvbG9yPSIjMDc0MmFkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGc+CiAgICA8cG9seWdvbiBjbGFzcz0iY2xzLTMiIHBvaW50cz0iMjkwLjc5IDI2My41MiAyNjAuMzYgMjYzLjUyIDE4NC41MSAxMTMuNyAxNjcuODMgMTQ2LjY1IDE1Mi42MiAxMTYuNTkgMTg0LjUxIDUzLjU3IDI5MC43OSAyNjMuNTIiLz4KICAgIDxwb2x5Z29uIGNsYXNzPSJjbHMtNSIgcG9pbnRzPSIxNjYuNTMgMTkwLjA4IDE4Ni4zMyAyMjkuMiAyMDMuNzIgMjYzLjUyIDIzNi45NCAyNjMuNTIgMTgzLjE1IDE1Ny4yNSAxNjYuNTMgMTkwLjA4Ii8+CiAgICA8cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iMTY3LjgzIDE0Ni42NSAxNTMuNjkgMTc0LjYgMTQxLjI5IDE1MC4xIDkzLjMgMjQ0LjkgMTI3IDI0NC45IDExNi44NCAyNjMuNTIgNTUuNTggMjYzLjUyIDE0MS4yOSA5NC4yIDE1Mi42MiAxMTYuNTkgMTY3LjgzIDE0Ni42NSIvPgogICAgPHBvbHlnb24gY2xhc3M9ImNscy00IiBwb2ludHM9IjE5OS44MyAxOTAuMDggMTgwLjAzIDIyOS4yIDE2Mi42NSAyNjMuNTIgMTI5LjQyIDI2My41MiAxODMuMjEgMTU3LjI1IDE5OS44MyAxOTAuMDgiLz4KICA8L2c+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00NzAuOTcsMjE0LjA2di0yNy4xYzAtMTYuNDIsMTEuMzYtMjQuMzYsMzIuMTYtMjQuMzZoMzkuOTZjMTQuNjQsMCwyMS4wOC00Ljc5LDIxLjA4LTEzLjU1LDAtMTAuNjctOS43Mi0xMy45Ni0yOC42LTEzLjk2aC01OS4yNmw5LjU4LTEyLjU5aDU1Ljg0YzI2LjQyLDAsMzYuNjgsMTAuNTQsMzYuNjgsMjUuNzNzLTkuODUsMjUuMzItMzMuOTQsMjUuMzJoLTM5Ljk2Yy0xMi41OSwwLTE5LjE2LDMuOTctMTkuMTYsMTMuMjh2MTQuNzhoOTQuNDRsLTkuNTgsMTIuNDVoLTk5LjIzWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNzQ4LjEsMTg0LjIydjI5Ljg0aC0xNC43OHYtNDIuMTVoNjUuNDJjMTcuMzgsMCwzMS40OC00LjkzLDMxLjQ4LTE4LjIsMC0xNC4yMy0xMi44Ny0xOC42MS0zMS42MS0xOC42MWgtNjUuNTZsOS44NS0xMi41OWg2MC45YzI1LjE4LDAsNDEuMiwxMS43Nyw0MS4yLDMxLjM0cy0xNS44OCwzMC4zOC00MS4yLDMwLjM4aC01NS43WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNODU4LjY3LDIxNC4wNnYtOTEuNTZoOTcuMTdsLTkuNzIsMTIuNTloLTcyLjY3djI3LjUxaDc4LjE1bC04LjQ5LDEwLjk1aC02OS42NnYyOC4wNmg4My4wOGwtOS43MiwxMi40NWgtODguMTRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xMDY3LjI0LDIxNC4wNmwtNDQuMzQtMzguNi00NC42MiwzOC42aC0xOC42MWw1NC42MS00Ny4wOC01MS4wNS00NC40OGgyMC41M2w0MC41MSwzNS43Miw0MC43OS0zNS43MmgxOS4zbC01MS4wNSw0My45Myw1NC44OCw0Ny42M2gtMjAuOTRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00NDUuNDUsMjE0LjA2aDE4LjE1bC01OC41OC0xMDUuNGMtMi4wNS0zLjE1LTUuMzQtNS42MS05LjcyLTUuNjFzLTcuOCwyLjc0LTkuNzIsNS42MWwtNTkuNCwxMDUuNGgxNy41MmwxNi4xOC0yOS43aDY5LjY2bDE1LjksMjkuN1pNMzY2LjY3LDE3MS45bDI4LjM1LTUyLjAzLDI3Ljg1LDUyLjAzaC01Ni4yMVoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTcwNS43NCwyMTQuMDZoMTguMTVsLTU4LjU4LTEwNS40Yy0yLjA1LTMuMTUtNS4zNC01LjYxLTkuNzItNS42MXMtNy44LDIuNzQtOS43Miw1LjYxbC01OS40LDEwNS40aDE3LjUybDE2LjE4LTI5LjdoNjkuNjZsMTUuOSwyOS43Wk02MjYuOTYsMTcxLjlsMjguMzUtNTIuMDMsMjcuODUsNTIuMDNoLTU2LjIxWiIvPgogIDwvZz4KPC9zdmc+" alt="A2Apex" class="logo-img" style="height: 32px; filter: brightness(1.5) drop-shadow(0 0 20px rgba(25, 193, 244, 0.5));">
+                <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTE0Ni42MyAzMTcuMSI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQtMik7CiAgICAgIH0KCiAgICAgIC5jbHMtMiB7CiAgICAgICAgZmlsbDogI2ZmZmZmZjsKICAgICAgfQoKICAgICAgLmNscy0zIHsKICAgICAgICBmaWxsOiB1cmwoI3JhZGlhbC1ncmFkaWVudCk7CiAgICAgIH0KCiAgICAgIC5jbHMtNCB7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQtMyk7CiAgICAgICAgb3BhY2l0eTogLjg1OwogICAgICB9CgogICAgICAuY2xzLTUgewogICAgICAgIGZpbGw6IHVybCgjbGluZWFyLWdyYWRpZW50KTsKICAgICAgfQogICAgPC9zdHlsZT4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0icmFkaWFsLWdyYWRpZW50IiBjeD0iMjIxLjciIGN5PSIxNTguNTUiIGZ4PSIyMjEuNyIgZnk9IjE1OC41NSIgcj0iNjMuNTEiIGdyYWRpZW50VHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEwMi40NyAtNDIuOTQpIHJvdGF0ZSgtMjIuNjMpIHNjYWxlKDEgMS45NikiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjI2IiBzdG9wLWNvbG9yPSIjMThiZWYyIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjQyIiBzdG9wLWNvbG9yPSIjMTdiNmVkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjU1IiBzdG9wLWNvbG9yPSIjMTVhN2U1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjY3IiBzdG9wLWNvbG9yPSIjMTI5M2RhIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjc3IiBzdG9wLWNvbG9yPSIjMGY3OGNiIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjg3IiBzdG9wLWNvbG9yPSIjMGE1OGI5Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjk2IiBzdG9wLWNvbG9yPSIjMDUzMmE0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB4MT0iMjMxLjQ5IiB5MT0iMTg4LjI0IiB4Mj0iMTgyLjUxIiB5Mj0iMjM4LjgzIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzE5YzFmNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii4wOSIgc3RvcC1jb2xvcj0iIzE2YWJlOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii4zMSIgc3RvcC1jb2xvcj0iIzBmN2FjYyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii41MiIgc3RvcC1jb2xvcj0iIzA5NTNiNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii43MSIgc3RvcC1jb2xvcj0iIzA2MzdhNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii44NyIgc3RvcC1jb2xvcj0iIzAzMjY5ZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMzIxOWIiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxpbmVhci1ncmFkaWVudC0yIiB4MT0iMTIxLjg4IiB5MT0iMTM3LjI5IiB4Mj0iMTA1LjIyIiB5Mj0iMjQ4LjMiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50LTMiIHgxPSIxODUuMjciIHkxPSIxODYuNjMiIHgyPSIxNTIuODEiIHkyPSIyNDkuMTEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjEzIiBzdG9wLWNvbG9yPSIjMThiYmYxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjI5IiBzdG9wLWNvbG9yPSIjMTZhY2U4Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjQ4IiBzdG9wLWNvbG9yPSIjMTI5MmRhIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjY3IiBzdG9wLWNvbG9yPSIjMGQ2ZmM2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjg3IiBzdG9wLWNvbG9yPSIjMDc0MmFkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGc+CiAgICA8cG9seWdvbiBjbGFzcz0iY2xzLTMiIHBvaW50cz0iMjkwLjc5IDI2My41MiAyNjAuMzYgMjYzLjUyIDE4NC41MSAxMTMuNyAxNjcuODMgMTQ2LjY1IDE1Mi42MiAxMTYuNTkgMTg0LjUxIDUzLjU3IDI5MC43OSAyNjMuNTIiLz4KICAgIDxwb2x5Z29uIGNsYXNzPSJjbHMtNSIgcG9pbnRzPSIxNjYuNTMgMTkwLjA4IDE4Ni4zMyAyMjkuMiAyMDMuNzIgMjYzLjUyIDIzNi45NCAyNjMuNTIgMTgzLjE1IDE1Ny4yNSAxNjYuNTMgMTkwLjA4Ii8+CiAgICA8cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iMTY3LjgzIDE0Ni42NSAxNTMuNjkgMTc0LjYgMTQxLjI5IDE1MC4xIDkzLjMgMjQ0LjkgMTI3IDI0NC45IDExNi44NCAyNjMuNTIgNTUuNTggMjYzLjUyIDE0MS4yOSA5NC4yIDE1Mi42MiAxMTYuNTkgMTY3LjgzIDE0Ni42NSIvPgogICAgPHBvbHlnb24gY2xhc3M9ImNscy00IiBwb2ludHM9IjE5OS44MyAxOTAuMDggMTgwLjAzIDIyOS4yIDE2Mi42NSAyNjMuNTIgMTI5LjQyIDI2My41MiAxODMuMjEgMTU3LjI1IDE5OS44MyAxOTAuMDgiLz4KICA8L2c+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00NzAuOTcsMjE0LjA2di0yNy4xYzAtMTYuNDIsMTEuMzYtMjQuMzYsMzIuMTYtMjQuMzZoMzkuOTZjMTQuNjQsMCwyMS4wOC00Ljc5LDIxLjA4LTEzLjU1LDAtMTAuNjctOS43Mi0xMy45Ni0yOC42LTEzLjk2aC01OS4yNmw5LjU4LTEyLjU5aDU1Ljg0YzI2LjQyLDAsMzYuNjgsMTAuNTQsMzYuNjgsMjUuNzNzLTkuODUsMjUuMzItMzMuOTQsMjUuMzJoLTM5Ljk2Yy0xMi41OSwwLTE5LjE2LDMuOTctMTkuMTYsMTMuMjh2MTQuNzhoOTQuNDRsLTkuNTgsMTIuNDVoLTk5LjIzWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNzQ4LjEsMTg0LjIydjI5Ljg0aC0xNC43OHYtNDIuMTVoNjUuNDJjMTcuMzgsMCwzMS40OC00LjkzLDMxLjQ4LTE4LjIsMC0xNC4yMy0xMi44Ny0xOC42MS0zMS42MS0xOC42MWgtNjUuNTZsOS44NS0xMi41OWg2MC45YzI1LjE4LDAsNDEuMiwxMS43Nyw0MS4yLDMxLjM0cy0xNS44OCwzMC4zOC00MS4yLDMwLjM4aC01NS43WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNODU4LjY3LDIxNC4wNnYtOTEuNTZoOTcuMTdsLTkuNzIsMTIuNTloLTcyLjY3djI3LjUxaDc4LjE1bC04LjQ5LDEwLjk1aC02OS42NnYyOC4wNmg4My4wOGwtOS43MiwxMi40NWgtODguMTRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xMDY3LjI0LDIxNC4wNmwtNDQuMzQtMzguNi00NC42MiwzOC42aC0xOC42MWw1NC42MS00Ny4wOC01MS4wNS00NC40OGgyMC41M2w0MC41MSwzNS43Miw0MC43OS0zNS43MmgxOS4zbC01MS4wNSw0My45Myw1NC44OCw0Ny42M2gtMjAuOTRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00NDUuNDUsMjE0LjA2aDE4LjE1bC01OC41OC0xMDUuNGMtMi4wNS0zLjE1LTUuMzQtNS42MS05LjcyLTUuNjFzLTcuOCwyLjc0LTkuNzIsNS42MWwtNTkuNCwxMDUuNGgxNy41MmwxNi4xOC0yOS43aDY5LjY2bDE1LjksMjkuN1pNMzY2LjY3LDE3MS45bDI4LjM1LTUyLjAzLDI3Ljg1LDUyLjAzaC01Ni4yMVoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTcwNS43NCwyMTQuMDZoMTguMTVsLTU4LjU4LTEwNS40Yy0yLjA1LTMuMTUtNS4zNC01LjYxLTkuNzItNS42MXMtNy44LDIuNzQtOS43Miw1LjYxbC01OS40LDEwNS40aDE3LjUybDE2LjE4LTI5LjdoNjkuNjZsMTUuOSwyOS43Wk02MjYuOTYsMTcxLjlsMjguMzUtNTIuMDMsMjcuODUsNTIuMDNoLTU2LjIxWiIvPgogIDwvZz4KPC9zdmc+" alt="A2Apex" class="logo-img">
                 <span class="logo-badge">Beta</span>
             </a>
             
-            <nav class="nav-center">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="https://github.com/a2aproject/A2A" class="nav-link" target="_blank" rel="noopener">A2A Spec</a>
+            <!-- Center: Navigation Links -->
+            <nav class="toolbar-nav">
+                <a href="/api/docs" class="toolbar-link">
+                    <span class="toolbar-icon">📖</span>
+                    <span>API Docs</span>
+                </a>
+                <a href="https://github.com/a2aproject/A2A" class="toolbar-link" target="_blank" rel="noopener">
+                    <span class="toolbar-icon">📜</span>
+                    <span>A2A Spec</span>
+                </a>
+                <a href="/api/registry-page" class="toolbar-link" target="_blank">
+                    <span class="toolbar-icon">📋</span>
+                    <span>Registry</span>
+                </a>
+                <a href="https://a2apex.io#pricing" class="toolbar-link" target="_blank">
+                    <span class="toolbar-icon">💎</span>
+                    <span>Pricing</span>
+                </a>
             </nav>
             
-            <div class="nav-right">
-                <a href="/api/docs" class="btn-docs">
-                    <span>📖</span> API Docs
-                </a>
+            <!-- Right: User Actions -->
+            <div class="toolbar-right">
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
                 
                 <!-- Auth: Login Button (shown when logged out) -->
                 <button class="btn-login" id="btn-show-login" onclick="showAuthModal()">
@@ -2492,6 +2604,14 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <nav class="mobile-nav" id="mobile-nav">
+            <a href="/api/docs" class="mobile-nav-link">📖 API Docs</a>
+            <a href="https://github.com/a2aproject/A2A" class="mobile-nav-link" target="_blank">📜 A2A Spec</a>
+            <a href="/api/registry-page" class="mobile-nav-link" target="_blank">📋 Registry</a>
+            <a href="https://a2apex.io#pricing" class="mobile-nav-link" target="_blank">💎 Pricing</a>
+        </nav>
     </header>
 
     <!-- ══════════════════════════════════════════════════════════════════════
@@ -2557,10 +2677,6 @@
                 <button class="tab" data-tab="certify">
                     <span class="tab-icon">🏅</span>
                     <span>Certify</span>
-                </button>
-                <button class="tab" data-tab="pricing">
-                    <span class="tab-icon">💎</span>
-                    <span>Pricing</span>
                 </button>
             </div>
         </div>
@@ -2768,137 +2884,6 @@
                         </a>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Pricing Section -->
-        <div id="pricing-section" style="display: none; max-width: 900px; margin: 0 auto; padding: 1.5rem;">
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <h2 style="font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">
-                    💎 Choose Your Plan
-                </h2>
-                <p style="color: #8899AA; font-size: 1rem;">
-                    Every plan includes Bronze, Silver, and Gold badges based on your agent's score
-                </p>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
-                
-                <!-- FREE -->
-                <div style="background: linear-gradient(135deg, #0D1D31, #111F36); border: 1px solid #1A2A3F; border-radius: 16px; padding: 2rem; position: relative;">
-                    <div style="font-size: 0.85rem; color: #00E5FF; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Free</div>
-                    <div style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">$0<span style="font-size: 1rem; color: #667788; font-weight: 400;">/mo</span></div>
-                    <p style="color: #667788; font-size: 0.9rem; margin-bottom: 1.5rem;">Get started testing your agents</p>
-                    <div style="border-top: 1px solid #1A2A3F; padding-top: 1.5rem;">
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">3 agent tests per month</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Embeddable badge (expires in 90 days)</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Basic registry listing</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Agent Card validation</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Community support</span>
-                        </div>
-                    </div>
-                    <button style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #1A2A3F; background: transparent; color: #00E5FF; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.background='#1A2A3F'" onmouseout="this.style.background='transparent'">Current Plan</button>
-                </div>
-                
-                <!-- PRO -->
-                <div style="background: linear-gradient(135deg, #0D1D31, #111F36); border: 2px solid #00E5FF; border-radius: 16px; padding: 2rem; position: relative;">
-                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #00E5FF; color: #0A1628; padding: 4px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Most Popular</div>
-                    <div style="font-size: 0.85rem; color: #00E5FF; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Pro</div>
-                    <div style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">$29<span style="font-size: 1rem; color: #667788; font-weight: 400;">/mo</span></div>
-                    <p style="color: #667788; font-size: 0.9rem; margin-bottom: 1.5rem;">For teams shipping A2A agents</p>
-                    <div style="border-top: 1px solid #1A2A3F; padding-top: 1.5rem;">
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;"><strong>Unlimited</strong> agent tests</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Badge valid for <strong>1 year</strong></span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;"><strong>PRO verified</strong> badge indicator</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Re-test anytime</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">API access (100 req/min)</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Test history & analytics</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #00E5FF; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Email support</span>
-                        </div>
-                    </div>
-                    <button id="pro-subscribe-btn" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: none; background: #00E5FF; color: #0A1628; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'" onclick="subscribeToPlan('pro')">Subscribe — $29/mo</button>
-                </div>
-                
-                <!-- ENTERPRISE -->
-                <div style="background: linear-gradient(135deg, #0D1D31, #111F36); border: 1px solid #FFD70040; border-radius: 16px; padding: 2rem; position: relative;">
-                    <div style="font-size: 0.85rem; color: #FFD700; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Enterprise</div>
-                    <div style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">$499<span style="font-size: 1rem; color: #667788; font-weight: 400;">/mo</span></div>
-                    <p style="color: #667788; font-size: 0.9rem; margin-bottom: 1.5rem;">For organizations that need trust at scale</p>
-                    <div style="border-top: 1px solid #1A2A3F; padding-top: 1.5rem;">
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Everything in Pro</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;"><strong>Permanent</strong> badges (never expire)</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Custom badge branding</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Bulk agent testing</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;"><strong>Unlimited</strong> API access</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">CI/CD integration</span>
-                        </div>
-                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="color: #FFD700; flex-shrink: 0;">✓</span>
-                            <span style="color: #CCDDEE; font-size: 0.9rem;">Priority support — direct Slack channel, 4-hour response</span>
-                        </div>
-                    </div>
-                    <button id="enterprise-subscribe-btn" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #FFD70060; background: transparent; color: #FFD700; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.background='#FFD70015'" onmouseout="this.style.background='transparent'" onclick="subscribeToPlan('enterprise')">Subscribe — $499/mo</button>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: #0D1D31; border-radius: 12px; border: 1px solid #1A2A3F;">
-                <p style="color: #8899AA; font-size: 0.9rem; margin-bottom: 0.5rem;">
-                    🏅 <strong style="color: #CCDDEE;">Score determines your grade</strong> — Plan determines your perks
-                </p>
-                <p style="color: #667788; font-size: 0.85rem;">
-                    🥉 Bronze (70-79) · 🥈 Silver (80-89) · 🥇 Gold (90-100) — All plans, all grades
-                </p>
             </div>
         </div>
 
@@ -3221,14 +3206,8 @@
         
         function goToPricing() {
             closeUpgradeModal();
-            // Switch to pricing tab if it exists, otherwise redirect
-            const pricingTab = document.querySelector('.tab[data-tab="pricing"]');
-            if (pricingTab) {
-                pricingTab.click();
-            } else {
-                // Redirect to pricing page on landing site
-                window.open('https://a2apex.io#pricing', '_blank');
-            }
+            // Redirect to pricing page on landing site
+            window.open('https://a2apex.io#pricing', '_blank');
         }
 
         // ════════════════════════════════════════════════════════════════════
@@ -3258,7 +3237,6 @@
         function updateTabVisibility() {
             const chatSection = document.getElementById('chat-section');
             const certifySection = document.getElementById('certify-section');
-            const pricingSection = document.getElementById('pricing-section');
             const resultsPanel = document.getElementById('results-panel');
             const scoreCard = document.getElementById('score-card');
             const validationSection = document.getElementById('validation-section');
@@ -3282,18 +3260,6 @@
             } else if (currentTab === 'certify') {
                 chatSection.style.display = 'none';
                 certifySection.style.display = 'block';
-                pricingSection.style.display = 'none';
-                resultsPanel.style.display = 'none';
-                scoreCard.style.display = 'none';
-                validationSection.style.display = 'none';
-                categorySection.style.display = 'none';
-                agentCard.style.display = 'none';
-                dashboard.classList.add('visible');
-                featuresSection.style.display = 'none';
-            } else if (currentTab === 'pricing') {
-                chatSection.style.display = 'none';
-                certifySection.style.display = 'none';
-                pricingSection.style.display = 'block';
                 resultsPanel.style.display = 'none';
                 scoreCard.style.display = 'none';
                 validationSection.style.display = 'none';
@@ -3304,7 +3270,6 @@
             } else {
                 chatSection.style.display = 'none';
                 certifySection.style.display = 'none';
-                pricingSection.style.display = 'none';
             }
         }
 
@@ -4267,6 +4232,26 @@
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
+        });
+
+        // ════════════════════════════════════════════════════════════════════
+        // MOBILE MENU
+        // ════════════════════════════════════════════════════════════════════
+        function toggleMobileMenu() {
+            const toggle = document.getElementById('mobile-menu-toggle');
+            const nav = document.getElementById('mobile-nav');
+            toggle.classList.toggle('active');
+            nav.classList.toggle('open');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const toggle = document.getElementById('mobile-menu-toggle');
+            const nav = document.getElementById('mobile-nav');
+            if (!toggle.contains(e.target) && !nav.contains(e.target)) {
+                toggle.classList.remove('active');
+                nav.classList.remove('open');
+            }
         });
 
         // ════════════════════════════════════════════════════════════════════
