@@ -397,13 +397,22 @@ async def stripe_webhook(request: Request):
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
     
-    # For now, we'll process without signature verification
-    # In production, you should set up a webhook secret and verify
+    # Verify webhook signature
+    webhook_secret_path = Path.home() / ".openclaw" / ".stripe_webhook_secret"
+    webhook_secret = webhook_secret_path.read_text().strip() if webhook_secret_path.exists() else None
+    
     try:
-        event = stripe.Event.construct_from(
-            json.loads(payload),
-            stripe.api_key
-        )
+        if webhook_secret and sig_header:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, webhook_secret
+            )
+        else:
+            event = stripe.Event.construct_from(
+                json.loads(payload),
+                stripe.api_key
+            )
+    except stripe.error.SignatureVerificationError:
+        raise HTTPException(status_code=400, detail="Invalid signature")
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON")
     except Exception as e:
