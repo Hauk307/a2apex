@@ -4533,7 +4533,7 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/create-checkout-session`, {
+                const response = await fetch(`/api/create-checkout-session`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -4563,7 +4563,7 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/create-portal-session`, {
+                const response = await fetch(`/api/create-portal-session`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -4608,7 +4608,7 @@
         
         async function refreshUserData() {
             try {
-                const response = await fetch(`${API_BASE}/auth/me`, {
+                const response = await fetch(`/api/auth/me`, {
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
                 
