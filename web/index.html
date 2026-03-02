@@ -3462,6 +3462,17 @@
                 };
                 document.querySelector('.btn-text').textContent = texts[currentTab];
                 
+                // Hide Run Tests button on Debug Chat (chat has its own send button)
+                const btnRun = document.getElementById('btn-run');
+                const btnDemo = document.getElementById('btn-demo');
+                if (currentTab === 'chat') {
+                    btnRun.style.display = 'none';
+                    btnDemo.style.display = 'none';
+                } else {
+                    btnRun.style.display = '';
+                    btnDemo.style.display = '';
+                }
+                
                 // Update tab description
                 const descriptions = {
                     'live': 'Send a real task to your A2A agent endpoint and validate the response against the protocol spec.',

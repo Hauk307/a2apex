@@ -388,6 +388,26 @@ app.include_router(badges_router)
 # Include payments router (Stripe)
 app.include_router(payments_router)
 
+# Sample agent proxy — allows testing from external devices
+import httpx
+
+@app.api_route("/sample-agent/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def proxy_sample_agent(request: Request, path: str):
+    """Proxy requests to the local sample A2A agent on port 8092."""
+    async with httpx.AsyncClient() as client:
+        url = f"http://localhost:8092/{path}"
+        body = await request.body()
+        headers = {k: v for k, v in request.headers.items() 
+                   if k.lower() not in ('host', 'transfer-encoding')}
+        resp = await client.request(
+            method=request.method,
+            url=url,
+            content=body,
+            headers=headers,
+            timeout=30.0
+        )
+        return JSONResponse(content=resp.json(), status_code=resp.status_code)
+
 # CORS middleware for web UI - allow all origins (dev tool)
 app.add_middleware(
     CORSMiddleware,
