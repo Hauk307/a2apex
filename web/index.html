@@ -1583,6 +1583,169 @@
         }
 
         /* ════════════════════════════════════════════════════════════════════
+           PRICING SECTION
+           ════════════════════════════════════════════════════════════════════ */
+        .pricing-section {
+            max-width: 1200px;
+            margin: 4rem auto 0;
+            padding: 3rem 1.5rem;
+        }
+
+        .pricing-section h2 {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .pricing-card.featured {
+            border: 2px solid var(--cyan);
+            position: relative;
+        }
+
+        .pricing-card .popular-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient-brand);
+            color: white;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .pricing-tier {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 0.4rem 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .pricing-features li::before {
+            content: "✓ ";
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
+        .pricing-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .pricing-btn-primary {
+            background: var(--gradient-brand);
+            color: white;
+        }
+
+        .pricing-btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .pricing-btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .pricing-btn-secondary:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
+
+        .pricing-btn-gold {
+            background: transparent;
+            color: #FFD700;
+            border: 1px solid #FFD700;
+        }
+
+        .pricing-btn-gold:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .pricing-note {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
            FOOTER
            ════════════════════════════════════════════════════════════════════ */
         .footer {
@@ -2559,7 +2722,7 @@
                     <span class="toolbar-icon">📋</span>
                     <span>Registry</span>
                 </a>
-                <a href="https://a2apex.io#pricing" class="toolbar-link" target="_blank">
+                <a href="#pricing" class="toolbar-link">
                     <span class="toolbar-icon">💎</span>
                     <span>Pricing</span>
                 </a>
@@ -2610,7 +2773,7 @@
             <a href="/api/docs" class="mobile-nav-link">📖 API Docs</a>
             <a href="https://github.com/a2aproject/A2A" class="mobile-nav-link" target="_blank">📜 A2A Spec</a>
             <a href="/api/registry-page" class="mobile-nav-link" target="_blank">📋 Registry</a>
-            <a href="https://a2apex.io#pricing" class="mobile-nav-link" target="_blank">💎 Pricing</a>
+            <a href="#pricing" class="mobile-nav-link">💎 Pricing</a>
         </nav>
     </header>
 
@@ -2929,6 +3092,61 @@
     </main>
 
     <!-- ══════════════════════════════════════════════════════════════════════
+         PRICING
+         ══════════════════════════════════════════════════════════════════════ -->
+    <section class="pricing-section" id="pricing">
+        <h2>Pricing</h2>
+        <p class="pricing-subtitle">Choose the plan that fits your agent testing needs</p>
+        <div class="pricing-grid">
+            <!-- Free -->
+            <div class="pricing-card">
+                <div class="pricing-tier">Free</div>
+                <div class="pricing-price">$0<span>/mo</span></div>
+                <ul class="pricing-features">
+                    <li>3 agent tests per month</li>
+                    <li>Embeddable badge (90-day expiry)</li>
+                    <li>Basic registry listing</li>
+                    <li>Agent Card validation</li>
+                    <li>Community support</li>
+                </ul>
+                <button class="pricing-btn pricing-btn-secondary" onclick="document.querySelector('.tab-btn').click()">Start Testing</button>
+            </div>
+            <!-- Pro -->
+            <div class="pricing-card featured">
+                <div class="popular-badge">MOST POPULAR</div>
+                <div class="pricing-tier" style="color: var(--cyan);">Pro</div>
+                <div class="pricing-price">$29<span>/mo</span></div>
+                <ul class="pricing-features">
+                    <li>Unlimited agent tests</li>
+                    <li>Badge valid for 1 year</li>
+                    <li>PRO verified badge indicator</li>
+                    <li>Re-test anytime</li>
+                    <li>API access (100 req/min)</li>
+                    <li>Test history &amp; analytics</li>
+                    <li>Email support</li>
+                </ul>
+                <button class="pricing-btn pricing-btn-primary" onclick="subscribeToPlan('pro')">Subscribe — $29/mo</button>
+            </div>
+            <!-- Enterprise -->
+            <div class="pricing-card" style="border-color: rgba(255, 215, 0, 0.4);">
+                <div class="pricing-tier" style="color: #FFD700;">Enterprise</div>
+                <div class="pricing-price" style="background: linear-gradient(135deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">$499<span style="color: var(--text-muted); -webkit-text-fill-color: var(--text-muted);">/mo</span></div>
+                <ul class="pricing-features">
+                    <li style="color: #FFD700;">✦ Everything in Pro</li>
+                    <li>Permanent badges (never expire)</li>
+                    <li>Custom badge branding</li>
+                    <li>Bulk agent testing</li>
+                    <li>Unlimited API access</li>
+                    <li>CI/CD integration</li>
+                    <li>Dedicated Slack + 4hr response</li>
+                </ul>
+                <a href="mailto:team@a2apex.io" class="pricing-btn pricing-btn-gold">Contact Us</a>
+            </div>
+        </div>
+        <p class="pricing-note">🎉 Start free, upgrade when you're ready. Cancel anytime.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
          FOOTER
          ══════════════════════════════════════════════════════════════════════ -->
     <footer class="footer">
@@ -3207,7 +3425,7 @@
         function goToPricing() {
             closeUpgradeModal();
             // Redirect to pricing page on landing site
-            window.open('https://a2apex.io#pricing', '_blank');
+            document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
         }
 
         // ════════════════════════════════════════════════════════════════════
