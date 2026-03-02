@@ -566,15 +566,17 @@
         @media (max-width: 640px) {
             .tabs {
                 width: 100%;
-                justify-content: space-between;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                justify-content: flex-start;
+                gap: 0.25rem;
+                padding-bottom: 0.25rem;
             }
             .tab {
-                flex: 1;
+                flex-shrink: 0;
                 justify-content: center;
-                padding: 0.625rem 0.5rem;
-            }
-            .tab span:not(.tab-icon) {
-                display: none;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
             }
         }
 
