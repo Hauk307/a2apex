@@ -563,6 +563,19 @@
             font-size: 1rem;
         }
 
+        .tab-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            padding: 0.75rem 1rem;
+            margin-top: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            line-height: 1.4;
+            transition: opacity 0.2s;
+        }
+
         @media (max-width: 640px) {
             .tabs {
                 width: 100%;
@@ -2844,6 +2857,9 @@
                     <span>Certify</span>
                 </button>
             </div>
+            <div class="tab-description" id="tab-description">
+                Send a real task to your A2A agent endpoint and validate the response against the protocol spec.
+            </div>
         </div>
 
         <!-- Dashboard -->
@@ -3449,6 +3465,17 @@
                     'certify': 'Run Tests'
                 };
                 document.querySelector('.btn-text').textContent = texts[currentTab];
+                
+                // Update tab description
+                const descriptions = {
+                    'live': 'Send a real task to your A2A agent endpoint and validate the response against the protocol spec.',
+                    'validate': 'Check your Agent Card for required fields, correct formatting, and spec compliance.',
+                    'compliance': 'Run the full A2A protocol compliance check — messaging, task lifecycle, error handling, and more.',
+                    'full': 'Run every test at once — Agent Card, protocol compliance, streaming, auth, and performance.',
+                    'chat': 'Talk to your agent in real-time through the A2A protocol. Debug requests and responses live.',
+                    'certify': 'Run the official certification suite and earn a Bronze, Silver, or Gold trust badge.'
+                };
+                document.getElementById('tab-description').textContent = descriptions[currentTab];
                 
                 updateTabVisibility();
             });
