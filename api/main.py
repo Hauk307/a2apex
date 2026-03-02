@@ -28,6 +28,9 @@ from api.auth import router as auth_router
 # Badges module
 from api.badges import router as badges_router
 
+# Payments module (Stripe)
+from api.payments import router as payments_router
+
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -90,7 +93,7 @@ PRO_TIER_LIMIT = 100  # requests per minute
 RATE_LIMIT_WINDOW = 60  # seconds
 
 # Public endpoints that don't require auth or rate limiting
-PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json", "/api/waitlist", "/api/registry", "/api/registry-page"}
+PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json", "/api/waitlist", "/api/registry", "/api/registry-page", "/api/webhook", "/api/stripe-config"}
 
 
 def load_api_keys():
@@ -381,6 +384,9 @@ app.include_router(auth_router)
 
 # Include badges router
 app.include_router(badges_router)
+
+# Include payments router (Stripe)
+app.include_router(payments_router)
 
 # CORS middleware for web UI - allow all origins (dev tool)
 app.add_middleware(

@@ -2481,6 +2481,9 @@
                         <div class="dropdown-item" onclick="showApiKey()">
                             <span>🔑</span> API Key
                         </div>
+                        <div class="dropdown-item" onclick="manageSubscription()" id="manage-subscription-item" style="display: none;">
+                            <span>💳</span> Manage Subscription
+                        </div>
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item danger" onclick="logout()">
                             <span>🚪</span> Sign Out
@@ -2847,7 +2850,7 @@
                             <span style="color: #CCDDEE; font-size: 0.9rem;">Email support</span>
                         </div>
                     </div>
-                    <button style="width: 100%; padding: 0.75rem; border-radius: 8px; border: none; background: #00E5FF; color: #0A1628; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Coming Soon</button>
+                    <button id="pro-subscribe-btn" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: none; background: #00E5FF; color: #0A1628; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'" onclick="subscribeToPlan('pro')">Subscribe — $29/mo</button>
                 </div>
                 
                 <!-- ENTERPRISE -->
@@ -2885,7 +2888,7 @@
                             <span style="color: #CCDDEE; font-size: 0.9rem;">Priority support — direct Slack channel, 4-hour response</span>
                         </div>
                     </div>
-                    <button style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #FFD70060; background: transparent; color: #FFD700; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.background='#FFD70015'" onmouseout="this.style.background='transparent'">Contact Us</button>
+                    <button id="enterprise-subscribe-btn" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #FFD70060; background: transparent; color: #FFD700; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 1rem; transition: all 0.2s;" onmouseover="this.style.background='#FFD70015'" onmouseout="this.style.background='transparent'" onclick="subscribeToPlan('enterprise')">Subscribe — $499/mo</button>
                 </div>
             </div>
             
@@ -4337,7 +4340,10 @@
                 
                 document.getElementById('user-avatar').textContent = initials;
                 document.getElementById('user-name').textContent = currentUser.name;
-                document.getElementById('user-plan').textContent = currentUser.plan;
+                document.getElementById('user-plan').textContent = currentUser.plan.charAt(0).toUpperCase() + currentUser.plan.slice(1);
+                
+                // Update subscription management UI
+                updateSubscriptionUI();
             } else {
                 loginBtn.style.display = 'flex';
                 userDropdown.style.display = 'none';
@@ -4514,6 +4520,124 @@
                 showToast('Failed to copy', 'error');
             });
         }
+
+        // ════════════════════════════════════════════════════════════════════
+        // STRIPE PAYMENTS
+        // ════════════════════════════════════════════════════════════════════
+        
+        async function subscribeToPlan(plan) {
+            if (!authToken) {
+                showToast('Please sign in to subscribe', 'warning');
+                document.getElementById('auth-modal').classList.add('visible');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/create-checkout-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ plan })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.checkout_url) {
+                    // Redirect to Stripe checkout
+                    window.location.href = data.checkout_url;
+                } else {
+                    showToast(data.detail || 'Failed to create checkout session', 'error');
+                }
+            } catch (error) {
+                console.error('Checkout error:', error);
+                showToast('Failed to start checkout. Please try again.', 'error');
+            }
+        }
+        
+        async function manageSubscription() {
+            if (!authToken) {
+                showToast('Please sign in first', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/create-portal-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.portal_url) {
+                    window.location.href = data.portal_url;
+                } else {
+                    showToast(data.detail || 'Failed to open subscription portal', 'error');
+                }
+            } catch (error) {
+                console.error('Portal error:', error);
+                showToast('Failed to open subscription portal. Please try again.', 'error');
+            }
+            
+            document.getElementById('user-dropdown').classList.remove('open');
+        }
+        
+        function checkPaymentSuccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('success') === 'true') {
+                const plan = urlParams.get('plan') || 'your new';
+                showToast(`🎉 Welcome to ${plan.charAt(0).toUpperCase() + plan.slice(1)}! Your subscription is now active.`, 'success');
+                
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                // Refresh user data to get updated plan
+                if (authToken) {
+                    refreshUserData();
+                }
+            } else if (urlParams.get('canceled') === 'true') {
+                showToast('Checkout was canceled. No charges were made.', 'info');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+        
+        async function refreshUserData() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                if (response.ok) {
+                    currentUser = await response.json();
+                    localStorage.setItem('a2apex_user', JSON.stringify(currentUser));
+                    updateAuthUI();
+                }
+            } catch (error) {
+                console.error('Failed to refresh user data:', error);
+            }
+        }
+        
+        function updateSubscriptionUI() {
+            const manageBtn = document.getElementById('manage-subscription-item');
+            if (manageBtn && currentUser) {
+                // Show manage subscription only for paid users
+                if (currentUser.plan === 'pro' || currentUser.plan === 'enterprise') {
+                    manageBtn.style.display = 'flex';
+                } else {
+                    manageBtn.style.display = 'none';
+                }
+            }
+        }
+        
+        // Check for payment success on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkPaymentSuccess();
+        });
 
         // Close modals on escape key
         document.addEventListener('keydown', (e) => {
