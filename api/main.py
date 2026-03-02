@@ -251,14 +251,21 @@ def get_user_plan(request: Request) -> tuple[Optional[str], str]:
         key_data = API_KEYS[api_key]
         return key_data.get("user_id", api_key), key_data.get("plan", "pro")
     
-    # Check for auth token (from cookies or headers)
-    # For now, treat all non-API-key users as anonymous free tier
-    # In a full implementation, this would check JWT tokens, sessions, etc.
+    # Check for JWT auth token
     auth_header = request.headers.get("Authorization", "")
     if auth_header.startswith("Bearer "):
-        # Would decode JWT and get user info here
-        # For now, return None to indicate anonymous
-        pass
+        try:
+            from api.auth import SECRET_KEY, ALGORITHM, get_user_by_id
+            from jose import jwt
+            token = auth_header.split(" ", 1)[1]
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            user_id = int(payload.get("sub", 0))
+            if user_id:
+                user = get_user_by_id(user_id)
+                if user:
+                    return str(user_id), user.get("plan", "free")
+        except Exception:
+            pass
     
     return None, "free"
 
