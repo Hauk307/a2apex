@@ -412,6 +412,118 @@ async def handle_a2a(request: Request):
         )''',
         spec_url=f"{A2A_SPEC_BASE}/#error-handling"
     ),
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # WARNING-SPECIFIC FIX GUIDANCE (shown for warnings, not just failures)
+    # ═══════════════════════════════════════════════════════════════════════════
+    
+    "agent_card_validation_errors": FixGuidance(
+        fix="Your Agent Card was fetched successfully but has validation errors. Review the errors and fix them for better compliance.",
+        code_snippet='''# Ensure your Agent Card has all required fields:
+{
+  "name": "My A2A Agent",           # Required
+  "url": "https://example.com/a2a",  # Required
+  "version": "1.0.0",                # Required
+  "capabilities": {                  # Required
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "skills": [{                       # Required, at least one
+    "id": "my-skill",
+    "name": "My Skill"
+  }]
+}''',
+        spec_url=f"{A2A_SPEC_BASE}/#agent-card"
+    ),
+    "response_unexpected_structure": FixGuidance(
+        fix="The response structure doesn't match A2A spec. The result should be a Task object (with 'id' and 'status') or a Message object (with 'role' and 'parts').",
+        code_snippet='''# Correct Task response:
+{
+  "jsonrpc": "2.0",
+  "id": "request-id",
+  "result": {
+    "id": "task-uuid",          # Required for Task
+    "status": {                 # Required for Task
+      "state": "completed",
+      "timestamp": "2024-01-01T00:00:00Z"
+    },
+    "artifacts": [...]
+  }
+}
+
+# Or correct Message response:
+{
+  "jsonrpc": "2.0",
+  "id": "request-id",
+  "result": {
+    "role": "agent",           # Required for Message
+    "parts": [{"kind": "text", "text": "Hello"}]  # Required
+  }
+}''',
+        spec_url=f"{A2A_SPEC_BASE}/#task-object"
+    ),
+    "task_not_found_warning": FixGuidance(
+        fix="Task was not found, possibly because it expired or was never stored. Consider implementing persistent task storage for better reliability.",
+        code_snippet='''# Store tasks persistently (e.g., in Redis or database):
+import redis
+
+r = redis.Redis()
+
+# When creating a task:
+r.setex(f"task:{task_id}", 3600, json.dumps(task))  # 1 hour TTL
+
+# When retrieving:
+task_data = r.get(f"task:{task_id}")
+if not task_data:
+    return {"error": {"code": -32001, "message": "Task not found"}}
+''',
+        spec_url=f"{A2A_SPEC_BASE}/#tasks-get"
+    ),
+    "wrong_error_code": FixGuidance(
+        fix="Use the correct JSON-RPC error codes. -32601 for method not found, -32700 for parse error, -32600 for invalid request.",
+        code_snippet='''# Standard JSON-RPC error codes:
+ERROR_CODES = {
+    -32700: "Parse error",         # Invalid JSON
+    -32600: "Invalid Request",     # Not valid JSON-RPC
+    -32601: "Method not found",    # Unknown method
+    -32602: "Invalid params",      # Invalid method params
+    -32603: "Internal error",      # Server error
+}
+
+# A2A-specific error codes:
+A2A_ERROR_CODES = {
+    -32001: "Task not found",
+    -32002: "Task not cancelable",
+    -32003: "Push notification not supported",
+    -32004: "Unsupported operation",
+}''',
+        spec_url=f"{A2A_SPEC_BASE}/#error-handling"
+    ),
+    "response_not_json": FixGuidance(
+        fix="For invalid JSON input, return a JSON-RPC error response (not HTML or plain text). Even error responses should be valid JSON.",
+        code_snippet='''# Always return JSON for JSON-RPC errors:
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+@app.post("/a2a")
+async def handle_a2a(request: Request):
+    try:
+        data = await request.json()
+    except:
+        # Return JSON error, not HTTP error page
+        return JSONResponse(
+            status_code=200,
+            content={
+                "jsonrpc": "2.0",
+                "id": None,
+                "error": {
+                    "code": -32700,
+                    "message": "Parse error: Invalid JSON"
+                }
+            }
+        )''',
+        spec_url=f"{A2A_SPEC_BASE}/#error-handling"
+    ),
 }
 
 

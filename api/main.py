@@ -1243,8 +1243,11 @@ async def run_demo_tests():
             response = await client.post(f"{demo_url}/a2a", json=req)
             resp_json = response.json()
             
-            if "result" in resp_json and "task" in resp_json["result"]:
-                task = resp_json["result"]["task"]
+            result = resp_json.get("result", {})
+            # A2A spec: result should be the Task directly OR wrapped in {"task": ...}
+            task = result.get("task", result) if isinstance(result, dict) else None
+            
+            if task and "id" in task and "status" in task:
                 status = task.get("status", {}).get("state")
                 artifacts = task.get("artifacts", [])
                 
@@ -1292,8 +1295,11 @@ async def run_demo_tests():
             response = await client.post(f"{demo_url}/a2a", json=req)
             resp_json = response.json()
             
-            if "result" in resp_json and "task" in resp_json["result"]:
-                task = resp_json["result"]["task"]
+            result = resp_json.get("result", {})
+            # A2A spec: result should be the Task directly OR wrapped in {"task": ...}
+            task = result.get("task", result) if isinstance(result, dict) else None
+            
+            if task and "id" in task and "status" in task:
                 status = task.get("status", {}).get("state")
                 artifacts = task.get("artifacts", [])
                 
@@ -1343,7 +1349,11 @@ async def run_demo_tests():
                 response = await client.post(f"{demo_url}/a2a", json=req)
                 resp_json = response.json()
                 
-                if "result" in resp_json and "task" in resp_json["result"]:
+                result = resp_json.get("result", {})
+                # A2A spec: result should be the Task directly OR wrapped in {"task": ...}
+                task = result.get("task", result) if isinstance(result, dict) else None
+                
+                if task and "id" in task and "status" in task:
                     results.append({
                         "test": "tasks_get",
                         "name": "tasks/get",
@@ -1385,7 +1395,10 @@ async def run_demo_tests():
             response = await client.post(f"{demo_url}/a2a", json=req)
             resp_json = response.json()
             
-            task_id = resp_json.get("result", {}).get("task", {}).get("id")
+            # A2A spec: result should be the Task directly OR wrapped in {"task": ...}
+            result = resp_json.get("result", {})
+            task = result.get("task", result) if isinstance(result, dict) else None
+            task_id = task.get("id") if task and isinstance(task, dict) else None
             
             if task_id:
                 # Try to cancel (will fail because task is already completed - that's expected)

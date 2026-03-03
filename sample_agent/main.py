@@ -462,8 +462,9 @@ async def handle_message_send(request_id: Any, params: dict) -> JSONResponse:
         task.update_state(TaskState.FAILED)
         task.metadata["error"] = str(e)
     
+    # A2A spec: result should be the Task object directly, not wrapped
     return JSONResponse(
-        content=make_jsonrpc_response(request_id, {"task": task.to_dict()}),
+        content=make_jsonrpc_response(request_id, task.to_dict()),
         status_code=200
     )
 
@@ -616,8 +617,9 @@ async def handle_tasks_get(request_id: Any, params: dict) -> JSONResponse:
     else:
         task_dict["history"] = task.history
     
+    # A2A spec: result should be the Task object directly, not wrapped
     return JSONResponse(
-        content=make_jsonrpc_response(request_id, {"task": task_dict}),
+        content=make_jsonrpc_response(request_id, task_dict),
         status_code=200
     )
 
@@ -657,8 +659,9 @@ async def handle_tasks_cancel(request_id: Any, params: dict) -> JSONResponse:
     # Cancel the task
     task.update_state(TaskState.CANCELED)
     
+    # A2A spec: result should be the Task object directly, not wrapped
     return JSONResponse(
-        content=make_jsonrpc_response(request_id, {"task": task.to_dict()}),
+        content=make_jsonrpc_response(request_id, task.to_dict()),
         status_code=200
     )
 

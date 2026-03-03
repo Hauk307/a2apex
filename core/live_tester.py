@@ -321,13 +321,17 @@ class LiveTester:
         }
         
         if report.error_count > 0:
+            fix = LIVE_TEST_FIXES.get("agent_card_validation_errors")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.WARNING,
                 message=f"Agent Card has {report.error_count} validation errors",
                 duration_ms=duration_ms,
                 response=agent_card,
-                details=details
+                details=details,
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         return LiveTestResult(
@@ -526,6 +530,7 @@ class LiveTester:
                 details=details
             )
         
+        fix = LIVE_TEST_FIXES.get("response_unexpected_structure")
         return LiveTestResult(
             test_name=test_name,
             status=TestStatus.WARNING,
@@ -533,7 +538,10 @@ class LiveTester:
             duration_ms=duration_ms,
             request=request,
             response=json_response,
-            details=details
+            details=details,
+            fix=fix.fix if fix else None,
+            code_snippet=fix.code_snippet if fix else None,
+            spec_url=fix.spec_url if fix else None
         )
     
     async def test_task_get(self, task_id: str) -> LiveTestResult:
@@ -599,6 +607,7 @@ class LiveTester:
             code = error_obj.get("code")
             
             if code == -32001:  # TaskNotFoundError
+                fix = LIVE_TEST_FIXES.get("task_not_found_warning")
                 return LiveTestResult(
                     test_name=test_name,
                     status=TestStatus.WARNING,
@@ -606,7 +615,10 @@ class LiveTester:
                     duration_ms=duration_ms,
                     request=request,
                     response=json_response,
-                    details={"error_code": code}
+                    details={"error_code": code},
+                    fix=fix.fix if fix else None,
+                    code_snippet=fix.code_snippet if fix else None,
+                    spec_url=fix.spec_url if fix else None
                 )
             
             fix = LIVE_TEST_FIXES.get("task_get_failed")
@@ -728,6 +740,7 @@ class LiveTester:
                 )
             
             if code == -32001:  # TaskNotFound
+                fix = LIVE_TEST_FIXES.get("task_not_found_warning")
                 return LiveTestResult(
                     test_name=test_name,
                     status=TestStatus.WARNING,
@@ -735,7 +748,10 @@ class LiveTester:
                     duration_ms=duration_ms,
                     request=request,
                     response=json_response,
-                    details={"error_code": code}
+                    details={"error_code": code},
+                    fix=fix.fix if fix else None,
+                    code_snippet=fix.code_snippet if fix else None,
+                    spec_url=fix.spec_url if fix else None
                 )
             
             fix = LIVE_TEST_FIXES.get("task_cancel_failed")
@@ -1005,6 +1021,7 @@ class LiveTester:
                 details={"error_code": code}
             )
         
+        fix = LIVE_TEST_FIXES.get("wrong_error_code")
         return LiveTestResult(
             test_name=test_name,
             status=TestStatus.WARNING,
@@ -1012,7 +1029,10 @@ class LiveTester:
             duration_ms=duration_ms,
             request=request,
             response=json_response,
-            details={"error_code": code, "expected_code": -32601}
+            details={"error_code": code, "expected_code": -32601},
+            fix=fix.fix if fix else None,
+            code_snippet=fix.code_snippet if fix else None,
+            spec_url=fix.spec_url if fix else None
         )
     
     async def test_invalid_json(self) -> LiveTestResult:
@@ -1060,13 +1080,17 @@ class LiveTester:
                                 details={"error_code": code}
                             )
                         
+                        fix = LIVE_TEST_FIXES.get("wrong_error_code")
                         return LiveTestResult(
                             test_name=test_name,
                             status=TestStatus.WARNING,
                             message=f"Returns error but unexpected code (got {code})",
                             duration_ms=duration_ms,
                             response=json_response,
-                            details={"error_code": code, "expected_code": -32700}
+                            details={"error_code": code, "expected_code": -32700},
+                            fix=fix.fix if fix else None,
+                            code_snippet=fix.code_snippet if fix else None,
+                            spec_url=fix.spec_url if fix else None
                         )
                     
                     fix = LIVE_TEST_FIXES.get("invalid_json_no_error")
@@ -1081,11 +1105,15 @@ class LiveTester:
                         spec_url=fix.spec_url if fix else None
                     )
                 except json.JSONDecodeError:
+                    fix = LIVE_TEST_FIXES.get("response_not_json")
                     return LiveTestResult(
                         test_name=test_name,
                         status=TestStatus.WARNING,
                         message="Response is not JSON (may be acceptable)",
-                        duration_ms=duration_ms
+                        duration_ms=duration_ms,
+                        fix=fix.fix if fix else None,
+                        code_snippet=fix.code_snippet if fix else None,
+                        spec_url=fix.spec_url if fix else None
                     )
                     
         except Exception as e:
