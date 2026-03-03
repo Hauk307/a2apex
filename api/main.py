@@ -374,6 +374,31 @@ def free_limit_error_response():
     )
 
 
+def get_test_usage_info(request: Request) -> dict:
+    """Get test usage info for the current user."""
+    user_id, plan = get_user_plan(request)
+    
+    if plan in ("pro", "enterprise"):
+        return {"plan": plan, "used": 0, "limit": -1, "remaining": -1, "unlimited": True}
+    
+    conn = sqlite3.connect(TEST_USAGE_DB_PATH)
+    cursor = conn.cursor()
+    
+    if user_id:
+        current_month = datetime.utcnow().strftime("%Y-%m")
+        cursor.execute("SELECT test_count FROM user_test_usage WHERE user_id = ? AND month = ?", (user_id, current_month))
+        row = cursor.fetchone()
+        used = row[0] if row else 0
+    else:
+        ip = request.client.host if request.client else "unknown"
+        cursor.execute("SELECT test_count FROM anon_test_usage WHERE ip_address = ?", (ip,))
+        row = cursor.fetchone()
+        used = row[0] if row else 0
+    
+    conn.close()
+    return {"plan": "free", "used": used, "limit": FREE_TESTS_PER_MONTH, "remaining": max(0, FREE_TESTS_PER_MONTH - used), "unlimited": False}
+
+
 # ============================================================================
 # APP SETUP
 # ============================================================================
@@ -554,6 +579,12 @@ async def health_check():
         "version": "0.2.0",
         "timestamp": datetime.utcnow().isoformat() + "Z"
     }
+
+
+@app.get("/api/usage")
+async def get_usage(request: Request):
+    """Get current user's test usage and remaining tests."""
+    return get_test_usage_info(request)
 
 
 # ============================================================================

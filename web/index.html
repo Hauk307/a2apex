@@ -572,6 +572,64 @@
             line-height: 1.4;
         }
 
+        .usage-bar {
+            margin-top: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .usage-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+
+        .usage-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .usage-plan {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--cyan);
+            padding: 0.15rem 0.5rem;
+            border: 1px solid var(--cyan);
+            border-radius: 4px;
+        }
+
+        .usage-plan.pro {
+            color: var(--cyan);
+            border-color: var(--cyan);
+        }
+
+        .usage-track {
+            height: 4px;
+            background: var(--bg-elevated);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .usage-fill {
+            height: 100%;
+            background: var(--gradient-cyan);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .usage-fill.warning {
+            background: var(--warning);
+        }
+
+        .usage-fill.danger {
+            background: var(--error);
+        }
+
         @media (max-width: 640px) {
             .tabs {
                 width: 100%;
@@ -2858,6 +2916,17 @@
             Send a real task to your A2A agent endpoint and validate the response against the protocol spec.
         </div>
 
+        <!-- Usage Bar -->
+        <div class="usage-bar" id="usage-bar" style="display: none;">
+            <div class="usage-info">
+                <span class="usage-text" id="usage-text">5 tests remaining</span>
+                <span class="usage-plan" id="usage-plan">Free</span>
+            </div>
+            <div class="usage-track">
+                <div class="usage-fill" id="usage-fill" style="width: 0%"></div>
+            </div>
+        </div>
+
         <!-- Dashboard -->
         <div id="dashboard" class="dashboard">
             <!-- Agent Card Display -->
@@ -3443,6 +3512,41 @@
         }
 
         // ════════════════════════════════════════════════════════════════════
+        // USAGE TRACKING
+        // ════════════════════════════════════════════════════════════════════
+        async function updateUsageBar() {
+            try {
+                const headers = {};
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+                const r = await fetch('/api/usage', { headers });
+                const data = await r.json();
+                const bar = document.getElementById('usage-bar');
+                const text = document.getElementById('usage-text');
+                const plan = document.getElementById('usage-plan');
+                const fill = document.getElementById('usage-fill');
+                
+                if (data.unlimited) {
+                    text.textContent = 'Unlimited tests';
+                    plan.textContent = data.plan.toUpperCase();
+                    plan.classList.add('pro');
+                    fill.style.width = '100%';
+                    fill.className = 'usage-fill';
+                } else {
+                    const used = data.used || 0;
+                    const limit = data.limit || 5;
+                    const remaining = data.remaining;
+                    text.textContent = `${remaining} of ${limit} tests remaining`;
+                    plan.textContent = 'FREE';
+                    const pct = (used / limit) * 100;
+                    fill.style.width = pct + '%';
+                    fill.className = 'usage-fill' + (pct >= 80 ? ' danger' : pct >= 60 ? ' warning' : '');
+                }
+                bar.style.display = 'block';
+            } catch(e) { /* silent */ }
+        }
+        updateUsageBar();
+
+        // ════════════════════════════════════════════════════════════════════
         // TABS
         // ════════════════════════════════════════════════════════════════════
         document.querySelectorAll('.tab').forEach(tab => {
@@ -3637,7 +3741,7 @@
                             statusEl.className = 'demo-status-badge passed';
                             statusEl.textContent = `${data.summary.passed}/${data.summary.total} Passed`;
                             progressText.textContent = 'Demo completed successfully!';
-                            showToast('Demo completed successfully!', 'success');
+                            showToast('Demo completed successfully!', 'success'); updateUsageBar();
                         } else {
                             statusEl.className = 'demo-status-badge failed';
                             statusEl.textContent = `${data.summary.failed} Failed`;
@@ -3965,7 +4069,7 @@
                 
                 if (response.ok) {
                     renderResults(data, currentTab);
-                    showToast('Tests completed!', 'success');
+                    showToast('Tests completed!', 'success'); updateUsageBar();
                 } else if (data.error === 'free_limit_reached') {
                     // Show upgrade modal for free limit reached
                     showUpgradeModal(data.message);
