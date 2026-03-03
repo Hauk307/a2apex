@@ -192,8 +192,8 @@ load_api_keys()
 TEST_USAGE_DB_PATH = Path(__file__).parent.parent / "data" / "test_usage.db"
 
 # Free tier limits
-FREE_TESTS_PER_MONTH = 3
-ANON_TESTS_TOTAL = 3  # Anonymous users get 3 total tests ever
+FREE_TESTS_PER_MONTH = 5
+ANON_TESTS_TOTAL = 5  # Anonymous users get 3 total tests ever
 
 
 def init_test_usage_db():
@@ -368,7 +368,7 @@ def free_limit_error_response():
         status_code=403,
         content={
             "error": "free_limit_reached",
-            "message": "You've used all 3 free tests this month. Upgrade to Pro for unlimited testing.",
+            "message": "You've used all 5 free tests this month. Upgrade to Pro for unlimited testing.",
             "upgrade_url": "https://app.a2apex.io"
         }
     )
