@@ -889,3 +889,68 @@ def format_fix_for_result(guidance: FixGuidance) -> dict:
     if guidance.code_snippet:
         result["code_snippet"] = guidance.code_snippet
     return result
+
+
+def get_fix_for_test(test_name: str, error: str = "", message: str = "") -> Optional[FixGuidance]:
+    """
+    Smart fix lookup by test name, error text, or message.
+    Searches all fix guidance maps for the best match.
+    """
+    # Combine for searching
+    search_text = f"{test_name} {error} {message}".lower()
+    
+    # Direct test_name lookup across all maps
+    all_fixes = {}
+    all_fixes.update(AGENT_CARD_FIXES)
+    all_fixes.update(LIVE_TEST_FIXES)
+    all_fixes.update(ERROR_TEST_FIXES)
+    all_fixes.update(AUTH_TEST_FIXES)
+    all_fixes.update(STREAMING_TEST_FIXES)
+    all_fixes.update(PERF_TEST_FIXES)
+    
+    # Try exact match on test_name
+    if test_name in all_fixes:
+        return all_fixes[test_name]
+    
+    # Try matching by key substring
+    for key, fix in all_fixes.items():
+        if key in search_text or key.replace("_", " ") in search_text:
+            return fix
+    
+    # Generic fallback based on common patterns
+    if "404" in search_text or "not found" in search_text:
+        return FixGuidance(
+            fix="The endpoint returned 404 Not Found. Make sure your A2A agent is running and the URL is correct. The agent must serve an Agent Card at /.well-known/agent-card.json.",
+            code_snippet='# Verify your agent is accessible\ncurl -s https://your-agent.com/.well-known/agent-card.json',
+            spec_url="https://google.github.io/A2A/#agent-discovery"
+        )
+    
+    if "connection" in search_text or "timeout" in search_text:
+        return FixGuidance(
+            fix="Could not connect to the agent. Verify the URL is correct and the agent is running and accessible from the internet.",
+            code_snippet='# Test connectivity\ncurl -v https://your-agent.com/.well-known/agent-card.json',
+            spec_url="https://google.github.io/A2A/#agent-discovery"
+        )
+    
+    if "json" in search_text or "parse" in search_text or "decode" in search_text:
+        return FixGuidance(
+            fix="The response was not valid JSON. A2A agents must return JSON-RPC 2.0 responses with Content-Type: application/json.",
+            code_snippet='# Your endpoint must return valid JSON-RPC 2.0\nreturn JSONResponse({\n    "jsonrpc": "2.0",\n    "id": request_id,\n    "result": task.to_dict()\n})',
+            spec_url="https://google.github.io/A2A/#json-rpc"
+        )
+    
+    if "jsonrpc" in search_text or "rpc" in search_text:
+        return FixGuidance(
+            fix="The response is missing required JSON-RPC 2.0 fields. Every response must include 'jsonrpc': '2.0', 'id', and either 'result' or 'error'.",
+            code_snippet='{\n    "jsonrpc": "2.0",\n    "id": 1,\n    "result": { ... }\n}',
+            spec_url="https://google.github.io/A2A/#json-rpc"
+        )
+    
+    if "error" in search_text and ("code" in search_text or "handling" in search_text):
+        return FixGuidance(
+            fix="Your agent should return proper JSON-RPC 2.0 error responses with numeric error codes. Use standard codes: -32700 (parse error), -32600 (invalid request), -32601 (method not found), -32602 (invalid params).",
+            code_snippet='# Error response format\n{\n    "jsonrpc": "2.0",\n    "id": 1,\n    "error": {\n        "code": -32601,\n        "message": "Method not found"\n    }\n}',
+            spec_url="https://google.github.io/A2A/#error-handling"
+        )
+    
+    return None

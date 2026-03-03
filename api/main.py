@@ -934,7 +934,7 @@ async def run_performance_test(request: TestRequest):
 
 
 @app.post("/api/test/full")
-async def run_full_compliance_suite(request: TestRequest):
+async def run_full_compliance_suite(request: TestRequest, req: Request):
     """
     Run the FULL compliance test suite against an A2A agent.
     
@@ -949,6 +949,12 @@ async def run_full_compliance_suite(request: TestRequest):
     Returns results grouped by category.
     """
     import asyncio
+    
+    # Check test limit
+    allowed, remaining, message = check_test_limit(req)
+    if not allowed:
+        return free_limit_error_response()
+    record_test_usage(req)
     
     try:
         # Run all test suites concurrently
@@ -1004,6 +1010,17 @@ async def run_full_compliance_suite(request: TestRequest):
         add_category("Error Handling", error_report, "❌")
         add_category("Streaming", streaming_report, "📡")
         add_category("Performance", perf_report, "⏱️")
+        
+        # Auto-attach fix guidance to any failed/warning result missing it
+        from core.fix_guidance import get_fix_for_test
+        for cat_name, cat_data in categories.items():
+            for result in cat_data.get("results", []):
+                if result.get("status") in ("failed", "warning") and not result.get("fix"):
+                    fix = get_fix_for_test(result.get("test_name", ""), result.get("error", ""), result.get("message", ""))
+                    if fix:
+                        result["fix"] = fix.fix
+                        result["code_snippet"] = fix.code_snippet
+                        result["spec_url"] = fix.spec_url
         
         # Calculate overall score
         overall_score = (total_passed / total_tests * 100) if total_tests > 0 else 0
