@@ -1091,6 +1091,149 @@
         .json-null { color: var(--text-muted); }
 
         /* ════════════════════════════════════════════════════════════════════
+           FIX GUIDANCE SECTION
+           ════════════════════════════════════════════════════════════════════ */
+        .fix-guidance {
+            background: linear-gradient(135deg, rgba(255, 179, 0, 0.08) 0%, rgba(255, 179, 0, 0.03) 100%);
+            border: 1px solid rgba(255, 179, 0, 0.3);
+            border-radius: 12px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .fix-guidance-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            user-select: none;
+        }
+
+        .fix-guidance-header:hover {
+            background: rgba(255, 179, 0, 0.1);
+        }
+
+        .fix-guidance-icon {
+            font-size: 1rem;
+        }
+
+        .fix-guidance-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--warning);
+        }
+
+        .fix-guidance-arrow {
+            margin-left: auto;
+            color: var(--warning);
+            font-size: 0.75rem;
+            transition: transform var(--transition-fast);
+        }
+
+        .fix-guidance.expanded .fix-guidance-arrow {
+            transform: rotate(90deg);
+        }
+
+        .fix-guidance-body {
+            display: none;
+            padding: 0 1rem 1rem;
+        }
+
+        .fix-guidance.expanded .fix-guidance-body {
+            display: block;
+            animation: slideDown 0.2s ease;
+        }
+
+        .fix-text {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .fix-code-block {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .fix-code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .fix-code-label {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .fix-code-copy {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-size: 0.6875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .fix-code-copy:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
+
+        .fix-code-content {
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .fix-code-content pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            white-space: pre;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .fix-spec-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.875rem;
+            background: var(--cyan-dim);
+            border: 1px solid var(--cyan);
+            border-radius: 8px;
+            color: var(--cyan);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .fix-spec-link:hover {
+            background: var(--cyan);
+            color: var(--bg-primary);
+        }
+
+        .fix-spec-link-icon {
+            font-size: 0.875rem;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
            VALIDATION RESULTS
            ════════════════════════════════════════════════════════════════════ */
         .validation-section {
@@ -4188,6 +4331,7 @@
                                                 <div class="json-block"><pre style="color: var(--error)">${escapeHtml(result.error)}</pre></div>
                                             </div>
                                         ` : ''}
+                                        ${result.fix ? renderFixGuidance(result, catName + '-' + i) : ''}
                                         ${result.suggestion ? `
                                             <div class="detail-section">
                                                 <div class="detail-label">Suggestion</div>
@@ -4304,6 +4448,7 @@
                             <div class="json-block"><pre style="color: var(--error)">${escapeHtml(result.error)}</pre></div>
                         </div>
                     ` : ''}
+                    ${result.fix ? renderFixGuidance(result, i) : ''}
                     ${result.details ? `
                         <div class="detail-section">
                             <div class="detail-label">Details</div>
@@ -4551,6 +4696,63 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function renderFixGuidance(result, index) {
+            if (!result.fix) return '';
+            
+            const codeSnippet = result.code_snippet ? `
+                <div class="fix-code-block">
+                    <div class="fix-code-header">
+                        <span class="fix-code-label">Code Example</span>
+                        <button class="fix-code-copy" onclick="copyFixCode(event, ${index})">Copy</button>
+                    </div>
+                    <div class="fix-code-content">
+                        <pre id="fix-code-${index}">${escapeHtml(result.code_snippet)}</pre>
+                    </div>
+                </div>
+            ` : '';
+            
+            const specLink = result.spec_url ? `
+                <a href="${escapeHtml(result.spec_url)}" target="_blank" rel="noopener" class="fix-spec-link">
+                    <span class="fix-spec-link-icon">📖</span>
+                    View A2A Spec
+                </a>
+            ` : '';
+            
+            return `
+                <div class="fix-guidance" id="fix-guidance-${index}">
+                    <div class="fix-guidance-header" onclick="toggleFixGuidance(${index})">
+                        <span class="fix-guidance-icon">🔧</span>
+                        <span class="fix-guidance-title">How to fix →</span>
+                        <span class="fix-guidance-arrow">›</span>
+                    </div>
+                    <div class="fix-guidance-body">
+                        <p class="fix-text">${escapeHtml(result.fix)}</p>
+                        ${codeSnippet}
+                        ${specLink}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function toggleFixGuidance(index) {
+            const guidance = document.getElementById('fix-guidance-' + index);
+            if (guidance) {
+                guidance.classList.toggle('expanded');
+            }
+        }
+        
+        function copyFixCode(event, index) {
+            event.stopPropagation();
+            const codeEl = document.getElementById('fix-code-' + index);
+            if (codeEl) {
+                navigator.clipboard.writeText(codeEl.textContent).then(() => {
+                    showToast('Code copied to clipboard!', 'success');
+                }).catch(() => {
+                    showToast('Failed to copy', 'error');
+                });
+            }
         }
 
         function syntaxHighlight(json) {

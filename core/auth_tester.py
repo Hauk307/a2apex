@@ -32,9 +32,12 @@ class AuthTestResult:
     error: Optional[str] = None
     details: Optional[dict] = None
     suggestion: Optional[str] = None
+    fix: Optional[str] = None
+    code_snippet: Optional[str] = None
+    spec_url: Optional[str] = None
     
     def to_dict(self) -> dict:
-        return {
+        result = {
             "test_name": self.test_name,
             "status": self.status.value,
             "message": self.message,
@@ -43,6 +46,13 @@ class AuthTestResult:
             "details": self.details,
             "suggestion": self.suggestion
         }
+        if self.fix:
+            result["fix"] = self.fix
+        if self.code_snippet:
+            result["code_snippet"] = self.code_snippet
+        if self.spec_url:
+            result["spec_url"] = self.spec_url
+        return result
 
 
 @dataclass

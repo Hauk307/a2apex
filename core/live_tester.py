@@ -24,6 +24,7 @@ import httpx
 
 from .agent_card_validator import AgentCardValidator, ValidationSeverity
 from .state_machine import StateMachineValidator, is_terminal_state
+from .fix_guidance import LIVE_TEST_FIXES, FixGuidance
 
 
 class TestStatus(Enum):
@@ -45,9 +46,12 @@ class LiveTestResult:
     response: Optional[dict] = None
     error: Optional[str] = None
     details: Optional[dict] = None
+    fix: Optional[str] = None
+    code_snippet: Optional[str] = None
+    spec_url: Optional[str] = None
     
     def to_dict(self) -> dict:
-        return {
+        result = {
             "test_name": self.test_name,
             "status": self.status.value,
             "message": self.message,
@@ -57,6 +61,14 @@ class LiveTestResult:
             "request": self.request,
             "response": self.response
         }
+        # Only include fix fields if they have values
+        if self.fix:
+            result["fix"] = self.fix
+        if self.code_snippet:
+            result["code_snippet"] = self.code_snippet
+        if self.spec_url:
+            result["spec_url"] = self.spec_url
+        return result
 
 
 @dataclass  
@@ -233,31 +245,43 @@ class LiveTester:
         response, error, duration_ms = await self._request("GET", url)
         
         if error:
+            fix = LIVE_TEST_FIXES.get("agent_card_connection_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"Failed to connect: {type(error).__name__}",
                 duration_ms=duration_ms,
-                error=str(error)
+                error=str(error),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         # Check HTTP status
         if response.status_code == 404:
+            fix = LIVE_TEST_FIXES.get("agent_card_not_found")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Agent Card not found at /.well-known/agent-card.json",
                 duration_ms=duration_ms,
-                error="HTTP 404 Not Found"
+                error="HTTP 404 Not Found",
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         if response.status_code != 200:
+            fix = LIVE_TEST_FIXES.get("agent_card_not_found")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"Unexpected HTTP status: {response.status_code}",
                 duration_ms=duration_ms,
-                error=f"HTTP {response.status_code}"
+                error=f"HTTP {response.status_code}",
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         # Check Content-Type
@@ -268,12 +292,16 @@ class LiveTester:
         try:
             agent_card = response.json()
         except json.JSONDecodeError as e:
+            fix = LIVE_TEST_FIXES.get("agent_card_invalid_json")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Response is not valid JSON",
                 duration_ms=duration_ms,
-                error=str(e)
+                error=str(e),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         # Store for later tests
@@ -344,40 +372,53 @@ class LiveTester:
         response, error, duration_ms = await self._request("POST", endpoint_url, request)
         
         if error:
+            fix = LIVE_TEST_FIXES.get("message_send_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"Request failed: {type(error).__name__}",
                 duration_ms=duration_ms,
                 request=request,
-                error=str(error)
+                error=str(error),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         if response.status_code != 200:
+            fix = LIVE_TEST_FIXES.get("message_send_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"HTTP {response.status_code}",
                 duration_ms=duration_ms,
                 request=request,
-                error=f"Expected HTTP 200, got {response.status_code}"
+                error=f"Expected HTTP 200, got {response.status_code}",
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         # Parse response
         try:
             json_response = response.json()
         except json.JSONDecodeError as e:
+            fix = LIVE_TEST_FIXES.get("message_send_invalid_response")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Invalid JSON response",
                 duration_ms=duration_ms,
                 request=request,
-                error=str(e)
+                error=str(e),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         # Validate JSON-RPC format
         if "jsonrpc" not in json_response or json_response.get("jsonrpc") != "2.0":
+            fix = LIVE_TEST_FIXES.get("message_send_invalid_response")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
@@ -385,12 +426,16 @@ class LiveTester:
                 duration_ms=duration_ms,
                 request=request,
                 response=json_response,
-                error="Missing or invalid 'jsonrpc' field"
+                error="Missing or invalid 'jsonrpc' field",
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         # Check for error response
         if "error" in json_response:
             error_obj = json_response["error"]
+            fix = LIVE_TEST_FIXES.get("message_send_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
@@ -398,11 +443,15 @@ class LiveTester:
                 duration_ms=duration_ms,
                 request=request,
                 response=json_response,
-                error=f"Code {error_obj.get('code')}: {error_obj.get('message')}"
+                error=f"Code {error_obj.get('code')}: {error_obj.get('message')}",
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         # Validate result
         if "result" not in json_response:
+            fix = LIVE_TEST_FIXES.get("message_send_invalid_response")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
@@ -410,7 +459,10 @@ class LiveTester:
                 duration_ms=duration_ms,
                 request=request,
                 response=json_response,
-                error="No result in response"
+                error="No result in response",
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         result = json_response["result"]
@@ -435,6 +487,7 @@ class LiveTester:
                           "completed", "failed", "canceled", "rejected"]
             
             if state not in valid_states:
+                fix = LIVE_TEST_FIXES.get("invalid_task_state")
                 return LiveTestResult(
                     test_name=test_name,
                     status=TestStatus.FAILED,
@@ -443,7 +496,10 @@ class LiveTester:
                     request=request,
                     response=json_response,
                     details=details,
-                    error=f"State '{state}' not in valid states"
+                    error=f"State '{state}' not in valid states",
+                    fix=fix.fix if fix else None,
+                    code_snippet=fix.code_snippet if fix else None,
+                    spec_url=fix.spec_url if fix else None
                 )
             
             return LiveTestResult(
@@ -495,34 +551,46 @@ class LiveTester:
         response, error, duration_ms = await self._request("POST", endpoint_url, request)
         
         if error:
+            fix = LIVE_TEST_FIXES.get("task_get_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"Request failed: {type(error).__name__}",
                 duration_ms=duration_ms,
                 request=request,
-                error=str(error)
+                error=str(error),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         if response.status_code != 200:
+            fix = LIVE_TEST_FIXES.get("task_get_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"HTTP {response.status_code}",
                 duration_ms=duration_ms,
-                request=request
+                request=request,
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         try:
             json_response = response.json()
         except json.JSONDecodeError as e:
+            fix = LIVE_TEST_FIXES.get("task_get_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Invalid JSON response",
                 duration_ms=duration_ms,
                 request=request,
-                error=str(e)
+                error=str(e),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         # Check for TaskNotFound error
@@ -541,6 +609,7 @@ class LiveTester:
                     details={"error_code": code}
                 )
             
+            fix = LIVE_TEST_FIXES.get("task_get_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
@@ -548,17 +617,24 @@ class LiveTester:
                 duration_ms=duration_ms,
                 request=request,
                 response=json_response,
-                error=f"Code {code}"
+                error=f"Code {code}",
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         if "result" not in json_response:
+            fix = LIVE_TEST_FIXES.get("task_get_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Response missing 'result'",
                 duration_ms=duration_ms,
                 request=request,
-                response=json_response
+                response=json_response,
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         result = json_response["result"]
@@ -593,34 +669,46 @@ class LiveTester:
         response, error, duration_ms = await self._request("POST", endpoint_url, request)
         
         if error:
+            fix = LIVE_TEST_FIXES.get("task_cancel_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"Request failed: {type(error).__name__}",
                 duration_ms=duration_ms,
                 request=request,
-                error=str(error)
+                error=str(error),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         if response.status_code != 200:
+            fix = LIVE_TEST_FIXES.get("task_cancel_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"HTTP {response.status_code}",
                 duration_ms=duration_ms,
-                request=request
+                request=request,
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         try:
             json_response = response.json()
         except json.JSONDecodeError as e:
+            fix = LIVE_TEST_FIXES.get("task_cancel_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Invalid JSON response",
                 duration_ms=duration_ms,
                 request=request,
-                error=str(e)
+                error=str(e),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         if "error" in json_response:
@@ -650,13 +738,17 @@ class LiveTester:
                     details={"error_code": code}
                 )
             
+            fix = LIVE_TEST_FIXES.get("task_cancel_failed")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"JSON-RPC error: {error_obj.get('message')}",
                 duration_ms=duration_ms,
                 request=request,
-                response=json_response
+                response=json_response,
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         result = json_response.get("result", {})
@@ -719,12 +811,16 @@ class LiveTester:
                 async with client.stream("POST", endpoint_url, json=request, headers=headers) as response:
                     if response.status_code != 200:
                         duration_ms = (time.perf_counter() - start) * 1000
+                        fix = LIVE_TEST_FIXES.get("streaming_not_working")
                         return LiveTestResult(
                             test_name=test_name,
                             status=TestStatus.FAILED,
                             message=f"HTTP {response.status_code}",
                             duration_ms=duration_ms,
-                            request=request
+                            request=request,
+                            fix=fix.fix if fix else None,
+                            code_snippet=fix.code_snippet if fix else None,
+                            spec_url=fix.spec_url if fix else None
                         )
                     
                     # Check content type
@@ -774,13 +870,17 @@ class LiveTester:
                     duration_ms = (time.perf_counter() - start) * 1000
                     
                     if not events_received:
+                        fix = LIVE_TEST_FIXES.get("streaming_not_working")
                         return LiveTestResult(
                             test_name=test_name,
                             status=TestStatus.FAILED,
                             message="No SSE events received",
                             duration_ms=duration_ms,
                             request=request,
-                            details={"content_type": content_type, "is_sse": is_sse}
+                            details={"content_type": content_type, "is_sse": is_sse},
+                            fix=fix.fix if fix else None,
+                            code_snippet=fix.code_snippet if fix else None,
+                            spec_url=fix.spec_url if fix else None
                         )
                     
                     return LiveTestResult(
@@ -808,22 +908,30 @@ class LiveTester:
                     request=request,
                     details={"events_count": len(events_received)}
                 )
+            fix = LIVE_TEST_FIXES.get("streaming_not_working")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Stream timed out with no events",
                 duration_ms=duration_ms,
-                request=request
+                request=request,
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         except Exception as e:
             duration_ms = (time.perf_counter() - start) * 1000
+            fix = LIVE_TEST_FIXES.get("streaming_not_working")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"Streaming failed: {type(e).__name__}",
                 duration_ms=duration_ms,
                 request=request,
-                error=str(e)
+                error=str(e),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
     
     async def test_invalid_method(self) -> LiveTestResult:
@@ -840,34 +948,46 @@ class LiveTester:
         response, error, duration_ms = await self._request("POST", endpoint_url, request)
         
         if error:
+            fix = LIVE_TEST_FIXES.get("invalid_method_no_error")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"Request failed: {type(error).__name__}",
                 duration_ms=duration_ms,
                 request=request,
-                error=str(error)
+                error=str(error),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         try:
             json_response = response.json()
         except json.JSONDecodeError:
+            fix = LIVE_TEST_FIXES.get("invalid_method_no_error")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Response is not valid JSON",
                 duration_ms=duration_ms,
-                request=request
+                request=request,
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         if "error" not in json_response:
+            fix = LIVE_TEST_FIXES.get("invalid_method_no_error")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message="Agent did not return error for invalid method",
                 duration_ms=duration_ms,
                 request=request,
-                response=json_response
+                response=json_response,
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
         
         error_obj = json_response["error"]
@@ -949,12 +1069,16 @@ class LiveTester:
                             details={"error_code": code, "expected_code": -32700}
                         )
                     
+                    fix = LIVE_TEST_FIXES.get("invalid_json_no_error")
                     return LiveTestResult(
                         test_name=test_name,
                         status=TestStatus.FAILED,
                         message="Agent accepted invalid JSON",
                         duration_ms=duration_ms,
-                        response=json_response
+                        response=json_response,
+                        fix=fix.fix if fix else None,
+                        code_snippet=fix.code_snippet if fix else None,
+                        spec_url=fix.spec_url if fix else None
                     )
                 except json.JSONDecodeError:
                     return LiveTestResult(
@@ -966,12 +1090,16 @@ class LiveTester:
                     
         except Exception as e:
             duration_ms = (time.perf_counter() - start) * 1000
+            fix = LIVE_TEST_FIXES.get("invalid_json_no_error")
             return LiveTestResult(
                 test_name=test_name,
                 status=TestStatus.FAILED,
                 message=f"Request failed: {type(e).__name__}",
                 duration_ms=duration_ms,
-                error=str(e)
+                error=str(e),
+                fix=fix.fix if fix else None,
+                code_snippet=fix.code_snippet if fix else None,
+                spec_url=fix.spec_url if fix else None
             )
     
     # ═══════════════════════════════════════════════════════════════════════════
