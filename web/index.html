@@ -3535,7 +3535,7 @@
                     const used = data.used || 0;
                     const limit = data.limit || 5;
                     const remaining = data.remaining;
-                    text.textContent = `${remaining} of ${limit} tests remaining`;
+                    text.textContent = `${used}/${limit} tests used`;
                     plan.textContent = 'FREE';
                     const pct = (used / limit) * 100;
                     fill.style.width = pct + '%';
