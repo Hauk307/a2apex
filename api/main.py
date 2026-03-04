@@ -31,6 +31,9 @@ from api.badges import router as badges_router
 # Payments module (Stripe)
 from api.payments import router as payments_router
 
+# Agent Profiles module
+from api.profiles import router as profiles_router
+
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -93,7 +96,7 @@ PRO_TIER_LIMIT = 100  # requests per minute
 RATE_LIMIT_WINDOW = 60  # seconds
 
 # Public endpoints that don't require auth or rate limiting
-PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json", "/api/waitlist", "/api/registry", "/api/registry-page", "/api/webhook", "/api/stripe-config"}
+PUBLIC_ENDPOINTS = {"/", "/api/health", "/api/demo", "/api/docs", "/api/redoc", "/openapi.json", "/api/waitlist", "/api/registry", "/api/registry-page", "/api/webhook", "/api/stripe-config", "/api/agents/", "/api/agents/register", "/agents"}
 
 
 def load_api_keys():
@@ -420,6 +423,9 @@ app.include_router(badges_router)
 # Include payments router (Stripe)
 app.include_router(payments_router)
 
+# Include agent profiles router
+app.include_router(profiles_router)
+
 # Sample agent proxy — allows testing from external devices
 import httpx
 
@@ -457,7 +463,7 @@ async def rate_limit_middleware(request: Request, call_next):
     path = request.url.path
     
     # Skip rate limiting for public endpoints
-    if path in PUBLIC_ENDPOINTS or path.startswith("/api/docs") or path.startswith("/api/redoc") or path.startswith("/api/badge/") or path.startswith("/api/registry"):
+    if path in PUBLIC_ENDPOINTS or path.startswith("/api/docs") or path.startswith("/api/redoc") or path.startswith("/api/badge/") or path.startswith("/api/registry") or path.startswith("/agents") or path.startswith("/api/agents"):
         return await call_next(request)
     
     # Handle CORS preflight
@@ -799,7 +805,15 @@ async def run_live_test(request: LiveTestRequest, req: Request):
         
         result = report.to_dict()
         result["report_id"] = report_id
-        
+
+        # Auto-create/update agent profile
+        try:
+            from api.profiles import ensure_agent_profile
+            score = result.get("summary", {}).get("score", 0)
+            await ensure_agent_profile(request.agent_url, "live", int(score), json.dumps(result.get("summary", {})))
+        except Exception:
+            pass
+
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -1025,7 +1039,7 @@ async def run_full_compliance_suite(request: TestRequest, req: Request):
         # Calculate overall score
         overall_score = (total_passed / total_tests * 100) if total_tests > 0 else 0
         
-        return {
+        full_result = {
             "agent_url": request.agent_url,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "summary": {
@@ -1038,7 +1052,16 @@ async def run_full_compliance_suite(request: TestRequest, req: Request):
             },
             "categories": categories
         }
-        
+
+        # Auto-create/update agent profile
+        try:
+            from api.profiles import ensure_agent_profile
+            await ensure_agent_profile(request.agent_url, "full", int(round(overall_score, 0)), json.dumps(full_result["summary"]))
+        except Exception:
+            pass
+
+        return full_result
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
