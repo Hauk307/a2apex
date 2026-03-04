@@ -700,6 +700,158 @@
             font-size: 0.85rem;
         }
         
+        /* Agent Directory Showcase */
+        .directory-showcase {
+            background: var(--bg-secondary);
+        }
+        
+        .agent-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .agent-profile-card {
+            background: #0D1D31;
+            border: 1px solid #1A2A3F;
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .agent-profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .agent-profile-card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0, 229, 255, 0.1);
+        }
+        
+        .agent-profile-card:hover::before {
+            opacity: 1;
+        }
+        
+        .agent-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+        
+        .agent-card-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .agent-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(0, 229, 255, 0.1);
+        }
+        
+        .agent-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .agent-type {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        
+        .agent-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .agent-score-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .agent-score-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        
+        .score-gold { color: #FFD700; }
+        .score-silver { color: #C0C0C0; }
+        .score-bronze { color: #CD7F32; }
+        
+        .agent-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .skill-tag {
+            background: rgba(0, 229, 255, 0.12);
+            color: var(--cyan);
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+        
+        .agent-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #1A2A3F;
+        }
+        
+        .agent-tests {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .agent-view-link {
+            color: var(--cyan);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .agent-view-link:hover {
+            text-decoration: underline;
+            filter: brightness(1.2);
+        }
+        
+        .directory-cta {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 640px) {
             section {
@@ -883,7 +1035,7 @@
         <div class="container">
             <a href="#" class="logo-text"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTE0Ni42MyAzMTcuMSI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQtMik7CiAgICAgIH0KCiAgICAgIC5jbHMtMiB7CiAgICAgICAgZmlsbDogI2ZmZmZmZjsKICAgICAgfQoKICAgICAgLmNscy0zIHsKICAgICAgICBmaWxsOiB1cmwoI3JhZGlhbC1ncmFkaWVudCk7CiAgICAgIH0KCiAgICAgIC5jbHMtNCB7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQtMyk7CiAgICAgICAgb3BhY2l0eTogLjg1OwogICAgICB9CgogICAgICAuY2xzLTUgewogICAgICAgIGZpbGw6IHVybCgjbGluZWFyLWdyYWRpZW50KTsKICAgICAgfQogICAgPC9zdHlsZT4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0icmFkaWFsLWdyYWRpZW50IiBjeD0iMjIxLjciIGN5PSIxNTguNTUiIGZ4PSIyMjEuNyIgZnk9IjE1OC41NSIgcj0iNjMuNTEiIGdyYWRpZW50VHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEwMi40NyAtNDIuOTQpIHJvdGF0ZSgtMjIuNjMpIHNjYWxlKDEgMS45NikiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjI2IiBzdG9wLWNvbG9yPSIjMThiZWYyIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjQyIiBzdG9wLWNvbG9yPSIjMTdiNmVkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjU1IiBzdG9wLWNvbG9yPSIjMTVhN2U1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjY3IiBzdG9wLWNvbG9yPSIjMTI5M2RhIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjc3IiBzdG9wLWNvbG9yPSIjMGY3OGNiIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjg3IiBzdG9wLWNvbG9yPSIjMGE1OGI5Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjk2IiBzdG9wLWNvbG9yPSIjMDUzMmE0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB4MT0iMjMxLjQ5IiB5MT0iMTg4LjI0IiB4Mj0iMTgyLjUxIiB5Mj0iMjM4LjgzIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzE5YzFmNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii4wOSIgc3RvcC1jb2xvcj0iIzE2YWJlOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii4zMSIgc3RvcC1jb2xvcj0iIzBmN2FjYyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii41MiIgc3RvcC1jb2xvcj0iIzA5NTNiNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii43MSIgc3RvcC1jb2xvcj0iIzA2MzdhNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii44NyIgc3RvcC1jb2xvcj0iIzAzMjY5ZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMzIxOWIiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxpbmVhci1ncmFkaWVudC0yIiB4MT0iMTIxLjg4IiB5MT0iMTM3LjI5IiB4Mj0iMTA1LjIyIiB5Mj0iMjQ4LjMiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50LTMiIHgxPSIxODUuMjciIHkxPSIxODYuNjMiIHgyPSIxNTIuODEiIHkyPSIyNDkuMTEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMTljMWY0Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjEzIiBzdG9wLWNvbG9yPSIjMThiYmYxIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjI5IiBzdG9wLWNvbG9yPSIjMTZhY2U4Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjQ4IiBzdG9wLWNvbG9yPSIjMTI5MmRhIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjY3IiBzdG9wLWNvbG9yPSIjMGQ2ZmM2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjg3IiBzdG9wLWNvbG9yPSIjMDc0MmFkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzMjE5YiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGc+CiAgICA8cG9seWdvbiBjbGFzcz0iY2xzLTMiIHBvaW50cz0iMjkwLjc5IDI2My41MiAyNjAuMzYgMjYzLjUyIDE4NC41MSAxMTMuNyAxNjcuODMgMTQ2LjY1IDE1Mi42MiAxMTYuNTkgMTg0LjUxIDUzLjU3IDI5MC43OSAyNjMuNTIiLz4KICAgIDxwb2x5Z29uIGNsYXNzPSJjbHMtNSIgcG9pbnRzPSIxNjYuNTMgMTkwLjA4IDE4Ni4zMyAyMjkuMiAyMDMuNzIgMjYzLjUyIDIzNi45NCAyNjMuNTIgMTgzLjE1IDE1Ny4yNSAxNjYuNTMgMTkwLjA4Ii8+CiAgICA8cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iMTY3LjgzIDE0Ni42NSAxNTMuNjkgMTc0LjYgMTQxLjI5IDE1MC4xIDkzLjMgMjQ0LjkgMTI3IDI0NC45IDExNi44NCAyNjMuNTIgNTUuNTggMjYzLjUyIDE0MS4yOSA5NC4yIDE1Mi42MiAxMTYuNTkgMTY3LjgzIDE0Ni42NSIvPgogICAgPHBvbHlnb24gY2xhc3M9ImNscy00IiBwb2ludHM9IjE5OS44MyAxOTAuMDggMTgwLjAzIDIyOS4yIDE2Mi42NSAyNjMuNTIgMTI5LjQyIDI2My41MiAxODMuMjEgMTU3LjI1IDE5OS44MyAxOTAuMDgiLz4KICA8L2c+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00NzAuOTcsMjE0LjA2di0yNy4xYzAtMTYuNDIsMTEuMzYtMjQuMzYsMzIuMTYtMjQuMzZoMzkuOTZjMTQuNjQsMCwyMS4wOC00Ljc5LDIxLjA4LTEzLjU1LDAtMTAuNjctOS43Mi0xMy45Ni0yOC42LTEzLjk2aC01OS4yNmw5LjU4LTEyLjU5aDU1Ljg0YzI2LjQyLDAsMzYuNjgsMTAuNTQsMzYuNjgsMjUuNzNzLTkuODUsMjUuMzItMzMuOTQsMjUuMzJoLTM5Ljk2Yy0xMi41OSwwLTE5LjE2LDMuOTctMTkuMTYsMTMuMjh2MTQuNzhoOTQuNDRsLTkuNTgsMTIuNDVoLTk5LjIzWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNzQ4LjEsMTg0LjIydjI5Ljg0aC0xNC43OHYtNDIuMTVoNjUuNDJjMTcuMzgsMCwzMS40OC00LjkzLDMxLjQ4LTE4LjIsMC0xNC4yMy0xMi44Ny0xOC42MS0zMS42MS0xOC42MWgtNjUuNTZsOS44NS0xMi41OWg2MC45YzI1LjE4LDAsNDEuMiwxMS43Nyw0MS4yLDMxLjM0cy0xNS44OCwzMC4zOC00MS4yLDMwLjM4aC01NS43WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNODU4LjY3LDIxNC4wNnYtOTEuNTZoOTcuMTdsLTkuNzIsMTIuNTloLTcyLjY3djI3LjUxaDc4LjE1bC04LjQ5LDEwLjk1aC02OS42NnYyOC4wNmg4My4wOGwtOS43MiwxMi40NWgtODguMTRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xMDY3LjI0LDIxNC4wNmwtNDQuMzQtMzguNi00NC42MiwzOC42aC0xOC42MWw1NC42MS00Ny4wOC01MS4wNS00NC40OGgyMC41M2w0MC41MSwzNS43Miw0MC43OS0zNS43MmgxOS4zbC01MS4wNSw0My45Myw1NC44OCw0Ny42M2gtMjAuOTRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00NDUuNDUsMjE0LjA2aDE4LjE1bC01OC41OC0xMDUuNGMtMi4wNS0zLjE1LTUuMzQtNS42MS05LjcyLTUuNjFzLTcuOCwyLjc0LTkuNzIsNS42MWwtNTkuNCwxMDUuNGgxNy41MmwxNi4xOC0yOS43aDY5LjY2bDE1LjksMjkuN1pNMzY2LjY3LDE3MS45bDI4LjM1LTUyLjAzLDI3Ljg1LDUyLjAzaC01Ni4yMVoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTcwNS43NCwyMTQuMDZoMTguMTVsLTU4LjU4LTEwNS40Yy0yLjA1LTMuMTUtNS4zNC01LjYxLTkuNzItNS42MXMtNy44LDIuNzQtOS43Miw1LjYxbC01OS40LDEwNS40aDE3LjUybDE2LjE4LTI5LjdoNjkuNjZsMTUuOSwyOS43Wk02MjYuOTYsMTcxLjlsMjguMzUtNTIuMDMsMjcuODUsNTIuMDNoLTU2LjIxWiIvPgogIDwvZz4KPC9zdmc+" alt="A2Apex" style="height: 32px; vertical-align: middle; filter: brightness(1.5) drop-shadow(0 0 20px rgba(25, 193, 244, 0.5));"></a>
             <ul class="nav-links">
-                <li><a href="#problem">Problem</a></li>
+                <li><a href="#directory">Directory</a></li>
                 <li><a href="#solution">Solution</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#roadmap">Roadmap</a></li>
@@ -910,6 +1062,93 @@
         </div>
     </section>
 
+    <!-- Agent Directory Showcase -->
+    <section id="directory" class="directory-showcase">
+        <div class="container">
+            <div class="fade-in" style="text-align: center;">
+                <h2 class="section-title">Discover Trusted AI Agents</h2>
+                <p class="section-subtitle">The first searchable directory of verified A2A agents. Every agent tested, scored, and showcased with a public profile.</p>
+            </div>
+            <div class="agent-cards-grid">
+                <!-- Weather Agent — Gold -->
+                <div class="agent-profile-card fade-in">
+                    <div class="agent-card-header">
+                        <div class="agent-card-info">
+                            <div class="agent-avatar">🌤️</div>
+                            <div>
+                                <div class="agent-name">Weather Agent</div>
+                                <div class="agent-type">A2A Verified</div>
+                            </div>
+                        </div>
+                        <div class="agent-score">
+                            <div class="agent-score-number score-gold">96</div>
+                            <div class="agent-score-label">Trust Score</div>
+                        </div>
+                    </div>
+                    <div class="agent-skills">
+                        <span class="skill-tag">Weather</span>
+                        <span class="skill-tag">Forecasting</span>
+                    </div>
+                    <div class="agent-card-footer">
+                        <span class="agent-tests">42 tests passed</span>
+                        <a href="https://weekend-healthy-soap-warming.trycloudflare.com/agents" class="agent-view-link">View Profile →</a>
+                    </div>
+                </div>
+                <!-- Code Assistant — Silver -->
+                <div class="agent-profile-card fade-in">
+                    <div class="agent-card-header">
+                        <div class="agent-card-info">
+                            <div class="agent-avatar">💻</div>
+                            <div>
+                                <div class="agent-name">Code Assistant</div>
+                                <div class="agent-type">A2A Verified</div>
+                            </div>
+                        </div>
+                        <div class="agent-score">
+                            <div class="agent-score-number score-silver">88</div>
+                            <div class="agent-score-label">Trust Score</div>
+                        </div>
+                    </div>
+                    <div class="agent-skills">
+                        <span class="skill-tag">Code Review</span>
+                        <span class="skill-tag">Debugging</span>
+                    </div>
+                    <div class="agent-card-footer">
+                        <span class="agent-tests">38 tests passed</span>
+                        <a href="https://weekend-healthy-soap-warming.trycloudflare.com/agents" class="agent-view-link">View Profile →</a>
+                    </div>
+                </div>
+                <!-- Data Analyst — Bronze -->
+                <div class="agent-profile-card fade-in">
+                    <div class="agent-card-header">
+                        <div class="agent-card-info">
+                            <div class="agent-avatar">📊</div>
+                            <div>
+                                <div class="agent-name">Data Analyst</div>
+                                <div class="agent-type">A2A Verified</div>
+                            </div>
+                        </div>
+                        <div class="agent-score">
+                            <div class="agent-score-number score-bronze">74</div>
+                            <div class="agent-score-label">Trust Score</div>
+                        </div>
+                    </div>
+                    <div class="agent-skills">
+                        <span class="skill-tag">SQL</span>
+                        <span class="skill-tag">Visualization</span>
+                    </div>
+                    <div class="agent-card-footer">
+                        <span class="agent-tests">31 tests passed</span>
+                        <a href="https://weekend-healthy-soap-warming.trycloudflare.com/agents" class="agent-view-link">View Profile →</a>
+                    </div>
+                </div>
+            </div>
+            <div class="directory-cta fade-in">
+                <a href="https://weekend-healthy-soap-warming.trycloudflare.com/agents" target="_blank" class="btn btn-primary">Browse the Directory →</a>
+            </div>
+        </div>
+    </section>
+
     <!-- Problem Section -->
     <section id="problem" class="problem">
         <div class="container">
@@ -931,7 +1170,7 @@
                 <div class="problem-card fade-in">
                     <div class="problem-icon">❓</div>
                     <h3>No Trust</h3>
-                    <p>How do you know an agent works before deploying? How do you trust an agent you didn't build?</p>
+                    <p>No way to verify agent quality or browse trusted agents. You can't find them, and even if you could — you can't trust them.</p>
                 </div>
             </div>
         </div>
@@ -941,8 +1180,8 @@
     <section id="solution">
         <div class="container">
             <div class="fade-in" style="text-align: center;">
-                <h2 class="section-title">A2Apex: Complete A2A Testing Suite</h2>
-                <p class="section-subtitle">Everything you need to build, test, and certify A2A-compliant agents.</p>
+                <h2 class="section-title">Test. Certify. Get Listed.</h2>
+                <p class="section-subtitle">Everything you need to build trusted A2A agents — from validation to public profiles.</p>
             </div>
             <div class="solution-grid">
                 <div class="feature-card fade-in">
@@ -956,24 +1195,24 @@
                     <p>Real JSON-RPC calls with response validation. Test every endpoint with actual protocol messages.</p>
                 </div>
                 <div class="feature-card fade-in">
-                    <div class="feature-icon">🔄</div>
-                    <h3>State Machine Validation</h3>
-                    <p>Task lifecycle transition verification. Ensure your agent handles every state change correctly.</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">📡</div>
-                    <h3>Streaming Tests</h3>
-                    <p>SSE event ordering and format checks. Validate real-time communication flows.</p>
-                </div>
-                <div class="feature-card fade-in">
                     <div class="feature-icon">🔒</div>
                     <h3>Security Checking</h3>
-                    <p>Auth scheme validation for API keys, OAuth, and JWT. Make sure your agent is secure.</p>
+                    <p>Auth scheme validation for API keys, OAuth, and JWT. Make sure your agent is locked down before going live.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">👤</div>
+                    <h3>Agent Profiles</h3>
+                    <p>Public profile pages with trust scores, test history, and embeddable badges. Your agent's reputation, on display.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Agent Directory</h3>
+                    <p>Searchable directory of verified agents. Get discovered by developers looking for agents they can trust.</p>
                 </div>
                 <div class="feature-card fade-in">
                     <div class="feature-icon">📊</div>
-                    <h3>Compliance Scoring</h3>
-                    <p>0-100 compliance score with detailed reports. Know exactly where your agent stands.</p>
+                    <h3>Trust Scoring</h3>
+                    <p>0-100 trust score with tiered badges — Gold, Silver, Bronze. Build credibility with every test run.</p>
                 </div>
             </div>
         </div>
@@ -984,7 +1223,7 @@
         <div class="container">
             <div class="fade-in" style="text-align: center;">
                 <h2 class="section-title">How It Works</h2>
-                <p class="section-subtitle">Three simple steps to A2A compliance.</p>
+                <p class="section-subtitle">Four steps from unknown agent to trusted, listed, and discoverable.</p>
             </div>
             <div class="steps">
                 <div class="step fade-in">
@@ -1003,7 +1242,13 @@
                     <div class="step-number">3</div>
                     <div class="step-icon">🏆</div>
                     <h3>Certify</h3>
-                    <p>Get your A2A compliance score and badge. Share it with confidence.</p>
+                    <p>Get your trust score and verified badge. Gold, Silver, or Bronze — share it with confidence.</p>
+                </div>
+                <div class="step fade-in">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">🚀</div>
+                    <h3>Get Listed</h3>
+                    <p>Your agent appears in the public directory with a profile page. Developers find you and trust you.</p>
                 </div>
             </div>
         </div>
@@ -1020,22 +1265,29 @@
                 <div class="roadmap-item completed fade-in">
                     <div class="phase-badge">✅</div>
                     <div class="roadmap-content">
-                        <h3>Phase 1: Web Testing Tool <span class="status-badge live">LIVE</span></h3>
-                        <p>Manual testing, validation, and compliance scoring. Point, click, get results. Available now in beta.</p>
+                        <h3>Phase 1: Testing &amp; Certification Platform <span class="status-badge live">LIVE</span></h3>
+                        <p>Full A2A compliance testing, certification scoring, and embeddable verified badges. Available now.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item completed fade-in">
+                    <div class="phase-badge">✅</div>
+                    <div class="roadmap-content">
+                        <h3>Phase 2: Agent Profiles &amp; Directory <span class="status-badge live">LIVE</span></h3>
+                        <p>Public agent profiles with trust scores, test history, and a searchable directory of verified agents.</p>
                     </div>
                 </div>
                 <div class="roadmap-item upcoming fade-in">
                     <div class="phase-badge">🔜</div>
                     <div class="roadmap-content">
-                        <h3>Phase 2: CLI &amp; SDK <span class="status-badge soon">Q2 2026</span></h3>
-                        <p><code>pip install a2apex</code> — CI/CD integration, automated testing in your pipeline, GitHub Actions support.</p>
+                        <h3>Phase 3: CLI, SDK &amp; CI/CD <span class="status-badge soon">Q2 2026</span></h3>
+                        <p><code>pip install a2apex</code> — GitHub Actions, automated pipeline testing, and programmatic access to trust scores.</p>
                     </div>
                 </div>
                 <div class="roadmap-item future fade-in">
                     <div class="phase-badge">🔮</div>
                     <div class="roadmap-content">
-                        <h3>Phase 3: Trust Layer</h3>
-                        <p>Agent certification, trust scores, and a verified registry. Know which agents you can trust before you integrate.</p>
+                        <h3>Phase 4: Agent Marketplace</h3>
+                        <p>Premium listings, placement fees, and an agent-to-agent discovery API. The app store for AI agents.</p>
                     </div>
                 </div>
             </div>
@@ -1129,6 +1381,7 @@
                     <h4>Product</h4>
                     <ul>
                         <li><a href="#solution">Features</a></li>
+                        <li><a href="https://weekend-healthy-soap-warming.trycloudflare.com/agents" target="_blank">Agent Directory</a></li>
                         <li><a href="#pricing">Pricing</a></li>
                         <li><a href="#roadmap">Roadmap</a></li>
                     </ul>
