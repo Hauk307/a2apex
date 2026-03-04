@@ -1,5 +1,5 @@
 """
-A2Apex - Test, validate, and certify A2A protocol implementations.
+A2Apex - The trust layer for AI agents. Test, certify, and build reputation for A2A agents.
 
 The A2Apex SDK provides tools for testing and validating agents that implement
 the A2A (Agent-to-Agent) protocol.

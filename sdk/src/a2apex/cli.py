@@ -124,7 +124,7 @@ def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
         prog="a2apex",
-        description="Test, validate, and certify A2A protocol implementations",
+        description="The trust layer for AI agents — test, certify, and build reputation for A2A agents",
     )
     parser.add_argument(
         "--version",
