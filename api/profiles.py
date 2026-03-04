@@ -878,7 +878,7 @@ async def agent_directory_page(request: Request):
     {_topbar_html()}
 
     <div class="hero">
-        <h1>🤖 Agent <span>Directory</span></h1>
+        <h1>Agent <span>Directory</span></h1>
         <p>Discover, verify, and connect with trusted AI agents. The trust layer for the A2A ecosystem.</p>
     </div>
 
