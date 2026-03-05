@@ -3520,6 +3520,7 @@
         let chatHistory = [];
         let currentContextId = null;
         let showRawJson = false;
+        const tabResultsCache = {}; // Cache results per tab
 
         // ════════════════════════════════════════════════════════════════════
         // DOM ELEMENTS
@@ -3727,6 +3728,22 @@
         // ════════════════════════════════════════════════════════════════════
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
+                // Save current tab's results before switching
+                const resultsPanel = document.getElementById('results-panel');
+                const scoreCard = document.getElementById('score-card');
+                const certResult = document.getElementById('certify-result');
+                if (resultsPanel && resultsPanel.style.display !== 'none' && resultsPanel.innerHTML.trim()) {
+                    tabResultsCache[currentTab] = {
+                        results: resultsPanel.innerHTML,
+                        score: scoreCard ? scoreCard.innerHTML : '',
+                        scoreDisplay: scoreCard ? scoreCard.style.display : 'none',
+                        resultsDisplay: resultsPanel.style.display
+                    };
+                }
+                if (currentTab === 'certify' && certResult && certResult.style.display !== 'none') {
+                    tabResultsCache['certify'] = { certify: certResult.innerHTML, certifyDisplay: certResult.style.display };
+                }
+                
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentTab = tab.dataset.tab;
@@ -3765,6 +3782,23 @@
                 document.getElementById('tab-description').textContent = descriptions[currentTab];
                 
                 updateTabVisibility();
+                
+                // Restore cached results for this tab
+                if (tabResultsCache[currentTab]) {
+                    const cached = tabResultsCache[currentTab];
+                    if (currentTab === 'certify' && cached.certify) {
+                        const certResult = document.getElementById('certify-result');
+                        if (certResult) {
+                            certResult.innerHTML = cached.certify;
+                            certResult.style.display = cached.certifyDisplay || 'block';
+                        }
+                    } else if (cached.results) {
+                        const rp = document.getElementById('results-panel');
+                        const sc = document.getElementById('score-card');
+                        if (rp) { rp.innerHTML = cached.results; rp.style.display = cached.resultsDisplay || 'block'; }
+                        if (sc && cached.score) { sc.innerHTML = cached.score; sc.style.display = cached.scoreDisplay || 'block'; }
+                    }
+                }
             });
         });
 
