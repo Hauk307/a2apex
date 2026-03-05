@@ -1510,14 +1510,19 @@ async def agent_chat_proxy(slug: str, body: ChatRequest):
         "params": {
             "message": {
                 "role": "user",
-                "parts": [{"type": "text", "text": body.message}]
+                "parts": [{"kind": "text", "type": "text", "text": body.message}]
             }
         }
     }
 
+    # Try the URL as-is first, then with /a2a appended (common A2A convention)
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(agent_url, json=payload)
+            if resp.status_code == 404:
+                # Try with /a2a suffix
+                alt_url = agent_url.rstrip("/") + "/a2a"
+                resp = await client.post(alt_url, json=payload)
             resp.raise_for_status()
             data = resp.json()
     except httpx.TimeoutException:
@@ -1537,13 +1542,15 @@ async def agent_chat_proxy(slug: str, body: ChatRequest):
         if artifacts:
             for art in artifacts:
                 for part in art.get("parts", []):
-                    if part.get("type") == "text" and part.get("text"):
+                    part_type = part.get("type") or part.get("kind")
+                    if part_type == "text" and part.get("text"):
                         reply_text += part["text"] + "\n"
         # Fall back to status message
         if not reply_text:
             status_msg = result.get("status", {}).get("message", {})
             for part in status_msg.get("parts", []):
-                if part.get("type") == "text" and part.get("text"):
+                part_type = part.get("type") or part.get("kind")
+                if part_type == "text" and part.get("text"):
                     reply_text += part["text"] + "\n"
         # Fall back: check for error in JSON-RPC response
         if not reply_text and "error" in data:
