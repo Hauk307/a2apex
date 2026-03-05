@@ -372,7 +372,7 @@ async def certify_agent(request: CertifyRequest, req: Request):
             status_code=403,
             content={
                 "error": "free_limit_reached",
-                "message": "You've used all 3 free tests this month. Upgrade to Pro for unlimited testing.",
+                "message": "You've used all 5 free tests this month. Upgrade to Pro for unlimited testing.",
                 "upgrade_url": "/"
             }
         )
