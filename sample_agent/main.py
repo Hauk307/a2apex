@@ -144,15 +144,8 @@ AGENT_CARD = {
             "outputModes": ["text/plain", "application/json"]
         }
     ],
-    "securitySchemes": {
-        "apiKey": {
-            "type": "apiKey",
-            "name": "X-API-Key",
-            "in": "header",
-            "description": "Optional API key for authentication"
-        }
-    },
-    "security": [{"apiKey": []}],
+    "securitySchemes": {},
+    "security": [],
     "provider": {
         "organization": "A2Apex Demo",
         "url": "https://github.com/a2aproject/A2A"

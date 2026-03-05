@@ -89,7 +89,7 @@ class StreamTestReport:
     def score(self) -> float:
         if self.total_tests == 0:
             return 0
-        return (self.passed / self.total_tests) * 100
+        scored = self.total_tests - self.skipped; return (self.passed / scored * 100) if scored > 0 else 0
     
     def to_dict(self) -> dict:
         return {

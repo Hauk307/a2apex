@@ -1037,7 +1037,15 @@ async def run_full_compliance_suite(request: TestRequest, req: Request):
                         result["spec_url"] = fix.spec_url
         
         # Calculate overall score
-        overall_score = (total_passed / total_tests * 100) if total_tests > 0 else 0
+        # Exclude fully-skipped categories and skipped tests from score
+        scored_tests = total_tests - total_skipped
+        overall_score = (total_passed / scored_tests * 100) if scored_tests > 0 else 0
+        
+        # Mark fully-skipped categories
+        for cat_name, cat_data in categories.items():
+            s = cat_data.get("summary", {})
+            if s.get("total", 0) > 0 and s.get("total", 0) == s.get("skipped", 0):
+                s["score"] = None  # N/A — all tests skipped
         
         full_result = {
             "agent_url": request.agent_url,

@@ -410,9 +410,10 @@ async def certify_agent(request: CertifyRequest, req: Request):
             return_exceptions=True
         )
         
-        # Calculate score same way as Full Suite
+        # Calculate score same way as Full Suite (exclude skipped)
         total_passed = 0
         total_tests = 0
+        total_skipped = 0
         for report in results:
             if isinstance(report, Exception):
                 continue
@@ -420,8 +421,10 @@ async def certify_agent(request: CertifyRequest, req: Request):
             summary = report_dict.get("summary", {})
             total_passed += summary.get("passed", 0)
             total_tests += summary.get("total", 0)
+            total_skipped += summary.get("skipped", 0)
         
-        total_score = int((total_passed / total_tests * 100) if total_tests > 0 else 0)
+        scored_tests = total_tests - total_skipped
+        total_score = int((total_passed / scored_tests * 100) if scored_tests > 0 else 0)
         
         test_results = {
             "total_tests": total_tests,
