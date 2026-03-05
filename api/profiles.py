@@ -1166,17 +1166,8 @@ async def agent_profile_page(slug: str, request: Request):
     badge_url = f"{base_url}/api/agents/{slug}/badge"
     profile_url = f"{base_url}/agents/{slug}"
 
-    # Claim CTA
+    # Claim CTA (hidden until claim flow is built)
     claim_html = ""
-    if not agent["claimed"]:
-        claim_html = f'''
-        <div class="section" style="text-align:center">
-            <div style="background:var(--cyan-dim);border:1px dashed var(--cyan);border-radius:12px;padding:1.5rem">
-                <h3 style="margin-bottom:.5rem">🔑 Is this your agent?</h3>
-                <p style="color:var(--text2);font-size:.875rem;margin-bottom:1rem">Claim ownership to manage this profile and update agent details.</p>
-                <a href="/" class="btn btn-cyan">Sign in to Claim</a>
-            </div>
-        </div>'''
 
     html = f'''<!DOCTYPE html>
 <html lang="en">
