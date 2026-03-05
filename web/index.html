@@ -2759,21 +2759,54 @@
 
         .certify-score {
             margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .score-ring-container {
+            position: relative;
+            display: inline-block;
+            width: 140px;
+            height: 140px;
+        }
+
+        .score-ring-svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-ring-bg { fill: none; stroke: #1a2a3a; stroke-width: 8; }
+        .score-ring-fg { 
+            fill: none; stroke-width: 8; stroke-linecap: round;
+            stroke-dasharray: 377; stroke-dashoffset: 377;
+            transition: stroke-dashoffset 2s ease-out;
+        }
+
+        .score-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        @keyframes ringPulse {
+            0%, 100% { filter: drop-shadow(0 0 8px currentColor); }
+            50% { filter: drop-shadow(0 0 20px currentColor); }
+        }
+
+        .score-ring-fg.animate { animation: ringPulse 2s ease-in-out infinite; }
+
+        /* Confetti */
+        .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+        .confetti-piece { position: absolute; width: 10px; height: 10px; top: -10px; opacity: 0; animation: confettiFall 3s ease-in forwards; }
+        @keyframes confettiFall {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
         }
 
         .certify-score .score-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--cyan) 0%, #0066FF 100%);
-            border-radius: 50%;
-            font-family: 'Orbitron', monospace;
-            font-size: 2rem;
-            font-weight: 800;
-            color: white;
-            box-shadow: 0 0 40px var(--cyan-glow);
+            display: none; /* replaced by ring */
         }
 
         .certify-score .score-badge.failed {
@@ -5339,17 +5372,51 @@
 
             const gradeInfo = getGradeInfo(data.score);
 
-            // Score badge with grade color
-            scoreBadge.textContent = data.score;
-            scoreBadge.classList.toggle('failed', !data.certified);
-            scoreBadge.style.background = data.certified 
-                ? `linear-gradient(135deg, ${gradeInfo.color} 0%, ${gradeInfo.color}99 100%)`
-                : 'linear-gradient(135deg, var(--error) 0%, #CC0000 100%)';
-            scoreBadge.style.boxShadow = data.certified
-                ? `0 0 40px ${gradeInfo.color}44`
-                : '0 0 40px rgba(255, 82, 82, 0.3)';
-            // Text color for gold needs to be dark
-            scoreBadge.style.color = (data.score >= 90) ? '#0A1628' : 'white';
+            // Animated score ring
+            const scoreContainer = document.querySelector('.certify-score');
+            const ringColor = data.certified ? gradeInfo.color : '#FF5252';
+            const dashOffset = 377 - (377 * data.score / 100);
+            
+            scoreContainer.innerHTML = `
+                <div class="score-ring-container">
+                    <svg class="score-ring-svg" width="140" height="140" viewBox="0 0 140 140">
+                        <circle class="score-ring-bg" cx="70" cy="70" r="60"/>
+                        <circle class="score-ring-fg" cx="70" cy="70" r="60" 
+                            stroke="${ringColor}" style="stroke-dashoffset: 377"/>
+                    </svg>
+                    <div class="score-ring-text" style="color: ${ringColor}">${data.score}</div>
+                </div>
+                <div class="score-label">Compliance Score</div>
+            `;
+            
+            // Animate ring after a beat
+            setTimeout(() => {
+                const ring = document.querySelector('.score-ring-fg');
+                if (ring) {
+                    ring.style.strokeDashoffset = dashOffset;
+                    ring.classList.add('animate');
+                }
+            }, 300);
+            
+            // Confetti burst for certified agents!
+            if (data.certified) {
+                const confettiDiv = document.createElement('div');
+                confettiDiv.className = 'confetti-container';
+                const colors = ['#FFD700','#FF6B6B','#00E5FF','#FF8C00','#7B68EE','#00FF88'];
+                for (let i = 0; i < 60; i++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'confetti-piece';
+                    piece.style.left = Math.random() * 100 + '%';
+                    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    piece.style.animationDelay = Math.random() * 1.5 + 's';
+                    piece.style.width = (Math.random() * 8 + 6) + 'px';
+                    piece.style.height = (Math.random() * 8 + 6) + 'px';
+                    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                    confettiDiv.appendChild(piece);
+                }
+                document.body.appendChild(confettiDiv);
+                setTimeout(() => confettiDiv.remove(), 4000);
+            }
 
             // Status
             if (data.certified) {
