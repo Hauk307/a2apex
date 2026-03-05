@@ -624,16 +624,62 @@ async def get_agent_badge(slug: str):
 
     left_text = name[:20] + ("…" if len(name) > 20 else "")
     right_text = f"{score}/100"
-    left_w = len(left_text) * 7 + 20
-    right_w = len(right_text) * 7 + 20
-    total_w = left_w + right_w
+    left_w = len(left_text) * 7 + 24
+    right_w = len(right_text) * 7 + 24
+    icon_w = 28
+    total_w = icon_w + left_w + right_w
 
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_w}" height="28" viewBox="0 0 {total_w} 28">
-  <rect width="{total_w}" height="28" rx="4" fill="#0A1628"/>
-  <rect x="{left_w}" width="{right_w}" height="28" rx="0" fill="{score_color}20"/>
-  <rect x="{total_w - 4}" width="4" height="28" rx="0" fill="{score_color}20"/>
-  <text x="{left_w/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#00E5FF" text-anchor="middle">{left_text}</text>
-  <text x="{left_w + right_w/2}" y="18" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{score_color}" text-anchor="middle">{right_text}</text>
+    # Tier-specific gradients and icons
+    if score >= 90:
+        bg_grad_1, bg_grad_2 = "#1a1400", "#2d2200"
+        border_color = "#FFD700"
+        icon_fill = "#FFD700"
+        icon_stroke = "#FFA500"
+        # Gold medal icon
+        icon_svg = f'''<circle cx="14" cy="11" r="7" fill="url(#iconGrad)" stroke="{icon_stroke}" stroke-width="1"/>
+    <text x="14" y="15" font-family="system-ui,sans-serif" font-size="8" font-weight="800" fill="#1a1400" text-anchor="middle">G</text>'''
+    elif score >= 80:
+        bg_grad_1, bg_grad_2 = "#141418", "#1e1e24"
+        border_color = "#C0C0C0"
+        icon_fill = "#C0C0C0"
+        icon_stroke = "#888"
+        icon_svg = f'''<circle cx="14" cy="11" r="7" fill="url(#iconGrad)" stroke="{icon_stroke}" stroke-width="1"/>
+    <text x="14" y="15" font-family="system-ui,sans-serif" font-size="8" font-weight="800" fill="#1e1e24" text-anchor="middle">S</text>'''
+    elif score >= 70:
+        bg_grad_1, bg_grad_2 = "#1a1008", "#241810"
+        border_color = "#CD7F32"
+        icon_fill = "#CD7F32"
+        icon_stroke = "#8B4513"
+        icon_svg = f'''<circle cx="14" cy="11" r="7" fill="url(#iconGrad)" stroke="{icon_stroke}" stroke-width="1"/>
+    <text x="14" y="15" font-family="system-ui,sans-serif" font-size="8" font-weight="800" fill="#1a1008" text-anchor="middle">B</text>'''
+    else:
+        bg_grad_1, bg_grad_2 = "#0A1628", "#0d1b2a"
+        border_color = "#334455"
+        icon_fill = "#667788"
+        icon_stroke = "#445566"
+        icon_svg = f'''<circle cx="14" cy="11" r="7" fill="{icon_fill}" stroke="{icon_stroke}" stroke-width="1"/>
+    <text x="14" y="15" font-family="system-ui,sans-serif" font-size="8" font-weight="700" fill="#0A1628" text-anchor="middle">?</text>'''
+
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_w}" height="24" viewBox="0 0 {total_w} 24">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="{bg_grad_1}"/>
+      <stop offset="100%" stop-color="{bg_grad_2}"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="{icon_fill}"/>
+      <stop offset="100%" stop-color="{icon_stroke}"/>
+    </linearGradient>
+  </defs>
+  <rect width="{total_w}" height="24" rx="6" fill="url(#bgGrad)" stroke="{border_color}" stroke-width="1" stroke-opacity="0.5"/>
+  <rect x="{icon_w + left_w}" width="{right_w}" height="24" rx="0" fill="{score_color}" fill-opacity="0.15"/>
+  <rect x="{total_w - 6}" width="6" height="24" rx="0" fill="{score_color}" fill-opacity="0.15"/>
+  <clipPath id="rightClip"><rect x="{total_w - 6}" y="0" width="6" height="24" rx="6"/></clipPath>
+  <rect x="{total_w - 6}" width="6" height="24" fill="{score_color}" fill-opacity="0.15" clip-path="url(#rightClip)"/>
+  {icon_svg}
+  <text x="{icon_w + left_w/2}" y="16" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="white" text-anchor="middle">{left_text}</text>
+  <text x="{icon_w + left_w + right_w/2}" y="16" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{score_color}" text-anchor="middle">{right_text}</text>
+  <text x="{icon_w + left_w + right_w/2}" y="16" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="{score_color}" text-anchor="middle" opacity="0.6" filter="blur(2px)">{right_text}</text>
 </svg>'''
     return Response(content=svg, media_type="image/svg+xml", headers={"Cache-Control": "public, max-age=300"})
 
