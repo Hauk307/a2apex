@@ -586,7 +586,7 @@ async def get_agent_badge(slug: str):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT a.name, COALESCE(t.overall_score, 0) as trust_score
+        SELECT a.name, a.url, COALESCE(t.overall_score, 0) as trust_score
         FROM agents a LEFT JOIN trust_scores t ON a.id = t.agent_id
         WHERE a.slug = ?
     """, (slug,))
@@ -597,7 +597,12 @@ async def get_agent_badge(slug: str):
         svg = '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="28"><rect width="160" height="28" rx="4" fill="#555"/><text x="80" y="18" font-family="sans-serif" font-size="11" font-weight="600" fill="#fff" text-anchor="middle">Agent Not Found</text></svg>'
         return Response(content=svg, media_type="image/svg+xml")
 
-    score = int(row["trust_score"])
+    # Use certification score if available (more accurate than averaged trust score)
+    cert = get_certification_for_agent(row["url"])
+    if cert and cert.get("score"):
+        score = int(cert["score"])
+    else:
+        score = int(row["trust_score"])
     name = row["name"]
 
     # Colors based on score
