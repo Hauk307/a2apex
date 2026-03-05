@@ -4661,20 +4661,36 @@
             document.getElementById('score-subtitle').textContent = 
                 `${summary.passed || 0}/${(summary.passed || 0) + (summary.failed || 0)} checks passed`;
             
-            // Render as live test results
-            if (data.checks) {
-                const results = data.checks.map(check => ({
-                    test_name: check.name,
+            // Render results from checks or checks_by_category
+            let allChecks = data.checks || [];
+            if (!allChecks.length && data.checks_by_category) {
+                for (const cat of Object.values(data.checks_by_category)) {
+                    if (Array.isArray(cat)) allChecks = allChecks.concat(cat);
+                    else if (cat.checks) allChecks = allChecks.concat(cat.checks);
+                }
+            }
+            if (allChecks.length) {
+                const results = allChecks.map(check => ({
+                    test_name: check.name || check.test_name,
                     status: check.status,
                     message: check.message,
-                    duration_ms: 0
+                    duration_ms: check.duration_ms || 0,
+                    fix: check.fix,
+                    code_snippet: check.code_snippet
                 }));
                 
+                // Reuse live test renderer with compliance data
                 renderLiveTestResults({ 
-                    summary, 
+                    summary,
                     results,
-                    total_duration_ms: 0
+                    total_duration_ms: data.duration_ms || 0,
+                    agent_card: data.agent_card
                 });
+                // Restore compliance-specific title
+                document.getElementById('score-title').textContent = 
+                    data.is_compliant ? 'A2A Compliant ✓' : 'Not Fully Compliant';
+                document.getElementById('score-subtitle').textContent = 
+                    `${summary.passed || 0}/${(summary.passed || 0) + (summary.failed || 0)} checks passed`;
             }
         }
 
