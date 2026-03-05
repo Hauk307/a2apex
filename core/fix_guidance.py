@@ -953,4 +953,35 @@ def get_fix_for_test(test_name: str, error: str = "", message: str = "") -> Opti
             spec_url="https://google.github.io/A2A/#error-handling"
         )
     
+    # Streaming tests that return HTTP 500
+    if ("stream" in search_text or "sse" in search_text or "state transition" in search_text 
+        or "final event" in search_text or "artifact streaming" in search_text):
+        return FixGuidance(
+            fix="Your agent's streaming endpoint (message/stream) returned an error. Implement SSE streaming: return Content-Type: text/event-stream, send JSON events with 'data:' prefix, and always end with a final status event (final: true). If your agent doesn't support streaming, remove 'streaming: true' from your Agent Card capabilities.",
+            code_snippet='''from sse_starlette.sse import EventSourceResponse
+
+@app.post("/a2a")
+async def handle(request: Request):
+    data = await request.json()
+    if data["method"] == "message/stream":
+        return EventSourceResponse(stream_gen(data))
+
+async def stream_gen(data):
+    yield {"data": json.dumps({"jsonrpc":"2.0","result":{"statusUpdate":{"state":"working"}}})}
+    yield {"data": json.dumps({"jsonrpc":"2.0","result":{"artifact":{"parts":[{"kind":"text","text":"Hello"}]}}})}
+    yield {"data": json.dumps({"jsonrpc":"2.0","result":{"statusUpdate":{"state":"completed","final":True}}})}
+
+# Or if you don't need streaming, remove it from Agent Card:
+# "capabilities": {"streaming": false}''',
+            spec_url=f"{A2A_SPEC_BASE}/#streaming"
+        )
+    
+    # HTTP 500 generic fallback
+    if "500" in search_text or "internal server error" in search_text:
+        return FixGuidance(
+            fix="Your agent returned HTTP 500 (Internal Server Error). Check your agent's logs for the stack trace. Common causes: unhandled exceptions, missing dependencies, or incorrect request parsing.",
+            code_snippet='# Add error handling to your endpoint\n@app.post("/a2a")\nasync def handle(request: Request):\n    try:\n        data = await request.json()\n        # ... handle request ...\n    except Exception as e:\n        return JSONResponse({\n            "jsonrpc": "2.0",\n            "id": data.get("id"),\n            "error": {"code": -32603, "message": str(e)}\n        }, status_code=200)  # A2A errors use 200 with error object',
+            spec_url=f"{A2A_SPEC_BASE}/#error-handling"
+        )
+    
     return None
