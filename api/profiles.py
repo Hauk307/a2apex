@@ -1069,6 +1069,8 @@ async def agent_profile_page(slug: str, request: Request):
     version = agent["version"] or card.get("version", "")
     url = agent["url"]
     base_url = str(request.base_url).rstrip("/")
+    # Public proxy URL for agents (so localhost agents are reachable from internet)
+    public_url = f"{base_url}/a2a/proxy/{slug}"
 
     # Score styling
     if score >= 90:
@@ -1315,7 +1317,7 @@ async def agent_profile_page(slug: str, request: Request):
 
         <div class="hero-info">
             <div class="hero-name">{name}</div>
-            <div class="hero-url">{url}</div>
+            <div class="hero-url"><a href="{public_url}/.well-known/agent-card.json" target="_blank" style="color:var(--cyan);text-decoration:none">{public_url}</a></div>
             <div class="hero-desc">{desc}</div>
             <div class="hero-meta">
                 {f'<span>🏢 {provider}</span>' if provider else ''}
@@ -1530,3 +1532,67 @@ async def agent_chat_proxy(slug: str, body: ChatRequest):
         reply_text = "(Could not parse agent response)"
 
     return JSONResponse({"reply": reply_text.strip()})
+
+
+# ============================================================================
+# PUBLIC A2A PROXY — Makes local agents accessible to the internet
+# ============================================================================
+
+@router.post("/a2a/proxy/{slug}")
+async def a2a_proxy(slug: str, request: Request):
+    """
+    Public A2A endpoint that proxies requests to the agent's real URL.
+    This lets local agents (like localhost:8092) be reachable from the internet.
+    """
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT url FROM agents WHERE slug = ?", (slug,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return JSONResponse({"jsonrpc": "2.0", "error": {"code": -32001, "message": "Agent not found"}}, status_code=404)
+
+    agent_url = row["url"]
+    body = await request.json()
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(agent_url, json=body)
+            if resp.status_code == 404:
+                alt_url = agent_url.rstrip("/") + "/a2a"
+                resp = await client.post(alt_url, json=body)
+            return JSONResponse(resp.json(), status_code=resp.status_code)
+    except httpx.TimeoutException:
+        return JSONResponse({"jsonrpc": "2.0", "error": {"code": -32000, "message": "Agent timeout"}}, status_code=504)
+    except httpx.ConnectError:
+        return JSONResponse({"jsonrpc": "2.0", "error": {"code": -32000, "message": "Agent unreachable"}}, status_code=502)
+    except Exception as e:
+        return JSONResponse({"jsonrpc": "2.0", "error": {"code": -32000, "message": str(e)}}, status_code=500)
+
+
+@router.get("/a2a/proxy/{slug}/.well-known/agent-card.json")
+async def a2a_proxy_agent_card(slug: str, request: Request):
+    """Proxy the agent's Agent Card, rewriting the URL to our public proxy."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT url FROM agents WHERE slug = ?", (slug,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return JSONResponse({"error": "Agent not found"}, status_code=404)
+
+    agent_url = row["url"].rstrip("/")
+    card_url = f"{agent_url}/.well-known/agent-card.json"
+
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            resp = await client.get(card_url)
+            card = resp.json()
+            # Rewrite the URL to our public proxy
+            base = str(request.base_url).rstrip("/")
+            card["url"] = f"{base}/a2a/proxy/{slug}"
+            return JSONResponse(card)
+    except Exception as e:
+        return JSONResponse({"error": f"Could not fetch agent card: {str(e)}"}, status_code=502)
