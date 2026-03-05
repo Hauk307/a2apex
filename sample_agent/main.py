@@ -110,7 +110,7 @@ AGENT_CARD = {
     "protocolVersion": "0.3.0",
     "preferredTransport": "JSONRPC",
     "capabilities": {
-        "streaming": True,
+        "streaming": False,
         "pushNotifications": False,
         "stateTransitionHistory": True
     },
