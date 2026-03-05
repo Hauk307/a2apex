@@ -751,7 +751,7 @@ def _topbar_html() -> str:
     </a>
     <div class="topbar-nav">
         <a href="/agents">Agent Directory</a>
-        <a href="https://app.a2apex.io">Test an Agent</a>
+        <a href="/">Test an Agent</a>
         <a href="https://a2apex.io">Home</a>
     </div>
 </nav>'''
@@ -1170,7 +1170,7 @@ async def agent_profile_page(slug: str, request: Request):
             <div style="background:var(--cyan-dim);border:1px dashed var(--cyan);border-radius:12px;padding:1.5rem">
                 <h3 style="margin-bottom:.5rem">🔑 Is this your agent?</h3>
                 <p style="color:var(--text2);font-size:.875rem;margin-bottom:1rem">Claim ownership to manage this profile and update agent details.</p>
-                <a href="https://app.a2apex.io" class="btn btn-cyan">Sign in to Claim</a>
+                <a href="/" class="btn btn-cyan">Sign in to Claim</a>
             </div>
         </div>'''
 
@@ -1302,7 +1302,7 @@ async def agent_profile_page(slug: str, request: Request):
                 <span>📅 Registered {agent["created_at"][:10]}</span>
             </div>
             <div class="actions">
-                <a href="https://app.a2apex.io" class="btn btn-cyan">⚡ Test This Agent</a>
+                <a href="/?url={agent_url}" class="btn btn-cyan">⚡ Test This Agent</a>
                 <a href="/agents" class="btn btn-outline">← Directory</a>
             </div>
         </div>
