@@ -1273,6 +1273,53 @@ async def agent_profile_page(slug: str, request: Request):
     .embed-code:hover{{border-color:var(--cyan)}}
 
     .actions{{display:flex;gap:.75rem;margin-top:1.5rem;flex-wrap:wrap}}
+
+    /* Try This Agent Chat */
+    .chat-container{{
+        background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+        overflow:hidden;
+    }}
+    .chat-messages{{
+        height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.6rem;
+    }}
+    .chat-welcome{{
+        text-align:center;color:var(--text3);font-size:.85rem;padding:2rem 1rem;
+    }}
+    .chat-bubble{{
+        max-width:80%;padding:.65rem 1rem;border-radius:14px;font-size:.9rem;
+        line-height:1.5;word-wrap:break-word;white-space:pre-wrap;
+        animation:chatFadeIn .25s ease-out;
+    }}
+    @keyframes chatFadeIn{{from{{opacity:0;transform:translateY(6px)}}to{{opacity:1;transform:translateY(0)}}}}
+    .chat-user{{
+        align-self:flex-end;background:var(--cyan);color:#0d1b2a;
+        border-bottom-right-radius:4px;
+    }}
+    .chat-agent{{
+        align-self:flex-start;background:var(--elevated);color:var(--text1);
+        border:1px solid var(--border);border-bottom-left-radius:4px;
+    }}
+    .chat-error{{
+        align-self:center;background:rgba(255,82,82,.12);color:#FF5252;
+        border:1px solid rgba(255,82,82,.25);font-size:.82rem;text-align:center;
+    }}
+    .chat-input-row{{
+        display:flex;gap:0;border-top:1px solid var(--border);
+    }}
+    .chat-input{{
+        flex:1;padding:.75rem 1rem;background:var(--bg);border:none;
+        color:var(--text1);font-size:.9rem;font-family:inherit;outline:none;
+    }}
+    .chat-input::placeholder{{color:var(--text3)}}
+    .chat-send-btn{{
+        border-radius:0;padding:.75rem 1.25rem;font-size:.85rem;
+        border:none;cursor:pointer;font-weight:600;
+    }}
+    .chat-send-btn:disabled{{opacity:.5;cursor:not-allowed}}
+    .chat-status{{
+        text-align:center;padding:.4rem;font-size:.8rem;color:var(--cyan);
+        background:var(--cyan-dim);
+    }}
     </style>
 </head>
 <body>
@@ -1346,6 +1393,22 @@ async def agent_profile_page(slug: str, request: Request):
         </div>
 
         {claim_html}
+
+        <!-- Try This Agent Chat -->
+        <div class="section" style="margin-top:2rem">
+            <h3 class="section-title">💬 Try This Agent</h3>
+            <p style="color:var(--text3);font-size:.85rem;margin-bottom:1rem">Send a message and see how this agent responds</p>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-welcome">Type a message below to start a conversation with <strong>{name}</strong></div>
+                </div>
+                <div class="chat-input-row">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Say something to this agent…" maxlength="2000" autocomplete="off"/>
+                    <button id="chatSendBtn" class="btn btn-cyan chat-send-btn">Send</button>
+                </div>
+                <div class="chat-status" id="chatStatus" style="display:none">Agent is thinking…</div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1357,8 +1420,136 @@ async def agent_profile_page(slug: str, request: Request):
             setTimeout(() => {{ el.style.borderColor = orig; }}, 2000);
         }});
     }}
+
+    // ---------- Try This Agent Chat ----------
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const chatSendBtn = document.getElementById('chatSendBtn');
+    const chatStatus = document.getElementById('chatStatus');
+
+    function appendMessage(role, text) {{
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble chat-' + role;
+        bubble.textContent = text;
+        chatMessages.appendChild(bubble);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }}
+
+    async function sendChatMessage() {{
+        const text = chatInput.value.trim();
+        if (!text) return;
+        chatInput.value = '';
+        appendMessage('user', text);
+        chatSendBtn.disabled = true;
+        chatInput.disabled = true;
+        chatStatus.textContent = 'Agent is thinking…';
+        chatStatus.style.display = 'block';
+        try {{
+            const res = await fetch('/api/agents/{slug}/chat', {{
+                method: 'POST',
+                headers: {{'Content-Type': 'application/json'}},
+                body: JSON.stringify({{message: text}})
+            }});
+            const data = await res.json();
+            chatStatus.style.display = 'none';
+            if (data.error) {{
+                appendMessage('error', data.error);
+            }} else {{
+                appendMessage('agent', data.reply || '(empty response)');
+            }}
+        }} catch(e) {{
+            chatStatus.style.display = 'none';
+            appendMessage('error', 'Network error: ' + e.message);
+        }}
+        chatSendBtn.disabled = false;
+        chatInput.disabled = false;
+        chatInput.focus();
+    }}
+
+    chatSendBtn.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keydown', e => {{
+        if (e.key === 'Enter' && !e.shiftKey) {{
+            e.preventDefault();
+            sendChatMessage();
+        }}
+    }});
     </script>
 </body>
 </html>'''
 
     return HTMLResponse(content=html)
+
+
+# ---------------------------------------------------------------------------
+# TRY THIS AGENT — Chat proxy endpoint
+# ---------------------------------------------------------------------------
+
+class ChatRequest(BaseModel):
+    message: str = Field(..., min_length=1, max_length=2000)
+
+
+@router.post("/api/agents/{slug}/chat")
+async def agent_chat_proxy(slug: str, body: ChatRequest):
+    """Proxy a chat message to an agent via A2A protocol and return the reply."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT url FROM agents WHERE slug = ?", (slug,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Agent not found")
+
+    agent_url = row["url"]
+
+    # Build A2A JSON-RPC message/send payload
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "message/send",
+        "id": str(uuid.uuid4()),
+        "params": {
+            "message": {
+                "role": "user",
+                "parts": [{"type": "text", "text": body.message}]
+            }
+        }
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(agent_url, json=payload)
+            resp.raise_for_status()
+            data = resp.json()
+    except httpx.TimeoutException:
+        return JSONResponse({"error": "Agent did not respond in time (30s timeout). It may be offline."})
+    except httpx.ConnectError:
+        return JSONResponse({"error": "Could not connect to the agent. It may be offline or unreachable."})
+    except Exception as e:
+        return JSONResponse({"error": f"Error contacting agent: {str(e)}"})
+
+    # Extract reply text from A2A response
+    # A2A responses vary: result.artifacts[].parts[].text or result.status.message.parts[].text
+    reply_text = ""
+    try:
+        result = data.get("result", {})
+        # Try artifacts first (common in task responses)
+        artifacts = result.get("artifacts", [])
+        if artifacts:
+            for art in artifacts:
+                for part in art.get("parts", []):
+                    if part.get("type") == "text" and part.get("text"):
+                        reply_text += part["text"] + "\n"
+        # Fall back to status message
+        if not reply_text:
+            status_msg = result.get("status", {}).get("message", {})
+            for part in status_msg.get("parts", []):
+                if part.get("type") == "text" and part.get("text"):
+                    reply_text += part["text"] + "\n"
+        # Fall back: check for error in JSON-RPC response
+        if not reply_text and "error" in data:
+            err = data["error"]
+            reply_text = f"Agent error: {err.get('message', str(err))}"
+    except Exception:
+        reply_text = "(Could not parse agent response)"
+
+    return JSONResponse({"reply": reply_text.strip()})
