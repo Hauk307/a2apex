@@ -1164,7 +1164,7 @@ async def agent_profile_page(slug: str, request: Request):
 
     # Embed section
     badge_url = f"{base_url}/api/agents/{slug}/badge"
-    profile_url = f"https://app.a2apex.io/agents/{slug}"
+    profile_url = f"{base_url}/agents/{slug}"
 
     # Claim CTA
     claim_html = ""

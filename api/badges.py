@@ -373,7 +373,7 @@ async def certify_agent(request: CertifyRequest, req: Request):
             content={
                 "error": "free_limit_reached",
                 "message": "You've used all 3 free tests this month. Upgrade to Pro for unlimited testing.",
-                "upgrade_url": "https://app.a2apex.io"
+                "upgrade_url": "/"
             }
         )
     
@@ -559,7 +559,7 @@ async def get_badge_svg(cert_id: str):
 
 
 @router.get("/certificate/{cert_id}", response_class=HTMLResponse)
-async def get_certificate_page(cert_id: str):
+async def get_certificate_page(cert_id: str, request: Request):
     """Full certificate celebration page."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -632,8 +632,9 @@ async def get_certificate_page(cert_id: str):
     elif score < 90:
         next_tier_html = f'<p class="next-tier">Score 90+ to earn <span style="color: #FFD700">🥇 Gold — A2Apex Certified</span></p>'
 
-    badge_url = f"https://app.a2apex.io/api/badge/{cert_id}.svg"
-    cert_url = f"https://app.a2apex.io/api/certificate/{cert_id}"
+    base = str(request.base_url).rstrip("/")
+    badge_url = f"{base}/api/badge/{cert_id}.svg"
+    cert_url = f"{base}/api/certificate/{cert_id}"
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -943,7 +944,7 @@ async def get_certificate_page(cert_id: str):
         
         <div class="footer">
             <a href="https://a2apex.io">A2Apex</a> — The Testing Platform for AI Agents<br>
-            <a href="https://app.a2apex.io/api/registry-page">View Public Registry</a>
+            <a href="/agents">View Public Registry</a>
         </div>
     </div>
     
