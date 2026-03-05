@@ -1302,7 +1302,7 @@ async def agent_profile_page(slug: str, request: Request):
                 <span>📅 Registered {agent["created_at"][:10]}</span>
             </div>
             <div class="actions">
-                <a href="/?url={agent_url}" class="btn btn-cyan">⚡ Test This Agent</a>
+                <a href="/?url={url}" class="btn btn-cyan">⚡ Test This Agent</a>
                 <a href="/agents" class="btn btn-outline">← Directory</a>
             </div>
         </div>
