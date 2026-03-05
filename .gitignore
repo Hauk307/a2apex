@@ -56,3 +56,9 @@ __pycache__/
 *.pyc
 .vercel/
 landing/public/.vercel/
+
+# Sensitive data
+data/.secret_key
+data/*.db
+*.pem
+*.key
