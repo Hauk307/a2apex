@@ -5191,6 +5191,16 @@
         // Check for payment success on page load
         document.addEventListener('DOMContentLoaded', () => {
             checkPaymentSuccess();
+            
+            // Pre-fill URL from ?url= parameter (from "Test This Agent" links)
+            const params = new URLSearchParams(window.location.search);
+            const prefillUrl = params.get('url');
+            if (prefillUrl && urlInput) {
+                urlInput.value = prefillUrl;
+                // Switch to Validate tab and auto-run
+                switchTab('validate');
+                setTimeout(() => runTests(), 500);
+            }
         });
 
         // Close modals on escape key
