@@ -3729,15 +3729,27 @@
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 // Save current tab's results before switching
-                const resultsPanel = document.getElementById('results-panel');
-                const scoreCard = document.getElementById('score-card');
+                const _rp = document.getElementById('results-panel');
+                const _sc = document.getElementById('score-card');
+                const _vs = document.getElementById('validation-section');
+                const _cs = document.getElementById('category-section');
+                const _ac = document.getElementById('agent-card-section');
                 const certResult = document.getElementById('certify-result');
-                if (resultsPanel && resultsPanel.style.display !== 'none' && resultsPanel.innerHTML.trim()) {
+                
+                const hasResults = _rp && _rp.style.display !== 'none' && _rp.innerHTML.trim();
+                const hasScore = _sc && _sc.style.display !== 'none' && _sc.innerHTML.trim();
+                if (hasResults || hasScore) {
                     tabResultsCache[currentTab] = {
-                        results: resultsPanel.innerHTML,
-                        score: scoreCard ? scoreCard.innerHTML : '',
-                        scoreDisplay: scoreCard ? scoreCard.style.display : 'none',
-                        resultsDisplay: resultsPanel.style.display
+                        results: _rp ? _rp.innerHTML : '',
+                        resultsDisplay: _rp ? _rp.style.display : 'none',
+                        score: _sc ? _sc.innerHTML : '',
+                        scoreDisplay: _sc ? _sc.style.display : 'none',
+                        validation: _vs ? _vs.innerHTML : '',
+                        validationDisplay: _vs ? _vs.style.display : 'none',
+                        category: _cs ? _cs.innerHTML : '',
+                        categoryDisplay: _cs ? _cs.style.display : 'none',
+                        agentCard: _ac ? _ac.innerHTML : '',
+                        agentCardDisplay: _ac ? _ac.style.display : 'none'
                     };
                 }
                 if (currentTab === 'certify' && certResult && certResult.style.display !== 'none') {
@@ -3781,6 +3793,18 @@
                 };
                 document.getElementById('tab-description').textContent = descriptions[currentTab];
                 
+                // Clear current results before switching view
+                const rp = document.getElementById('results-panel');
+                const sc = document.getElementById('score-card');
+                const vs = document.getElementById('validation-section');
+                const cs = document.getElementById('category-section');
+                const ac = document.getElementById('agent-card-section');
+                if (rp) { rp.style.display = 'none'; rp.innerHTML = ''; }
+                if (sc) { sc.style.display = 'none'; sc.innerHTML = ''; }
+                if (vs) vs.style.display = 'none';
+                if (cs) cs.style.display = 'none';
+                if (ac) ac.style.display = 'none';
+                
                 updateTabVisibility();
                 
                 // Restore cached results for this tab
@@ -3792,11 +3816,12 @@
                             certResult.innerHTML = cached.certify;
                             certResult.style.display = cached.certifyDisplay || 'block';
                         }
-                    } else if (cached.results) {
-                        const rp = document.getElementById('results-panel');
-                        const sc = document.getElementById('score-card');
-                        if (rp) { rp.innerHTML = cached.results; rp.style.display = cached.resultsDisplay || 'block'; }
+                    } else if (cached.results || cached.score) {
+                        if (rp && cached.results) { rp.innerHTML = cached.results; rp.style.display = cached.resultsDisplay || 'block'; }
                         if (sc && cached.score) { sc.innerHTML = cached.score; sc.style.display = cached.scoreDisplay || 'block'; }
+                        if (vs && cached.validation) { vs.innerHTML = cached.validation; vs.style.display = cached.validationDisplay || 'none'; }
+                        if (cs && cached.category) { cs.innerHTML = cached.category; cs.style.display = cached.categoryDisplay || 'none'; }
+                        if (ac && cached.agentCard) { ac.innerHTML = cached.agentCard; ac.style.display = cached.agentCardDisplay || 'none'; }
                     }
                 }
             });
