@@ -391,11 +391,7 @@ async def certify_agent(request: CertifyRequest, req: Request):
     
     # Run the FULL test suite (same as Full Suite tab) for consistent scoring
     import asyncio
-    from core.tests.live_tests import run_live_tests
-    from core.tests.auth_tests import run_auth_tests
-    from core.tests.error_tests import run_error_tests
-    from core.tests.streaming_tests import run_streaming_tests
-    from core.tests.perf_tests import run_perf_tests
+    from core import run_live_tests, run_auth_tests, run_error_tests, run_streaming_tests, run_perf_tests
     
     try:
         # First, get agent name from card
