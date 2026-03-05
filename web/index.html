@@ -3793,14 +3793,14 @@
                 };
                 document.getElementById('tab-description').textContent = descriptions[currentTab];
                 
-                // Clear current results before switching view
+                // Hide current results before switching view (don't wipe innerHTML — child elements need to persist)
                 const rp = document.getElementById('results-panel');
                 const sc = document.getElementById('score-card');
                 const vs = document.getElementById('validation-section');
                 const cs = document.getElementById('category-section');
                 const ac = document.getElementById('agent-card-section');
-                if (rp) { rp.style.display = 'none'; rp.innerHTML = ''; }
-                if (sc) { sc.style.display = 'none'; sc.innerHTML = ''; }
+                if (rp) rp.style.display = 'none';
+                if (sc) sc.style.display = 'none';
                 if (vs) vs.style.display = 'none';
                 if (cs) cs.style.display = 'none';
                 if (ac) ac.style.display = 'none';
@@ -4714,6 +4714,8 @@
             const scoreValue = document.getElementById('score-value');
             const scoreProgress = document.getElementById('score-progress');
             const scoreCircle = document.getElementById('score-circle');
+            
+            if (!scoreValue || !scoreProgress || !scoreCircle) return;
             
             // Animate score value
             const currentScore = parseInt(scoreValue.textContent) || 0;
