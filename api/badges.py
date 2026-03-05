@@ -35,7 +35,7 @@ from core import (
 
 TEST_USAGE_DB_PATH = Path(__file__).parent.parent / "data" / "test_usage.db"
 FREE_TESTS_PER_MONTH = 3
-ANON_TESTS_TOTAL = 3
+ANON_TESTS_TOTAL = 5
 
 
 def init_test_usage_db():

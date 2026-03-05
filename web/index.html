@@ -4197,6 +4197,10 @@
                         endpoint = '/api/test/full';
                         body = { agent_url: url };
                         break;
+                    case 'certify':
+                        // Certify tab uses its own button/flow
+                        runCertification();
+                        return;
                     default:
                         endpoint = '/api/live-test';
                         body = { agent_url: url };
@@ -5281,7 +5285,11 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.detail || 'Certification failed');
+                    if (data.error === 'free_limit_reached') {
+                        showUpgradeModal(data.message);
+                        return;
+                    }
+                    throw new Error(data.detail || data.message || 'Certification failed');
                 }
 
                 certificationResult = data;
