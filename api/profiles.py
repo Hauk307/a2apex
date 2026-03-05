@@ -1055,10 +1055,10 @@ async def agent_profile_page(slug: str, request: Request):
 
     agent = dict(row)
 
-    # Test history
+    # Test history (show last 5 only)
     cursor.execute("""
         SELECT test_type, score, tested_at FROM test_history
-        WHERE agent_id = ? ORDER BY tested_at DESC LIMIT 10
+        WHERE agent_id = ? ORDER BY tested_at DESC LIMIT 5
     """, (agent["id"],))
     history = [dict(r) for r in cursor.fetchall()]
     conn.close()
@@ -1078,7 +1078,11 @@ async def agent_profile_page(slug: str, request: Request):
 
     cert = get_certification_for_agent(agent["url"])
 
-    score = int(agent["trust_score"])
+    # Use certification score if available (more meaningful than averaged trust score)
+    if cert and cert.get("score"):
+        score = int(cert["score"])
+    else:
+        score = int(agent["trust_score"])
     compliance = int(agent.get("compliance_score") or 0)
     name = agent["name"]
     desc = agent["description"] or card.get("description", "An A2A protocol agent.")
