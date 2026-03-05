@@ -389,29 +389,47 @@ async def certify_agent(request: CertifyRequest, req: Request):
     # Badge style will be set after we know the score
     badge_style = "basic"  # Placeholder, updated after scoring
     
-    # Run tests
+    # Run the FULL test suite (same as Full Suite tab) for consistent scoring
+    import asyncio
+    from core.tests.live_tests import run_live_tests
+    from core.tests.auth_tests import run_auth_tests
+    from core.tests.error_tests import run_error_tests
+    from core.tests.streaming_tests import run_streaming_tests
+    from core.tests.perf_tests import run_perf_tests
+    
     try:
-        # First, validate agent card
+        # First, get agent name from card
         card_report = await fetch_and_validate_agent_card(agent_url)
         agent_name = "Unknown Agent"
-        
         if card_report.agent_card:
             agent_name = card_report.agent_card.get("name", "Unknown Agent")
         
-        # Run live tests
-        live_report = await run_live_tests(agent_url, timeout=60.0)
+        # Run ALL test suites concurrently (same as Full Suite)
+        results = await asyncio.gather(
+            run_live_tests(agent_url, timeout=60.0),
+            run_auth_tests(agent_url, timeout=60.0),
+            run_error_tests(agent_url, timeout=60.0),
+            run_streaming_tests(agent_url, timeout=60.0),
+            run_perf_tests(agent_url, timeout=60.0),
+            return_exceptions=True
+        )
         
-        # Calculate score
-        # Weight: 40% agent card, 60% live tests
-        card_score = card_report.score if hasattr(card_report, 'score') else 0
-        live_score = live_report.score if hasattr(live_report, 'score') else 0
+        # Calculate score same way as Full Suite
+        total_passed = 0
+        total_tests = 0
+        for report in results:
+            if isinstance(report, Exception):
+                continue
+            report_dict = report.to_dict()
+            summary = report_dict.get("summary", {})
+            total_passed += summary.get("passed", 0)
+            total_tests += summary.get("total", 0)
         
-        total_score = int(card_score * 0.4 + live_score * 0.6)
+        total_score = int((total_passed / total_tests * 100) if total_tests > 0 else 0)
         
-        # Build test results
         test_results = {
-            "agent_card": card_report.to_dict(),
-            "live_tests": live_report.to_dict(),
+            "total_tests": total_tests,
+            "total_passed": total_passed,
             "calculated_score": total_score
         }
         
