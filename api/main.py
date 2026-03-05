@@ -91,7 +91,7 @@ API_KEYS_PATH = Path(__file__).parent.parent / "data" / "api_keys.json"
 API_KEYS: dict[str, dict] = {}
 
 # Rate limit settings
-FREE_TIER_LIMIT = 10  # requests per minute
+FREE_TIER_LIMIT = 60  # requests per minute
 PRO_TIER_LIMIT = 100  # requests per minute
 RATE_LIMIT_WINDOW = 60  # seconds
 
