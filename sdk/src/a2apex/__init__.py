@@ -29,7 +29,7 @@ Standalone Functions:
 """
 
 __version__ = "0.1.0"
-__author__ = "Apex Ventures LLC"
+__author__ = "A2Apex Ventures LLC"
 
 # Main client
 from .client import A2ApexClient, test_agent, validate_card
