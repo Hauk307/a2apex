@@ -215,6 +215,15 @@ async def ensure_agent_profile(agent_url: str, test_type: str = "unknown", score
 
     if row:
         agent_id = row["id"]
+        # Re-fetch agent card to keep profile current
+        card = await fetch_agent_card(url)
+        if card:
+            now = datetime.utcnow().isoformat() + "Z"
+            skills_list = [s.get("name", s.get("id", "")) for s in card.get("skills", [])]
+            cursor.execute("""
+                UPDATE agents SET agent_card_json = ?, skills = ?, updated_at = ?
+                WHERE id = ?
+            """, (json.dumps(card), json.dumps(skills_list), now, agent_id))
     else:
         # Create profile
         card = await fetch_agent_card(url)
