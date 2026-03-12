@@ -62,3 +62,5 @@ data/.secret_key
 data/*.db
 *.pem
 *.key
+logo_*_screenshot.png
+logos*_screenshot.png
