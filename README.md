@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="brand/a2apex-mark-256.png" alt="A2Apex" width="128">
+  <img src="brand/A2APEX Icon-Full Color n Background.png" alt="A2Apex" width="128">
 </p>
 
 <h1 align="center">A2Apex</h1>
